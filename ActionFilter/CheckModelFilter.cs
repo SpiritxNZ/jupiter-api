@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Web.Http;
-using System.Web.Helpers;
-using System.Web.Http.Controllers;
+//using System.Web.Helpers;
+//using System.Web.Http.Controllers;
 using Jupiter.Models;
-using System.Web.Http.Filters;
-using System.Web.Http.ModelBinding;
+//using System.Web.Http.Filters;
+//using System.Web.Http.ModelBinding;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;

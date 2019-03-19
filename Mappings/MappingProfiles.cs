@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using jupiterCore.jupiterContext;
 using Jupiter.Models;
 
 namespace jupiterCore.Mappings

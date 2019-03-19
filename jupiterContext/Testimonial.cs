@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-//using JupiterEntity;
 
-namespace Jupiter.Models
+namespace jupiterCore.jupiterContext
 {
-    public class TestimonialModel
+    public partial class Testimonial
     {
-        public int? TestimonialId { get; set; }
+        public int TestimonialId { get; set; }
         public string CustomerName { get; set; }
         public int? EventtypeId { get; set; }
         public string Message { get; set; }
+
+        public virtual EventType Eventtype { get; set; }
     }
 }

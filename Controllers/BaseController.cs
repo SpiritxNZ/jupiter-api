@@ -6,14 +6,15 @@ using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Web.Http;
-using System.Web.Http.ModelBinding;
+//using System.Web.Http.ModelBinding;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Jupiter.Controllers
 {
     [ApiController]
     //public abstract class BaseController : ApiController
-    public abstract class BaseController : ApiController
+    public abstract class BaseController : ControllerBase
 
     {
         private bool CanAccess(string currentControllerName, string currentActionName)
