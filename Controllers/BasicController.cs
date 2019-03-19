@@ -14,7 +14,7 @@ namespace Jupiter.Controllers
 {
     [ApiController]
     //public abstract class BaseController : ApiController
-    public abstract class BaseController : ControllerBase
+    public abstract class BasicController : ControllerBase
 
     {
         private bool CanAccess(string currentControllerName, string currentActionName)
@@ -46,6 +46,7 @@ namespace Jupiter.Controllers
             tResult.ErrorMessage = "Not Found";
             return tResult;
         }
+
         private bool SetCurrentUser()
         {
             return true;
@@ -63,18 +64,5 @@ namespace Jupiter.Controllers
             UriBuilder uriBuilder = new UriBuilder();
             return uriBuilder.Uri;
         }
-        protected string[] GetErrorMessages(ModelStateDictionary modelStates)
-        {
-            var errorMessages = new List<string>();
-            foreach (var modelState in modelStates.Values)
-            {
-                foreach (var modelError in modelState.Errors)
-                {
-                    errorMessages.Add(modelError.ErrorMessage);
-                }
-            }
-            return errorMessages.ToArray();
-        }
-
     }
 }

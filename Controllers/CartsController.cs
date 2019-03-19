@@ -2,22 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using jupiterCore.jupiterContext;
+using Jupiter.ActionFilter;
+using Jupiter.Controllers;
+using Jupiter.Models;
 
 namespace jupiterCore.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CartsController : ControllerBase
+    public class CartsController : BasicController
     {
         private readonly jupiterContext.jupiterContext _context;
+        private readonly IMapper _mapper;
 
-        public CartsController(jupiterContext.jupiterContext context)
+        public CartsController(jupiterContext.jupiterContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Carts
@@ -31,6 +37,7 @@ namespace jupiterCore.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Cart>> GetCart(int id)
         {
+
             var cart = await _context.Cart.FindAsync(id);
 
             if (cart == null)
@@ -42,64 +49,80 @@ namespace jupiterCore.Controllers
         }
 
         // PUT: api/Carts/5
+        [CheckModelFilter]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCart(int id, Cart cart)
+        public async Task<ActionResult> PutCart(int id,  CartModel cartModel)
         {
-            if (id != cart.CartId)
+            var result = new Result<string>();
+            Type cartType = typeof(Cart);
+            var updateCart = await _context.Cart.Where(x=>x.CartId == id).FirstOrDefaultAsync();
+            if (updateCart == null)
             {
-                return BadRequest();
+                return NotFound(DataNotFound(result));
             }
-
-            _context.Entry(cart).State = EntityState.Modified;
-
+            UpdateTable(cartModel,cartType,updateCart);
             try
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
-                if (!CartExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                result.ErrorMessage = e.Message;
+                result.IsSuccess = false;
+                return BadRequest(result);
             }
 
-            return NoContent();
+            return Ok(result);
         }
 
         // POST: api/Carts
         [HttpPost]
-        public async Task<ActionResult<Cart>> PostCart(Cart cart)
+        public async Task<ActionResult<Cart>> PostCart(CartModel cartModel)
         {
-            _context.Cart.Add(cart);
-            await _context.SaveChangesAsync();
+            var result = new Result<Cart>();
+            Cart cart = new Cart();
+            _mapper.Map(cartModel, cart);
+            try
+            {
+                result.Data = cart;
+                await _context.AddAsync(cart);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                result.ErrorMessage = e.Message;
+                result.IsFound = false;
+            }
 
-            return CreatedAtAction("GetCart", new { id = cart.CartId }, cart);
+            return Ok(result);
         }
 
         // DELETE: api/Carts/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Cart>> DeleteCart(int id)
         {
+            var result = new Result<string>();
             var cart = await _context.Cart.FindAsync(id);
             if (cart == null)
             {
-                return NotFound();
+                return NotFound(DataNotFound(result));
+            }
+            _context.Cart.Remove(cart);
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                result.ErrorMessage = e.Message;
+                result.IsSuccess = false;
             }
 
-            _context.Cart.Remove(cart);
-            await _context.SaveChangesAsync();
-
-            return cart;
+            return Ok(result);
         }
-
-        private bool CartExists(int id)
-        {
-            return _context.Cart.Any(e => e.CartId == id);
-        }
+        //private bool CartExists(int id)
+        //{
+        //    return _context.Cart.Any(e => e.CartId == id);
+        //}
     }
 }

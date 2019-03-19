@@ -8,7 +8,7 @@ namespace Jupiter.Models
     public class Result<T>
     {
         //1--Success
-        public bool IsSuccess { get; set; } =true;
+        public bool IsSuccess { get; set; } = true;
         public bool IsFound { get; set; } = true;
         public string ErrorCode { get; set; } 
         public string ErrorMessage { get; set; }

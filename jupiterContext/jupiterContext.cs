@@ -29,14 +29,6 @@ namespace jupiterCore.jupiterContext
         public virtual DbSet<ProjectMedia> ProjectMedia { get; set; }
         public virtual DbSet<Testimonial> Testimonial { get; set; }
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    if (!optionsBuilder.IsConfigured)
-        //    {
-        //        optionsBuilder.UseMySQL("server=35.197.166.191;port=3306;user=root;password=qwer1234;database=jupiter");
-        //    }
-        //}
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("ProductVersion", "2.2.3-servicing-35854");
