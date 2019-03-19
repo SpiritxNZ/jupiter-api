@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 namespace jupiterCore
 {
@@ -34,12 +33,12 @@ namespace jupiterCore
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddDbContext<jupiterContext.jupiterContext>();
+            services.AddDbContext<jupiterContext.jupiterContext>(options => 
+                options.UseMySQL(Configuration.GetConnectionString("DefaultDatabase")));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddAutoMapper();
 
-            //services.AddDbContext<CustomerContext>(options =>options.UseMySql("server=localhost;port=3306;database=customer;user=root;password=liuguanxi1995");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
