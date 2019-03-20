@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -28,22 +29,19 @@ namespace jupiterCore.Controllers
 
         // GET: api/Carts
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Cart>>> GetCart()
+        public ActionResult<List<Cart>> GetCart()
         {
-            return await _context.Cart.ToListAsync();
+            var cartsValue = _context.Cart.Include(s => s.Contact).Include(s => s.CartProd).ToList();
+            return Ok(cartsValue);
         }
 
         // GET: api/Carts/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Cart>> GetCart(int id)
+        public ActionResult GetCart(int id)
         {
-            var cart = await _context.Cart.FindAsync(id);
-
-            if (cart == null)
-            {
-                return NotFound();
-            }
-            return cart;
+            var cart1 =  _context.Cart.Include(s => s.Contact).Include(s => s.CartProd)
+                .FirstOrDefault(s => s.CartId == id);
+            return Ok(cart1);
         }
 
         // PUT: api/Carts/5

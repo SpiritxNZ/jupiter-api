@@ -13,6 +13,7 @@ namespace jupiterCore.jupiterContext
         public string SubTitle { get; set; }
         public int? Quantity { get; set; }
 
+        
         public virtual Cart Cart { get; set; }
         public virtual Product Prod { get; set; }
     }

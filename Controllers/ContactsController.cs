@@ -30,14 +30,15 @@ namespace jupiterCore.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Contact>>> GetContact()
         {
-            return await _context.Contact.ToListAsync();
+            var contactValue = await _context.Contact.Include(s => s.Cart).ToListAsync();
+            return contactValue;
         }
 
         // GET: api/Contacts/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Contact>> GetContact(int id)
         {
-            var contact = await _context.Contact.FindAsync(id);
+            var contact = await _context.Contact.Include(x => x.Cart).FirstOrDefaultAsync(s=>s.ContactId == id);
 
             if (contact == null)
             {

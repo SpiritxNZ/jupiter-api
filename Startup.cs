@@ -36,7 +36,9 @@ namespace jupiterCore
             services.AddDbContext<jupiterContext.jupiterContext>(options => 
                 options.UseMySQL(Configuration.GetConnectionString("DefaultDatabase")));
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddJsonOptions(option =>
+                    option.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddAutoMapper();
 
         }

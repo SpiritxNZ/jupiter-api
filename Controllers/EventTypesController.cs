@@ -13,54 +13,57 @@ using Jupiter.Models;
 
 namespace jupiterCore.Controllers
 {
+    //TODO: TEST ALL THE CONTROLLERS
     [Route("api/[controller]")]
     [ApiController]
-    public class CartProdsController : BasicController
+    public class EventTypesController : BasicController
     {
         private readonly jupiterContext.jupiterContext _context;
-        private readonly IMapper _mapper; 
+        private readonly IMapper _mapper;
 
-        public CartProdsController(jupiterContext.jupiterContext context, IMapper mapper)
+        public EventTypesController(jupiterContext.jupiterContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
         }
 
-        // GET: api/CartProds
+        // GET: api/EventTypes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CartProd>>> GetCartProd()
+        public async Task<ActionResult<IEnumerable<EventType>>> GetEventType()
         {
-            var cartProdValue = await _context.CartProd.Include(s => s.Cart).Include(s => s.Prod).ToListAsync();
-            return cartProdValue ;
+            var EventTypeValue = await _context.EventType.Include(x => x.Project)
+                    .Include(x => x.Testimonial).ToListAsync();
+            return EventTypeValue;
         }
 
-        // GET: api/CartProds/5
+        // GET: api/EventTypes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<CartProd>> GetCartProd(int id)
+        public async Task<ActionResult<EventType>> GetEventType(int id)
         {
-            var cartProd = await _context.CartProd.Include(s => s.Cart).Include(s => s.Prod).FirstOrDefaultAsync(x=>x.Id == id);
+            var eventType = await _context.EventType.Include(x => x.Project)
+                .Include(x => x.Testimonial).FirstOrDefaultAsync(s => s.TypeId == id);
 
-            if (cartProd == null)
+            if (eventType == null)
             {
                 return NotFound();
             }
 
-            return cartProd;
+            return eventType;
         }
 
-        // PUT: api/CartProds/5
+        // PUT: api/EventTypes/5
         [CheckModelFilter]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCartProd(int id, CartProdModel cartProdModel)
+        public async Task<IActionResult> PutEventType(int id, EventTypeModel eventTypeModel)
         {
             var result = new Result<string>();
-            Type cartProdType = typeof(CartProd);
-            var updateCartProd = await _context.CartProd.Where(x=>x.Id == id).FirstOrDefaultAsync();
-            if (updateCartProd == null)
+            Type eType = typeof(EventType);
+            var updateEventType = await _context.EventType.Where(x => x.TypeId == id).FirstOrDefaultAsync();
+            if (updateEventType == null)
             {
                 return NotFound(DataNotFound(result));
             }
-            UpdateTable(cartProdModel,cartProdType,updateCartProd);
+            UpdateTable(eventTypeModel, eType,updateEventType);
             try
             {
                 await _context.SaveChangesAsync();
@@ -74,18 +77,18 @@ namespace jupiterCore.Controllers
             return Ok(result);
         }
 
-        // POST: api/CartProds
+        // POST: api/EventTypes
         [CheckModelFilter]
         [HttpPost]
-        public async Task<ActionResult<CartProd>> PostCartProd(CartProdModel cartProdModel)
+        public async Task<ActionResult<EventType>> PostEventType(EventTypeModel eventTypeModel)
         {
-            var result = new Result<CartProd>();
-            CartProd cartProd = new CartProd();
-            _mapper.Map(cartProdModel, cartProd);
+            var result = new Result<EventType>();
+            EventType eventType = new EventType();
+            _mapper.Map(eventTypeModel, eventType);
             try
             {
-                result.Data = cartProd;
-                await _context.CartProd.AddAsync(cartProd);
+                result.Data = eventType;
+                await _context.EventType.AddAsync(eventType);
                 await _context.SaveChangesAsync();
             }
             catch (Exception e)
@@ -96,17 +99,18 @@ namespace jupiterCore.Controllers
             return Ok(result);
         }
 
-        // DELETE: api/CartProds/5
+        // DELETE: api/EventTypes/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<CartProd>> DeleteCartProd(int id)
+        public async Task<ActionResult<EventType>> DeleteEventType(int id)
         {
             var result = new Result<string>();
-            var cartProd = await _context.CartProd.FindAsync(id);
-            if (cartProd == null)
+            var eventType = await _context.EventType.FindAsync(id);
+            if (eventType == null)
             {
                 return NotFound(DataNotFound(result));
             }
-            _context.CartProd.Remove(cartProd);
+
+            _context.EventType.Remove(eventType);
             try
             {
                 await _context.SaveChangesAsync();
@@ -118,5 +122,10 @@ namespace jupiterCore.Controllers
             }
             return Ok(result);
         }
+
+        //private bool EventTypeExists(int id)
+        //{
+        //    return _context.EventType.Any(e => e.TypeId == id);
+        //}
     }
 }

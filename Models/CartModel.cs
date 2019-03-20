@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.ComponentModel.DataAnnotations;
+using jupiterCore.jupiterContext;
 
 namespace Jupiter.Models
 {
@@ -18,5 +19,9 @@ namespace Jupiter.Models
         public DateTime? CreateOn { get; set; }
         public DateTime? UpdateOn { get; set; }
         public int? ContactId { get; set; }
+
+        
+        public Contact Contact { get; set; }
+        public List<CartProd> CartProd { get; set; }
     }
 }
