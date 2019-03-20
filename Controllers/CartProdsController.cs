@@ -15,50 +15,51 @@ namespace jupiterCore.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CartsController : BasicController
+    public class CartProdsController : BasicController
     {
         private readonly jupiterContext.jupiterContext _context;
-        private readonly IMapper _mapper;
+        private readonly IMapper _mapper; 
 
-        public CartsController(jupiterContext.jupiterContext context, IMapper mapper)
+        public CartProdsController(jupiterContext.jupiterContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
         }
 
-        // GET: api/Carts
+        // GET: api/CartProds
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Cart>>> GetCart()
+        public async Task<ActionResult<IEnumerable<CartProd>>> GetCartProd()
         {
-            return await _context.Cart.ToListAsync();
+            return await _context.CartProd.ToListAsync();
         }
 
-        // GET: api/Carts/5
+        // GET: api/CartProds/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Cart>> GetCart(int id)
+        public async Task<ActionResult<CartProd>> GetCartProd(int id)
         {
-            var cart = await _context.Cart.FindAsync(id);
+            var cartProd = await _context.CartProd.FindAsync(id);
 
-            if (cart == null)
+            if (cartProd == null)
             {
                 return NotFound();
             }
-            return cart;
+
+            return cartProd;
         }
 
-        // PUT: api/Carts/5
+        // PUT: api/CartProds/5
         [CheckModelFilter]
         [HttpPut("{id}")]
-        public async Task<ActionResult> PutCart(int id,  CartModel cartModel)
+        public async Task<IActionResult> PutCartProd(int id, CartProdModel cartProdModel)
         {
             var result = new Result<string>();
-            Type cartType = typeof(Cart);
-            var updateCart = await _context.Cart.Where(x=>x.CartId == id).FirstOrDefaultAsync();
-            if (updateCart == null)
+            Type cartProdType = typeof(CartProd);
+            var updateCartProd = await _context.CartProd.Where(x=>x.Id == id).FirstOrDefaultAsync();
+            if (updateCartProd == null)
             {
                 return NotFound(DataNotFound(result));
             }
-            UpdateTable(cartModel,cartType,updateCart);
+            UpdateTable(cartProdModel,cartProdType,updateCartProd);
             try
             {
                 await _context.SaveChangesAsync();
@@ -72,18 +73,18 @@ namespace jupiterCore.Controllers
             return Ok(result);
         }
 
-        // POST: api/Carts
+        // POST: api/CartProds
         [CheckModelFilter]
         [HttpPost]
-        public async Task<ActionResult<Cart>> PostCart(CartModel cartModel)
+        public async Task<ActionResult<CartProd>> PostCartProd(CartProdModel cartProdModel)
         {
-            var result = new Result<Cart>();
-            Cart cart = new Cart();
-            _mapper.Map(cartModel, cart);
+            var result = new Result<CartProd>();
+            CartProd cartProd = new CartProd();
+            _mapper.Map(cartProdModel, cartProd);
             try
             {
-                result.Data = cart;
-                await _context.Cart.AddAsync(cart);
+                result.Data = cartProd;
+                await _context.CartProd.AddAsync(cartProd);
                 await _context.SaveChangesAsync();
             }
             catch (Exception e)
@@ -94,17 +95,17 @@ namespace jupiterCore.Controllers
             return Ok(result);
         }
 
-        // DELETE: api/Carts/5
+        // DELETE: api/CartProds/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Cart>> DeleteCart(int id)
+        public async Task<ActionResult<CartProd>> DeleteCartProd(int id)
         {
             var result = new Result<string>();
-            var cart = await _context.Cart.FindAsync(id);
-            if (cart == null)
+            var cartProd = await _context.CartProd.FindAsync(id);
+            if (cartProd == null)
             {
                 return NotFound(DataNotFound(result));
             }
-            cart.IsActivate = 0;
+            _context.CartProd.Remove(cartProd);
             try
             {
                 await _context.SaveChangesAsync();
