@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -63,6 +64,15 @@ namespace jupiterCore
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
             app.UseMvc();
+            //for support Nginx proxy server 
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
+
+            app.UseAuthentication();
+            //end for support Nginx 
+
         }
     }
 }

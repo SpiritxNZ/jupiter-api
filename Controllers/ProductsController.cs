@@ -29,8 +29,7 @@ namespace jupiterCore.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProduct()
         {
-            var productValue = await _context.Product.Include(x => x.ProductMedia)
-                    .Include(x => x.CartProd).ToListAsync();
+            var productValue = await _context.Product.Include(x=>x.ProductMedia).Include(x=>x.CartProd).Include(x=>x.Category).Include(x=>x.ProdType).ToListAsync();
             return productValue;
         }
 
@@ -38,7 +37,7 @@ namespace jupiterCore.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            var product = await _context.Product.Include(x=>x.ProductMedia).Include(x=>x.CartProd).FirstOrDefaultAsync(s=>s.ProdId == id);
+            var product = await _context.Product.Include(x=>x.ProductMedia).Include(x=>x.CartProd).Include(x=>x.Category).Include(x=>x.ProdType).FirstOrDefaultAsync(s=>s.ProdId == id);
 
             if (product == null)
             {
