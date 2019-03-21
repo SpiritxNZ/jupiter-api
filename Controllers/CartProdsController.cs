@@ -77,15 +77,21 @@ namespace jupiterCore.Controllers
         // POST: api/CartProds
         [CheckModelFilter]
         [HttpPost]
-        public async Task<ActionResult<CartProd>> PostCartProd(CartProdModel cartProdModel)
+        public async Task<ActionResult<CartProd>> PostCartProd(List<CartProdModel> cartProdModelList)
         {
-            var result = new Result<CartProd>();
-            CartProd cartProd = new CartProd();
-            _mapper.Map(cartProdModel, cartProd);
+            // add cartId
+//            CartsController cartsController = new CartsController(_context,_mapper);
+//            var newCart = cartsController.PostCart().Result.Value;
+            var result = new Result<List<CartProd>>();
+            foreach (var cp in cartProdModelList)
+            {
+                CartProd cartProd = new CartProd();
+                _mapper.Map(cp, cartProd);
+                result.Data.Add(cartProd);
+                await _context.CartProd.AddAsync(cartProd);
+            }
             try
             {
-                result.Data = cartProd;
-                await _context.CartProd.AddAsync(cartProd);
                 await _context.SaveChangesAsync();
             }
             catch (Exception e)
@@ -107,6 +113,7 @@ namespace jupiterCore.Controllers
                 return NotFound(DataNotFound(result));
             }
             _context.CartProd.Remove(cartProd);
+            
             try
             {
                 await _context.SaveChangesAsync();

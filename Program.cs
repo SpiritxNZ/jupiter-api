@@ -15,27 +15,27 @@ namespace jupiterCore
         public static void Main(string[] args)
         {
             // use this to allow command line parameters in the config
-            var configuration = new ConfigurationBuilder()
-                .AddCommandLine(args)
-                .Build();
+            //var configuration = new ConfigurationBuilder()
+            //    .AddCommandLine(args)
+            //    .Build();
 
 
-            var hostUrl = configuration["hosturl"];
-            if (string.IsNullOrEmpty(hostUrl))
-                hostUrl = "http://*:5000";
+            //var hostUrl = configuration["hosturl"];
+            //if (string.IsNullOrEmpty(hostUrl))
+            //    hostUrl = "http://*:5000";
 
 
-            var host = new WebHostBuilder()
-                .UseKestrel()
-                .UseUrls(hostUrl)   // <!-- this 
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseIISIntegration()
-                .UseStartup<Startup>()
-                .UseConfiguration(configuration)
-                .Build();
+            //var host = new WebHostBuilder()
+            //    .UseKestrel()
+            //    .UseUrls(hostUrl)   // <!-- this 
+            //    .UseContentRoot(Directory.GetCurrentDirectory())
+            //    .UseIISIntegration()
+            //    .UseStartup<Startup>()
+            //    .UseConfiguration(configuration)
+            //    .Build();
 
-            host.Run();
-            //CreateWebHostBuilder(args).Build().Run();
+            //host.Run();
+            CreateWebHostBuilder(args).Build().Run();
 
         }
 
