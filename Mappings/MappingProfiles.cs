@@ -15,7 +15,7 @@ namespace jupiterCore.Mappings
         public MappingProfiles()
         {
             CreateMap<Cart, CartModel>().ReverseMap();
-            CreateMap<CartProd, CartProdModel>().ReverseMap();
+            CreateMap<CartProd, CartProdModel>();
             CreateMap<Contact, ContactModel>().ReverseMap();
             CreateMap<EventTypeModel, EventType>();
             CreateMap<ProductModel, Product>();

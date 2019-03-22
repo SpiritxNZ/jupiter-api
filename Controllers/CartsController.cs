@@ -108,26 +108,6 @@ namespace jupiterCore.Controllers
                 result.ErrorMessage = e.Message;
                 result.IsFound = false;
             }
-            try
-            {
-                if (cartContactModel.CartModel.CartProd.Count() != 0)
-                {
-                    CartProd cartProd = new CartProd();
-                    foreach (var cp in cartContactModel.CartModel.CartProd)
-                    {
-                        cartProd.CartId = cart.CartId;
-                        cartProd = cp;
-                        _context.CartProd.Add(cartProd);
-                    }
-
-                    await _context.SaveChangesAsync();
-                }
-            }
-            catch (Exception e)
-            {
-                result.ErrorMessage = e.Message;
-                result.IsFound = false;
-            }
 
             return Ok(result);
         }

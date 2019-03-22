@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -11,7 +10,7 @@ namespace jupiterCore.jupiterContext
         {
         }
 
-        public jupiterContext(DbContextOptions options)
+        public jupiterContext(DbContextOptions<jupiterContext> options)
             : base(options)
         {
         }
@@ -21,6 +20,7 @@ namespace jupiterCore.jupiterContext
         public virtual DbSet<Contact> Contact { get; set; }
         public virtual DbSet<EventType> EventType { get; set; }
         public virtual DbSet<Example> Example { get; set; }
+        public virtual DbSet<Faq> Faq { get; set; }
         public virtual DbSet<Product> Product { get; set; }
         public virtual DbSet<ProductCategory> ProductCategory { get; set; }
         public virtual DbSet<ProductMedia> ProductMedia { get; set; }
@@ -28,6 +28,15 @@ namespace jupiterCore.jupiterContext
         public virtual DbSet<Project> Project { get; set; }
         public virtual DbSet<ProjectMedia> ProjectMedia { get; set; }
         public virtual DbSet<Testimonial> Testimonial { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseMySQL("server=35.197.166.191;port=3306;user=root;password=qwer1234;database=jupiter");
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -153,6 +162,23 @@ namespace jupiterCore.jupiterContext
                     .IsRequired()
                     .HasColumnName("name")
                     .HasMaxLength(20)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<Faq>(entity =>
+            {
+                entity.ToTable("FAQ", "jupiter");
+
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.Answer)
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Question)
+                    .HasMaxLength(45)
                     .IsUnicode(false);
             });
 
