@@ -35,6 +35,7 @@ namespace jupiterCore
             //    .Build();
 
             //host.Run();
+
             CreateWebHostBuilder(args).Build().Run();
 
         }

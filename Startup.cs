@@ -35,7 +35,7 @@ namespace jupiterCore
             });
 
             services.AddDbContext<jupiterContext.jupiterContext>(options => 
-                options.UseMySQL(Configuration.GetConnectionString("DefaultDatabase")));
+                options.UseMySQL("server=35.197.166.191;port=3306;user=root;password=qwer1234;database=jupiter"));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddJsonOptions(option =>

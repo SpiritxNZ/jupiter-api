@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using jupiterCore.jupiterContext;
 using Jupiter.ActionFilter;
 using Jupiter.Controllers;
+using Jupiter.Models;
 
 namespace jupiterCore.Controllers
 {
@@ -50,42 +51,53 @@ namespace jupiterCore.Controllers
         // PUT: api/Products/5
         [CheckModelFilter]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(int id, Product product)
+        public async Task<IActionResult> PutProduct(int id, ProductModel productModel)
         {
-            if (id != product.ProdId)
+            var result = new Result<string>();
+            Type prodType = typeof(Product);
+            var updateProd = await _context.Product.Where(x=>x.ProdId == id).FirstOrDefaultAsync();
+            if (updateProd == null)
             {
-                return BadRequest();
+                return NotFound(DataNotFound(result));
             }
-
-            _context.Entry(product).State = EntityState.Modified;
-
+            UpdateTable(productModel,prodType,updateProd);
             try
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
-                if (!ProductExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                result.ErrorMessage = e.Message;
+                result.IsSuccess = false;
+                return BadRequest(result);
             }
-
-            return NoContent();
+            return Ok(result);
         }
 
         // POST: api/Products
         [HttpPost]
-        public async Task<ActionResult<Product>> PostProduct(Product product)
+        public async Task<ActionResult<Product>> PostProduct(ProductModel productModel)
         {
-            _context.Product.Add(product);
-            await _context.SaveChangesAsync();
+            var result = new Result<Product>();
 
-            return CreatedAtAction("GetProduct", new { id = product.ProdId }, product);
+            Product product = new Product();
+            _mapper.Map(productModel, product);
+            product.CreateOn = DateTime.Now;
+            product.IsActivate = 1;
+
+            try
+            {
+                await _context.Product.AddAsync(product);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                result.ErrorMessage = e.Message;
+                result.IsFound = false;
+            }
+
+            return Ok(result);
+
         }
 
         // DELETE: api/Products/5

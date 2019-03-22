@@ -80,8 +80,6 @@ namespace jupiterCore.Controllers
         [HttpPost]
         public async Task<ActionResult<CartProd>> PostCartProd(IEnumerable<CartProdModel> cartProdModelList)
         {
-            // TODO: add cartId
-
             var result = new Result<IEnumerable<CartProd>>();
             var list = _mapper.Map<IEnumerable<CartProdModel>, IEnumerable<CartProd>>(cartProdModelList);
 
