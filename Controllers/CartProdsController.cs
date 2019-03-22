@@ -10,6 +10,7 @@ using jupiterCore.jupiterContext;
 using Jupiter.ActionFilter;
 using Jupiter.Controllers;
 using Jupiter.Models;
+using Newtonsoft.Json.Linq;
 
 namespace jupiterCore.Controllers
 {
@@ -77,18 +78,18 @@ namespace jupiterCore.Controllers
         // POST: api/CartProds
         [CheckModelFilter]
         [HttpPost]
-        public async Task<ActionResult<CartProd>> PostCartProd(List<CartProdModel> cartProdModelList)
+        public async Task<ActionResult<CartProd>> PostCartProd(IEnumerable<CartProdModel> cartProdModelList)
         {
-            // add cartId
-//            CartsController cartsController = new CartsController(_context,_mapper);
-//            var newCart = cartsController.PostCart().Result.Value;
-            var result = new Result<List<CartProd>>();
-            foreach (var cp in cartProdModelList)
+            // TODO: add cartId
+
+            var result = new Result<IEnumerable<CartProd>>();
+            var list = _mapper.Map<IEnumerable<CartProdModel>, IEnumerable<CartProd>>(cartProdModelList);
+
+            result.Data = list;
+
+            foreach (CartProd cp in list)
             {
-                CartProd cartProd = new CartProd();
-                _mapper.Map(cp, cartProd);
-                result.Data.Add(cartProd);
-                await _context.CartProd.AddAsync(cartProd);
+                await _context.CartProd.AddAsync(cp);
             }
             try
             {

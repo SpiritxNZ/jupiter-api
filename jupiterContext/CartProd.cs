@@ -5,7 +5,7 @@ namespace jupiterCore.jupiterContext
 {
     public partial class CartProd
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public int? CartId { get; set; }
         public int? ProdId { get; set; }
         public decimal? Price { get; set; }

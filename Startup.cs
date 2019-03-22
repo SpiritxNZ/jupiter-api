@@ -70,7 +70,7 @@ namespace jupiterCore
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
-            app.UseAuthentication();
+            //app.UseAuthentication();
             //end for support Nginx 
 
         }

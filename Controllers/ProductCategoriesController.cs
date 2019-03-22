@@ -48,7 +48,7 @@ namespace jupiterCore.Controllers
         }
 
         // PUT: api/ProductCategories/5
-        [CheckModelFilter]
+        //[CheckModelFilter]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProductCategory(int id, ProductCategoryModel productCategoryModel)
         {

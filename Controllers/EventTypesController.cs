@@ -13,7 +13,6 @@ using Jupiter.Models;
 
 namespace jupiterCore.Controllers
 {
-    //TODO: TEST ALL THE CONTROLLERS
     [Route("api/[controller]")]
     [ApiController]
     public class EventTypesController : BasicController

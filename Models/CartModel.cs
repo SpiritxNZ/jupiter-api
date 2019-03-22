@@ -22,6 +22,6 @@ namespace Jupiter.Models
 
         
         public Contact Contact { get; set; }
-        public List<CartProd> CartProd { get; set; }
+        public IEnumerable<CartProd> CartProd { get; set; }
     }
 }

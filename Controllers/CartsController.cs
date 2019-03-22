@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using jupiterCore.jupiterContext;
+using jupiterCore.Models;
 using Jupiter.ActionFilter;
 using Jupiter.Controllers;
 using Jupiter.Models;
@@ -73,14 +74,32 @@ namespace jupiterCore.Controllers
         // POST: api/Carts
         [CheckModelFilter]
         [HttpPost]
-        public async Task<ActionResult<Cart>> PostCart(CartModel cartModel)
+        public async Task<ActionResult<Cart>> PostCart(CartContactModel cartContactModel)
         {
+
             var result = new Result<Cart>();
-            Cart cart = new Cart();
-            _mapper.Map(cartModel, cart);
+
+            Contact contact = new Contact();
+            _mapper.Map(cartContactModel.ContactModel, contact);
             try
             {
-                result.Data = cart;
+                await _context.Contact.AddAsync(contact);
+                await _context.SaveChangesAsync();
+            }
+            catch(Exception e)
+            {
+                result.ErrorMessage = e.Message;
+                result.IsSuccess = false;
+            }
+
+            Cart cart = new Cart();
+            _mapper.Map(cartContactModel.CartModel, cart);
+            cart.CreateOn = DateTime.Now;
+            cart.IsActivate = 1;
+            cart.ContactId = contact.ContactId;
+
+            try
+            {
                 await _context.Cart.AddAsync(cart);
                 await _context.SaveChangesAsync();
             }
@@ -89,6 +108,27 @@ namespace jupiterCore.Controllers
                 result.ErrorMessage = e.Message;
                 result.IsFound = false;
             }
+            try
+            {
+                if (cartContactModel.CartModel.CartProd.Count() != 0)
+                {
+                    CartProd cartProd = new CartProd();
+                    foreach (var cp in cartContactModel.CartModel.CartProd)
+                    {
+                        cartProd.CartId = cart.CartId;
+                        cartProd = cp;
+                        _context.CartProd.Add(cartProd);
+                    }
+
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                result.ErrorMessage = e.Message;
+                result.IsFound = false;
+            }
+
             return Ok(result);
         }
 
