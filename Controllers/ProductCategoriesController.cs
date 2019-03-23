@@ -30,14 +30,14 @@ namespace jupiterCore.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductCategory>>> GetProductCategory()
         {
-            return await _context.ProductCategory.Include(x=>x.Product).ToListAsync();
+            return await _context.ProductCategory.Include(x=>x.Product).ThenInclude(s=>s.ProductMedia).ToListAsync();
         }
 
         // GET: api/ProductCategories/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductCategory>> GetProductCategory(int id)
         {
-            var productCategory = await _context.ProductCategory.Include(x=>x.Product).FirstOrDefaultAsync(s=>s.CategoryId==id);
+            var productCategory = await _context.ProductCategory.Include(x=>x.Product).ThenInclude(s=>s.ProductMedia).FirstOrDefaultAsync(s=>s.CategoryId==id);
 
             if (productCategory == null)
             {
