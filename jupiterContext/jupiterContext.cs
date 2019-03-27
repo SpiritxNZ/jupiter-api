@@ -18,6 +18,7 @@ namespace jupiterCore.jupiterContext
         public virtual DbSet<Cart> Cart { get; set; }
         public virtual DbSet<CartProd> CartProd { get; set; }
         public virtual DbSet<Contact> Contact { get; set; }
+        public virtual DbSet<ContactEmail> ContactEmail { get; set; }
         public virtual DbSet<EventType> EventType { get; set; }
         public virtual DbSet<Example> Example { get; set; }
         public virtual DbSet<Faq> Faq { get; set; }
@@ -137,6 +138,45 @@ namespace jupiterCore.jupiterContext
                     .IsUnicode(false);
             });
 
+            modelBuilder.Entity<ContactEmail>(entity =>
+            {
+                entity.ToTable("ContactEmail", "jupiter");
+
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.Property(e => e.Company)
+                    .HasMaxLength(80)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Email)
+                    .HasMaxLength(80)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FindUs)
+                    .HasMaxLength(80)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LocationOfEvent)
+                    .HasMaxLength(2500)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Message)
+                    .HasMaxLength(2500)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(80)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PhoneNumber)
+                    .HasMaxLength(80)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TypeOfEvent)
+                    .HasMaxLength(80)
+                    .IsUnicode(false);
+            });
+
             modelBuilder.Entity<EventType>(entity =>
             {
                 entity.HasKey(e => e.TypeId);
@@ -169,16 +209,14 @@ namespace jupiterCore.jupiterContext
             {
                 entity.ToTable("FAQ", "jupiter");
 
-                entity.Property(e => e.Id)
-                    .HasColumnType("int(11)")
-                    .ValueGeneratedNever();
+                entity.Property(e => e.Id).HasColumnType("int(11)");
 
                 entity.Property(e => e.Answer)
-                    .HasMaxLength(45)
+                    .HasMaxLength(2500)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Question)
-                    .HasMaxLength(45)
+                    .HasMaxLength(2500)
                     .IsUnicode(false);
             });
 

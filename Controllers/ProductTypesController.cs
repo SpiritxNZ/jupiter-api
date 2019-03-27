@@ -42,6 +42,7 @@ namespace jupiterCore.Controllers
         {
             var productType = await _context.ProductType
                 .Include(s=>s.Product).ThenInclude(s=>s.ProductMedia)
+                .Include(s=>s.Product).ThenInclude(s=>s.Category)
                 .FirstOrDefaultAsync(x=>x.ProdTypeId == id);
             if (productType == null)
             {

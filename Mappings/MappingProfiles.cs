@@ -25,6 +25,7 @@ namespace jupiterCore.Mappings
             CreateMap<TestimonialModel, Testimonial>();
             CreateMap<ProjectModel, Project>();
             CreateMap<ProjectMediaModel, ProductMedia>();
+            CreateMap<ContactEmailModel, ContactEmail>();
         }
     }
 }

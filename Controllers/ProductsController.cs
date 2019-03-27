@@ -34,6 +34,21 @@ namespace jupiterCore.Controllers
             return productValue;
         }
 
+        [Route("[action]")]
+        [HttpGet]
+        public ActionResult<IEnumerable<Product>> GetSpecialProduct()
+        {
+            var result = new Result<IEnumerable<Product>>();
+            var specialProducts = _context.Product.Where(x => x.Discount > 0 && x.Discount != null).Select(x => x).Include(s=>s.ProductMedia).ToList();
+            result.Data = specialProducts;
+            if (specialProducts.Count == 0)
+            {
+                return NotFound(DataNotFound(result));
+            }
+
+            return Ok(result);
+        }
+
         // GET: api/Products/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
