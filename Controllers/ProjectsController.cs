@@ -53,7 +53,7 @@ namespace jupiterCore.Controllers
         public async Task<IActionResult> PutProject(int id, ProjectModel projectModel)
         {
             var result = new Result<string>();
-            Type projectType = typeof(ProjectModel);
+            Type projectType = typeof(Project);
             var updateProject = await _context.Project.Where(x=>x.ProdjectId == id).FirstOrDefaultAsync();
             if (updateProject == null)
             {

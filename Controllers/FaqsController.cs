@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using jupiterCore.jupiterContext;
+using jupiterCore.Models;
+using Jupiter.ActionFilter;
 using Jupiter.Controllers;
+using Jupiter.Models;
 
 namespace jupiterCore.Controllers
 {
@@ -15,10 +19,12 @@ namespace jupiterCore.Controllers
     public class FaqsController : BasicController
     {
         private readonly jupiterContext.jupiterContext _context;
+        private readonly IMapper _mapper;
 
-        public FaqsController(jupiterContext.jupiterContext context)
+        public FaqsController(jupiterContext.jupiterContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Faqs
@@ -43,57 +49,50 @@ namespace jupiterCore.Controllers
         }
 
         // PUT: api/Faqs/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutFaq(int id, Faq faq)
+        [HttpPut]
+        public async Task<IActionResult> PutFaq(int id, FaqModel faqModel)
         {
-            if (id != faq.Id)
+            var result = new Result<Faq>();
+            Type faqType = typeof(Faq);
+            var updateFaq = await _context.Faq.Where(x=>x.Id == id).FirstOrDefaultAsync();
+            if (updateFaq == null)
             {
-                return BadRequest();
+                return NotFound(DataNotFound(result));
             }
-
-            _context.Entry(faq).State = EntityState.Modified;
-
+            UpdateTable(faqModel,faqType,updateFaq);
+            result.Data = updateFaq;
             try
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
-                if (!FaqExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                result.ErrorMessage = e.Message;
+                result.IsSuccess = false;
+                return BadRequest(result);
             }
-
-            return NoContent();
+            return Ok(result);
         }
 
         // POST: api/Faqs
         [HttpPost]
-        public async Task<ActionResult<Faq>> PostFaq(Faq faq)
+        public async Task<ActionResult<Faq>> PostFaq(FaqModel faqModel)
         {
-            _context.Faq.Add(faq);
+            var result = new Result<Faq>();
+            Faq faq = new Faq();
+            _mapper.Map(faqModel, faq);
             try
             {
+                result.Data = faq;
+                await _context.Faq.AddAsync(faq);
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException)
+            catch (Exception e)
             {
-                if (FaqExists(faq.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
+                result.ErrorMessage = e.Message;
+                result.IsFound = false;
             }
-
-            return CreatedAtAction("GetFaq", new { id = faq.Id }, faq);
+            return Ok(result);
         }
 
         // DELETE: api/Faqs/5

@@ -32,7 +32,7 @@ namespace jupiterCore.Controllers
         [HttpGet]
         public ActionResult<List<Cart>> GetCart()
         {
-            var cartsValue = _context.Cart.Include(s => s.Contact).Include(s => s.CartProd).ToList();
+            var cartsValue = _context.Cart.Where(x=>x.IsActivate==1).Include(s => s.Contact).Include(s => s.CartProd).ToList();
             return Ok(cartsValue);
         }
 

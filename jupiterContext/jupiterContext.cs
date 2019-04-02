@@ -15,6 +15,7 @@ namespace jupiterCore.jupiterContext
         {
         }
 
+        public virtual DbSet<Admin> Admin { get; set; }
         public virtual DbSet<Cart> Cart { get; set; }
         public virtual DbSet<CartProd> CartProd { get; set; }
         public virtual DbSet<Contact> Contact { get; set; }
@@ -42,6 +43,23 @@ namespace jupiterCore.jupiterContext
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("ProductVersion", "2.2.3-servicing-35854");
+
+            modelBuilder.Entity<Admin>(entity =>
+            {
+                entity.ToTable("Admin", "jupiter");
+
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.Property(e => e.Password)
+                    .IsRequired()
+                    .HasMaxLength(160)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Username)
+                    .IsRequired()
+                    .HasMaxLength(80)
+                    .IsUnicode(false);
+            });
 
             modelBuilder.Entity<Cart>(entity =>
             {
