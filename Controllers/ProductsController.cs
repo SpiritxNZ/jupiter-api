@@ -124,10 +124,16 @@ namespace jupiterCore.Controllers
             {
                 return NotFound();
             }
-
-            _context.Product.Remove(product);
-            await _context.SaveChangesAsync();
-
+//            _context.Product.Remove(product);
+            product.IsActivate = 0;
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
             return product;
         }
 

@@ -101,21 +101,39 @@ namespace jupiterCore.Controllers
         {
             var result = new Result<string>();
             var project = await _context.Project.FindAsync(id);
-            if (project == null)
+            var proMedias = await _context.ProjectMedia.Where(x => x.ProjectId == id).ToListAsync();
+            if (proMedias != null)
             {
-                return NotFound();
+                foreach (var media in proMedias)
+                {
+                    try
+                    {
+                        _context.ProjectMedia.Remove(media);
+                    }
+                    catch (Exception e)
+                    {
+                        result.ErrorMessage = e.Message;
+                        result.IsSuccess = false;
+                        return BadRequest(result);
+                    }
+                }
+
             }
-            _context.Project.Remove(project);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                result.ErrorMessage = e.Message;
-                result.IsSuccess = false;
-            }
-            return project;
+                if (project == null)
+                {
+                    return NotFound();
+                }
+                _context.Project.Remove(project);
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception e)
+                {
+                    result.ErrorMessage = e.Message;
+                    result.IsSuccess = false;
+                }
+                return project;
         }
     }
 }
