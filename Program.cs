@@ -12,31 +12,34 @@ namespace jupiterCore
 {
     public class Program
     {
+        
         public static void Main(string[] args)
         {
             //use this to allow command line parameters in the config
-//            var configuration = new ConfigurationBuilder()
-//                .AddCommandLine(args)
-//                .Build();
-//
-//
-//            var hostUrl = configuration["hosturl"];
-//            if (string.IsNullOrEmpty(hostUrl))
-//                hostUrl = "http://*:5000";
-//
-//
-//            var host = new WebHostBuilder()
-//                .UseKestrel()
-//                .UseUrls(hostUrl)   // <!-- this 
-//                .UseContentRoot(Directory.GetCurrentDirectory())
-//                .UseIISIntegration()
-//                .UseStartup<Startup>()
-//                .UseConfiguration(configuration)
-//                .Build();
-//
-//            host.Run();
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .AddCommandLine(args)
+                .Build();
 
-            CreateWebHostBuilder(args).Build().Run();
+
+            var hostUrl = configuration["hosturl"];
+            if (string.IsNullOrEmpty(hostUrl))
+                hostUrl = "http://localhost:5000";
+
+
+            var host = new WebHostBuilder()
+                .UseConfiguration(configuration)
+                .UseKestrel()
+                .UseUrls(hostUrl)   // <!-- this 
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseIISIntegration()
+                .UseStartup<Startup>()
+                .Build();
+
+            host.Run();
+
+           // CreateWebHostBuilder(args).Build().Run();
 
         }
 

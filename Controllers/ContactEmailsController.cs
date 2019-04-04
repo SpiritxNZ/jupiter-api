@@ -93,8 +93,8 @@ namespace jupiterCore.Controllers
 
             try
             {
-                SendEmail();
-                //await _context.SaveChangesAsync();
+                SendEmail(contactEmailModel);
+                await _context.SaveChangesAsync();
             }
             catch (Exception e)
             {
@@ -104,7 +104,6 @@ namespace jupiterCore.Controllers
             }
             return Ok(result);
         }
-
         // DELETE: api/ContactEmails/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<ContactEmail>> DeleteContactEmail(int id)
@@ -126,21 +125,25 @@ namespace jupiterCore.Controllers
             return _context.ContactEmail.Any(e => e.Id == id);
         }
 
-        public void SendEmail()
+        public void SendEmail(ContactEmailModel contactEmailModel)
         {
             var message = new MimeMessage();
-            message.To.Add(new MailboxAddress("lgx9587@email.com"));
-            message.From.Add(new MailboxAddress("lgx2500@126.com"));
-            message.Subject = "Testing MailKit";
-            message.Body = new TextPart("plain")
-            {
-                Text = "Testing Email."
-            };
+            message.To.Add(new MailboxAddress("lgx9587@gmail.com"));
+            message.From.Add(new MailboxAddress("luxecontacts94@gmail.com"));
+            message.Subject = "New Customer Email";
+            var builder = new BodyBuilder();
+            builder.TextBody = @"New Contact Email";
+            builder.HtmlBody = $@"<b>Name:</b>{contactEmailModel.Name}<br><b>Email:</b>{contactEmailModel.Email}<br>
+<b>Phone Number:</b>{contactEmailModel.PhoneNumber}<br><b>Company:</b>{contactEmailModel.Company}<br>
+                <b>DateOfEvent:</b>{contactEmailModel.DateOfEvent}<br><b>LocationOfEvent</b>:{contactEmailModel.LocationOfEvent}<br>
+<b>How to find us</b>{contactEmailModel.FindUs}<br><b>Type of event:</b>{contactEmailModel.TypeOfEvent}<br>
+<b>Message:</b>{contactEmailModel.Message}";
+            message.Body = builder.ToMessageBody ();
 
             using (var emailClient = new SmtpClient())
             {
-                emailClient.Connect("smtp.126.com", 25, false);
-                emailClient.Authenticate("lgx2500@126.com","password");
+                emailClient.Connect("smtp.gmail.com", 587, false);
+                emailClient.Authenticate("luxecontacts94@gmail.com","luxe1234");
                 emailClient.Send(message);
                 emailClient.Disconnect(true);
             }
