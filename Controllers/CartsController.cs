@@ -153,7 +153,7 @@ namespace jupiterCore.Controllers
             var cartProds = "";
             foreach (var cart in cartDetail.CartProd)
             {
-                cartProds = cart.Quantity+ " of " + " " + cart.Title + "<br>";
+                cartProds = cartProds + "<br>"+cart.Quantity+ " of " + " " + cart.Title + "<br>";
             }
 
             builder.HtmlBody = $@"Hi {contactDetail.FirstName} {contactDetail.LastName}<br><br>Thank you for ordering at Luxe Dream Event Hire.<br><br>
@@ -165,7 +165,7 @@ Your Message: {contactDetail.Message}<br><br>
 Please let us know if you would like to change your order.<br><br>
 We will be in touch very shortly.<br><br>
 Many thanks<br>
-LuxeDreamEventHire
+Emma, Luxe Dream Event Hire
 ";
             message.Body = builder.ToMessageBody ();
 
