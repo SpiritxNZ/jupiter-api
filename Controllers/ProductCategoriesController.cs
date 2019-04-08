@@ -44,6 +44,17 @@ namespace jupiterCore.Controllers
                 return NotFound();
             }
 
+            if (productCategory.Product !=null && productCategory.Product.Count()!=0)
+            {
+                foreach (var prod in productCategory.Product.ToList())
+                {
+                    if (prod.IsActivate == 0)
+                    {
+                        productCategory.Product.Remove(prod);
+                    }
+                }
+            }
+
             return productCategory;
         }
 

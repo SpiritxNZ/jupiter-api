@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-using System.ComponentModel.DataAnnotations;//for validation
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
+
+//for validation
 
 
 
@@ -33,5 +36,6 @@ namespace Jupiter.Models
         public byte? IsActivate { get; set; }
         public DateTime? CreateOn { get; set; }
         public IEnumerable<string> ProdMedias { get; set; }
+        public IFormFile ProductImage { get; set; }
     }
 }

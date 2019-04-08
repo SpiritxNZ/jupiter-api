@@ -12,6 +12,8 @@ using jupiterCore.Models;
 using Jupiter.ActionFilter;
 using Jupiter.Controllers;
 using Jupiter.Models;
+using MailKit.Net.Smtp;
+using MimeKit;
 
 namespace jupiterCore.Controllers
 {
@@ -102,6 +104,7 @@ namespace jupiterCore.Controllers
             {
                 await _context.Cart.AddAsync(cart);
                 await _context.SaveChangesAsync();
+                SendCartEmail(cartContactModel);
             }
             catch (Exception e)
             {
@@ -133,6 +136,46 @@ namespace jupiterCore.Controllers
                 result.IsSuccess = false;
             }
             return Ok(result);
+        }
+
+        public void SendCartEmail(CartContactModel cartContactModel)
+        {
+            var message = new MimeMessage();
+            message.To.Add(new MailboxAddress(cartContactModel.ContactModel.Email));
+            message.To.Add(new MailboxAddress("lgx9587@gmail.com"));
+            message.From.Add(new MailboxAddress("luxecontacts94@gmail.com"));
+            message.Subject = "New Customer Email";
+            var builder = new BodyBuilder();
+            builder.TextBody = @"New Contact Email";
+            var contactDetail = cartContactModel.ContactModel;
+            var cartDetail = cartContactModel.CartModel;
+
+            var cartProds = "";
+            foreach (var cart in cartDetail.CartProd)
+            {
+                cartProds = cart.Quantity+ " of " + " " + cart.Title + "<br>";
+            }
+
+            builder.HtmlBody = $@"Hi {contactDetail.FirstName} {contactDetail.LastName}<br><br>Thank you for ordering at Luxe Dream Event Hire.<br><br>
+Your planned event date is: <br>{cartDetail.PlannedTime}<br>
+Your email address: {contactDetail.Email}<br>
+Your Phone Number: {contactDetail.PhoneNum}<br><br>
+Your ordered items are:<br><br>{cartProds}<br>
+Your Message: {contactDetail.Message}<br><br>
+Please let us know if you would like to change your order.<br><br>
+We will be in touch very shortly.<br><br>
+Many thanks<br>
+LuxeDreamEventHire
+";
+            message.Body = builder.ToMessageBody ();
+
+            using (var emailClient = new SmtpClient())
+            {
+                emailClient.Connect("smtp.gmail.com", 587, false);
+                emailClient.Authenticate("luxecontacts94@gmail.com","luxe1234");
+                emailClient.Send(message);
+                emailClient.Disconnect(true);
+            }
         }
     }
 }

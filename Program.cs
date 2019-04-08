@@ -25,21 +25,21 @@ namespace jupiterCore
 
             var hostUrl = configuration["hosturl"];
             if (string.IsNullOrEmpty(hostUrl))
-                hostUrl = "http://localhost:5000";
+                hostUrl = "http://*:5000";
 
 
             var host = new WebHostBuilder()
-                .UseConfiguration(configuration)
                 .UseKestrel()
                 .UseUrls(hostUrl)   // <!-- this 
                 .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseConfiguration(configuration)
                 .UseIISIntegration()
                 .UseStartup<Startup>()
                 .Build();
 
             host.Run();
 
-           // CreateWebHostBuilder(args).Build().Run();
+           //CreateWebHostBuilder(args).Build().Run();
 
         }
 

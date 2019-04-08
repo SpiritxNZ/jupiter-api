@@ -47,16 +47,16 @@ namespace jupiterCore.Controllers
         public IActionResult  Login(AdminModel adminModel)
         {
 
-            bool result = ValidateUser(adminModel);
+            string result = ValidateUser(adminModel);
 
-            if (result)
+            if (result == "Success")
             {
                 var tokenString = GenerateJwt();
                 return Ok(new { token = tokenString });
             }
             else
             {
-                return Unauthorized();
+                return Unauthorized(result);
             }
         }
 
@@ -86,21 +86,21 @@ namespace jupiterCore.Controllers
             return stringToken;
         }
 
-        private Boolean ValidateUser(AdminModel adminModel)
+        private string ValidateUser(AdminModel adminModel)
         {
             var admin = _context.Admin.FirstOrDefault(x => x.Username == adminModel.UserName);
             //cannot find user
             if (admin == null)
             {
-                return false;
+                return "Username not exist";
             }
             //bad password
             if (admin.Password != adminModel.Password)
             {
-                return false;
+                return "Password is wrong";
             }
 
-            return true;
+            return "Success";
         }
 
     }

@@ -91,7 +91,7 @@ namespace jupiterCore.Controllers
 
         // POST: api/Products
         [HttpPost]
-        public async Task<ActionResult<Product>> PostProduct(ProductModel productModel)
+        public async Task<ActionResult<Product>> PostProduct(ProductModel productModel )
         {
             var result = new Result<Product>();
 
@@ -102,6 +102,7 @@ namespace jupiterCore.Controllers
 
             try
             {
+                result.Data = product;
                 await _context.Product.AddAsync(product);
                 await _context.SaveChangesAsync();
             }
@@ -109,6 +110,7 @@ namespace jupiterCore.Controllers
             {
                 result.ErrorMessage = e.Message;
                 result.IsFound = false;
+                return BadRequest(result);
             }
 
             return Ok(result);

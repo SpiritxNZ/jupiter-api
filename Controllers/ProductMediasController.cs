@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using AutoMapper;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +14,9 @@ using jupiterCore.jupiterContext;
 using Jupiter.ActionFilter;
 using Jupiter.Controllers;
 using Jupiter.Models;
+using Microsoft.AspNetCore.Hosting;
+using Newtonsoft.Json;
+using Type = System.Type;
 
 namespace jupiterCore.Controllers
 {
@@ -19,11 +26,13 @@ namespace jupiterCore.Controllers
     {
         private readonly jupiterContext.jupiterContext _context;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-        public ProductMediasController(jupiterContext.jupiterContext context, IMapper mapper)
+        public ProductMediasController(jupiterContext.jupiterContext context, IMapper mapper, IHttpContextAccessor contextAccessor)
         {
             _context = context;
             _mapper = mapper;
+            _contextAccessor = contextAccessor;
         }
 
         // GET: api/ProductMedias
@@ -35,9 +44,9 @@ namespace jupiterCore.Controllers
 
         // GET: api/ProductMedias/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProductMedia>> GetProductMedia(int id)
+        public async Task<ActionResult<List<ProductMedia>>> GetProductMedia(int id)
         {
-            var productMedia = await _context.ProductMedia.FindAsync(id);
+            var productMedia = await _context.ProductMedia.Where(x => x.ProdId == id).Select(x => x).ToListAsync();
 
             if (productMedia == null)
             {
@@ -45,6 +54,8 @@ namespace jupiterCore.Controllers
             }
 
             return productMedia;
+
+
         }
 
         // PUT: api/ProductMedias/5
@@ -74,25 +85,56 @@ namespace jupiterCore.Controllers
         }
 
         // POST: api/ProductMedias
-        [CheckModelFilter]
         [HttpPost]
-        public async Task<ActionResult<ProductMedia>> PostProductMedia(ProductMediaModel productMediaModel)
+//        public async Task<ActionResult<ProductMedia>> PostProductMedia(ProductMediaModel productMediaModel)
+//        {
+//            var result = new Result<ProductMedia>();
+//            ProductMedia productMedia = new ProductMedia();
+//            _mapper.Map(productMediaModel, productMedia);
+//            try
+//            {
+//                result.Data = productMedia;
+//                await _context.ProductMedia.AddAsync(productMedia);
+//                await _context.SaveChangesAsync();
+//            }
+//            catch (Exception e)
+//            {
+//                result.ErrorMessage = e.Message;
+//                result.IsFound = false;
+//            }
+//            return Ok(result);
+//        }
+        public async Task<IActionResult> UploadFile([FromForm] ProductMediaModel productMediaModel)
         {
-            var result = new Result<ProductMedia>();
-            ProductMedia productMedia = new ProductMedia();
-            _mapper.Map(productMediaModel, productMedia);
+            
+            var requestForm = Request.Form;
+            var file = requestForm.Files[0];
+            var result = new Result<string>();
+            var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
             try
             {
-                result.Data = productMedia;
+                // add image
+                var folderName = Path.Combine("wwwroot", "Images","ProductImages");
+                var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+                var path = Path.Combine(pathToSave, fileName);
+                var stream = new FileStream(path, FileMode.Create);
+                await file.CopyToAsync(stream);
+                stream.Close();
+
+                //add image name to db
+                ProductMedia productMedia = new ProductMedia {ProdId = Int32.Parse(productMediaModel.ProdId), Url = $@"Images/ProductImages/{fileName}"};
                 await _context.ProductMedia.AddAsync(productMedia);
                 await _context.SaveChangesAsync();
+
+                result.Data = $@"{fileName} successfully uploaded";
+
+                return Ok(result);
             }
             catch (Exception e)
             {
                 result.ErrorMessage = e.Message;
-                result.IsFound = false;
+                return BadRequest(result);
             }
-            return Ok(result);
         }
 
         // DELETE: api/ProductMedias/5
@@ -106,6 +148,17 @@ namespace jupiterCore.Controllers
                 return NotFound(DataNotFound(result));
             }
 
+            try
+            {
+                //remove img from folder
+                var path = Path.Combine("wwwroot", media.Url);
+                FileInfo file = new FileInfo(path); 
+                file.Delete();
+            }
+            catch (Exception e)
+            {
+                return BadRequest("unable to delete image");
+            }
             _context.ProductMedia.Remove(media);
             try
             {
