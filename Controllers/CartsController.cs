@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using jupiterCore.jupiterContext;
@@ -13,6 +11,7 @@ using Jupiter.ActionFilter;
 using Jupiter.Controllers;
 using Jupiter.Models;
 using MailKit.Net.Smtp;
+using Microsoft.AspNetCore.Authorization;
 using MimeKit;
 
 namespace jupiterCore.Controllers
@@ -32,6 +31,7 @@ namespace jupiterCore.Controllers
 
         // GET: api/Carts
         [HttpGet]
+        [Authorize]
         public ActionResult<List<Cart>> GetCart()
         {
             var cartsValue = _context.Cart.Where(x=>x.IsActivate==1).Include(s => s.Contact).Include(s => s.CartProd).ToList();
@@ -40,6 +40,8 @@ namespace jupiterCore.Controllers
 
         // GET: api/Carts/5
         [HttpGet("{id}")]
+        [Authorize]
+
         public ActionResult GetCart(int id)
         {
             var cart1 =  _context.Cart.Include(s => s.Contact).Include(s => s.CartProd)
@@ -50,6 +52,7 @@ namespace jupiterCore.Controllers
         // PUT: api/Carts/5
         [CheckModelFilter]
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<ActionResult> PutCart(int id,  CartModel cartModel)
         {
             var result = new Result<string>();
@@ -60,6 +63,7 @@ namespace jupiterCore.Controllers
                 return NotFound(DataNotFound(result));
             }
             UpdateTable(cartModel,cartType,updateCart);
+            updateCart.UpdateOn = DateTime.Now;
             try
             {
                 await _context.SaveChangesAsync();
@@ -80,7 +84,16 @@ namespace jupiterCore.Controllers
         {
 
             var result = new Result<Cart>();
-
+            try
+            {
+                SendCartEmail(cartContactModel);
+            }
+            catch (Exception e)
+            {
+                result.ErrorMessage = $@"Sending Email Failed, {e.Message}";
+                result.IsSuccess = false;
+                return BadRequest(result);
+            }
             Contact contact = new Contact();
             _mapper.Map(cartContactModel.ContactModel, contact);
             try
@@ -92,6 +105,7 @@ namespace jupiterCore.Controllers
             {
                 result.ErrorMessage = e.Message;
                 result.IsSuccess = false;
+                return BadRequest(result);
             }
 
             Cart cart = new Cart();
@@ -104,12 +118,12 @@ namespace jupiterCore.Controllers
             {
                 await _context.Cart.AddAsync(cart);
                 await _context.SaveChangesAsync();
-                SendCartEmail(cartContactModel);
             }
             catch (Exception e)
             {
                 result.ErrorMessage = e.Message;
                 result.IsFound = false;
+                return BadRequest(result);
             }
 
             return Ok(result);
@@ -117,6 +131,7 @@ namespace jupiterCore.Controllers
 
         // DELETE: api/Carts/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<ActionResult<Cart>> DeleteCart(int id)
         {
             var result = new Result<string>();
@@ -134,6 +149,7 @@ namespace jupiterCore.Controllers
             {
                 result.ErrorMessage = e.Message;
                 result.IsSuccess = false;
+                return BadRequest(result);
             }
             return Ok(result);
         }
@@ -142,11 +158,10 @@ namespace jupiterCore.Controllers
         {
             var message = new MimeMessage();
             message.To.Add(new MailboxAddress(cartContactModel.ContactModel.Email));
-            message.To.Add(new MailboxAddress("lgx9587@gmail.com"));
+            message.To.Add(new MailboxAddress("luxedreameventhire@gmail.com"));
             message.From.Add(new MailboxAddress("luxecontacts94@gmail.com"));
-            message.Subject = "New Customer Email";
+            message.Subject = "Luxe Dream Event Hire Customer Email";
             var builder = new BodyBuilder();
-            builder.TextBody = @"New Contact Email";
             var contactDetail = cartContactModel.ContactModel;
             var cartDetail = cartContactModel.CartModel;
 
@@ -156,17 +171,17 @@ namespace jupiterCore.Controllers
                 cartProds = cartProds + "<br>"+cart.Quantity+ " of " + " " + cart.Title + "<br>";
             }
 
-            builder.HtmlBody = $@"Hi {contactDetail.FirstName} {contactDetail.LastName}<br><br>Thank you for ordering at Luxe Dream Event Hire.<br><br>
-Your planned event date is: <br>{cartDetail.PlannedTime}<br>
-Your email address: {contactDetail.Email}<br>
-Your Phone Number: {contactDetail.PhoneNum}<br><br>
-Your ordered items are:<br><br>{cartProds}<br>
-Your Message: {contactDetail.Message}<br><br>
-Please let us know if you would like to change your order.<br><br>
-We will be in touch very shortly.<br><br>
-Many thanks<br>
-Emma, Luxe Dream Event Hire
-";
+            builder.HtmlBody =
+                $@"Hi {contactDetail.FirstName} {contactDetail.LastName}<br><br>Thank you for ordering at Luxe Dream Event Hire.<br><br>
+                Your planned event date is: <br>{cartDetail.PlannedTime}<br>
+                Your email address: {contactDetail.Email}<br>
+                Your Phone Number: {contactDetail.PhoneNum}<br><br>
+                Your ordered items are:<br><br>{cartProds}<br>
+                Your Message: {contactDetail.Message}<br><br>
+                Please let us know if you would like to change your order.<br><br>
+                We will be in touch very shortly.<br><br>
+                Many thanks<br>
+                Emma, Luxe Dream Event Hire";
             message.Body = builder.ToMessageBody ();
 
             using (var emailClient = new SmtpClient())

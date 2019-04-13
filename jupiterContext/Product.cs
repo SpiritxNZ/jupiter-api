@@ -8,6 +8,7 @@ namespace jupiterCore.jupiterContext
         public Product()
         {
             CartProd = new HashSet<CartProd>();
+            ProductDetail = new HashSet<ProductDetail>();
             ProductMedia = new HashSet<ProductMedia>();
         }
 
@@ -22,13 +23,13 @@ namespace jupiterCore.jupiterContext
         public decimal? Price { get; set; }
         public short? SpcOrDisct { get; set; }
         public decimal? Discount { get; set; }
-        public decimal? SpecialPrice { get; set; }
         public byte? IsActivate { get; set; }
         public DateTime? CreateOn { get; set; }
 
         public virtual ProductCategory Category { get; set; }
         public virtual ProductType ProdType { get; set; }
         public virtual ICollection<CartProd> CartProd { get; set; }
+        public virtual ICollection<ProductDetail> ProductDetail { get; set; }
         public virtual ICollection<ProductMedia> ProductMedia { get; set; }
     }
 }

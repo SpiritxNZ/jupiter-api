@@ -49,6 +49,19 @@ namespace jupiterCore.Controllers
             return cartProd;
         }
 
+        //GET:api/CartProds
+        [Route("[action]/{id}")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<CartProd>>> GetCartProdByCart(int id)
+        {
+            var cartProdValue = await _context.CartProd
+                .Where(x=>x.CartId == id)
+                .Select(x=>x)
+                .ToListAsync();
+            return cartProdValue ;
+
+        }
+
         // PUT: api/CartProds/5
         [CheckModelFilter]
         [HttpPut("{id}")]

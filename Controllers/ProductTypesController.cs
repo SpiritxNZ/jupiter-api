@@ -40,29 +40,37 @@ namespace jupiterCore.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductType>> GetProductType(int id)
         {
-            var productType = await _context.ProductType
-                .Include(s=>s.Product)
-                .ThenInclude(s=>s.ProductMedia)
-                .Include(s=>s.Product)
-                .ThenInclude(s=>s.Category)
-                .FirstOrDefaultAsync(x=>x.ProdTypeId == id);
-            
-            if (productType == null)
-            {
-                return NotFound();
-            }
-
-            if (productType.Product !=null && productType.Product.Count()!=0)
-            {
-                foreach (var prod in productType.Product.ToList())
-                {
-                    if (prod.IsActivate == 0)
-                    {
-                        productType.Product.Remove(prod);
-                    }
-                }
-            }
-            return productType;
+//            var productType = await _context.ProductType
+//                .Include(s=>s.Product)
+//                .ThenInclude(s=>s.ProductMedia)
+//                .Include(s=>s.Product)
+//                .ThenInclude(s=>s.Category)
+//                .FirstOrDefaultAsync(x=>x.ProdTypeId == id);
+//            
+//            if (productType == null)
+//            {
+//                return NotFound();
+//            }
+//
+//            if (productType.Product !=null && productType.Product.Count()!=0)
+//            {
+//                foreach (var prod in productType.Product.ToList())
+//                {
+//                    if (prod.IsActivate == 0)
+//                    {
+//                        productType.Product.Remove(prod);
+//                    }
+//                }
+//            }
+//            return productType;
+            var products = await _context.Product
+                .Include(s => s.ProductMedia)
+                .Include(s=>s.Category)
+                .Include(x=>x.ProductDetail)
+                .Where(x => x.IsActivate == 1 && x.ProdTypeId == id)
+                .Select(x => x)
+                .ToListAsync();
+            return Ok(products);
         }
 
         // PUT: api/ProductTypes/5

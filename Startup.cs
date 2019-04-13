@@ -50,8 +50,9 @@ namespace jupiterCore
             services.AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 }).AddJwtBearer(options =>
-            {
+                {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
@@ -62,7 +63,7 @@ namespace jupiterCore
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.
                         GetBytes(Configuration.GetSection("JWT:Key").Value)),
                 };
-            });
+                });
 
         }
 
@@ -80,11 +81,11 @@ namespace jupiterCore
                 app.UseHsts();
             }
 
+            app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-            app.UseAuthentication();
 
             app.UseMvc();
             //for support Nginx proxy server 

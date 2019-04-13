@@ -37,25 +37,35 @@ namespace jupiterCore.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductCategory>> GetProductCategory(int id)
         {
-            var productCategory = await _context.ProductCategory.Include(x=>x.Product).ThenInclude(s=>s.ProductMedia).FirstOrDefaultAsync(s=>s.CategoryId==id);
+//            var productCategory = await _context.ProductCategory
+//                .Include(x=>x.Product)
+//                .ThenInclude(s=>s.ProductMedia)
+//                .FirstOrDefaultAsync(s=>s.CategoryId==id);
+//
+//            if (productCategory == null)
+//            {
+//                return NotFound();
+//            }
+//
+//            if (productCategory.Product !=null && productCategory.Product.Count()!=0)
+//            {
+//                foreach (var prod in productCategory.Product.ToList())
+//                {
+//                    if (prod.IsActivate == 0)
+//                    {
+//                        productCategory.Product.Remove(prod);
+//                    }
+//                }
+//            }
+//
+//            return productCategory;
 
-            if (productCategory == null)
-            {
-                return NotFound();
-            }
-
-            if (productCategory.Product !=null && productCategory.Product.Count()!=0)
-            {
-                foreach (var prod in productCategory.Product.ToList())
-                {
-                    if (prod.IsActivate == 0)
-                    {
-                        productCategory.Product.Remove(prod);
-                    }
-                }
-            }
-
-            return productCategory;
+            var prodCategory = await _context.Product
+                .Include(x => x.ProductMedia)
+                .Include(x=>x.Category)
+                .Where(x => x.CategoryId == id && x.IsActivate == 1)
+                .Select(x => x).ToListAsync();
+            return Ok(prodCategory);
         }
 
         // PUT: api/ProductCategories/5

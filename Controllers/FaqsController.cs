@@ -11,6 +11,7 @@ using jupiterCore.Models;
 using Jupiter.ActionFilter;
 using Jupiter.Controllers;
 using Jupiter.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace jupiterCore.Controllers
 {
@@ -50,6 +51,7 @@ namespace jupiterCore.Controllers
 
         // PUT: api/Faqs/5
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> PutFaq(int id, FaqModel faqModel)
         {
             var result = new Result<Faq>();
@@ -76,6 +78,7 @@ namespace jupiterCore.Controllers
 
         // POST: api/Faqs
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Faq>> PostFaq(FaqModel faqModel)
         {
             var result = new Result<Faq>();
@@ -97,6 +100,7 @@ namespace jupiterCore.Controllers
 
         // DELETE: api/Faqs/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<ActionResult<Faq>> DeleteFaq(int id)
         {
             var faq = await _context.Faq.FindAsync(id);

@@ -10,6 +10,7 @@ using jupiterCore.jupiterContext;
 using Jupiter.ActionFilter;
 using Jupiter.Controllers;
 using Jupiter.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace jupiterCore.Controllers
 {
@@ -50,6 +51,7 @@ namespace jupiterCore.Controllers
         // PUT: api/Projects/5
         [CheckModelFilter]
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutProject(int id, ProjectModel projectModel)
         {
             var result = new Result<string>();
@@ -76,6 +78,7 @@ namespace jupiterCore.Controllers
         // POST: api/Projects
         [CheckModelFilter]
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Project>> PostProject(ProjectModel projectModel)
         {
             var result = new Result<Project>();
@@ -97,6 +100,7 @@ namespace jupiterCore.Controllers
 
         // DELETE: api/Projects/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<ActionResult<Project>> DeleteProject(int id)
         {
             var result = new Result<string>();

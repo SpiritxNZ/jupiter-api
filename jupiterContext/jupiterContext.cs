@@ -25,6 +25,7 @@ namespace jupiterCore.jupiterContext
         public virtual DbSet<Faq> Faq { get; set; }
         public virtual DbSet<Product> Product { get; set; }
         public virtual DbSet<ProductCategory> ProductCategory { get; set; }
+        public virtual DbSet<ProductDetail> ProductDetail { get; set; }
         public virtual DbSet<ProductMedia> ProductMedia { get; set; }
         public virtual DbSet<ProductType> ProductType { get; set; }
         public virtual DbSet<Project> Project { get; set; }
@@ -270,8 +271,6 @@ namespace jupiterCore.jupiterContext
 
                 entity.Property(e => e.SpcOrDisct).HasColumnType("smallint(6)");
 
-                entity.Property(e => e.SpecialPrice).HasColumnType("decimal(10,2)");
-
                 entity.Property(e => e.SubTitle)
                     .HasMaxLength(255)
                     .IsUnicode(false);
@@ -304,6 +303,37 @@ namespace jupiterCore.jupiterContext
                 entity.Property(e => e.CategoryName)
                     .HasMaxLength(100)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<ProductDetail>(entity =>
+            {
+                entity.ToTable("ProductDetail", "jupiter");
+
+                entity.HasIndex(e => e.ProdId)
+                    .HasName("detail_product_id_fk");
+
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.Property(e => e.AvailableStock).HasColumnType("int(11)");
+
+                entity.Property(e => e.Discount).HasColumnType("decimal(10,2)");
+
+                entity.Property(e => e.Price).HasColumnType("decimal(10,2)");
+
+                entity.Property(e => e.ProdId).HasColumnType("int(11)");
+
+                entity.Property(e => e.ProductDetail1)
+                    .HasColumnName("ProductDetail")
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TotalStock).HasColumnType("int(11)");
+
+                entity.HasOne(d => d.Prod)
+                    .WithMany(p => p.ProductDetail)
+                    .HasForeignKey(d => d.ProdId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("detail_product_id_fk");
             });
 
             modelBuilder.Entity<ProductMedia>(entity =>

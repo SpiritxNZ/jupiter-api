@@ -10,6 +10,7 @@ using jupiterCore.jupiterContext;
 using Jupiter.ActionFilter;
 using Jupiter.Controllers;
 using Jupiter.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace jupiterCore.Controllers
 {
@@ -30,7 +31,12 @@ namespace jupiterCore.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProduct()
         {
-            var productValue = await _context.Product.Include(x=>x.ProductMedia).Include(x=>x.CartProd).Include(x=>x.Category).Include(x=>x.ProdType).ToListAsync();
+            var productValue = await _context.Product
+                .Include(x=>x.ProductMedia)
+                .Include(x=>x.Category)
+                .Include(x=>x.ProdType)
+                .Include(x=>x.ProductDetail)
+                .ToListAsync();
             return productValue;
         }
 
@@ -53,7 +59,12 @@ namespace jupiterCore.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            var product = await _context.Product.Include(x=>x.ProductMedia).Include(x=>x.CartProd).Include(x=>x.Category).Include(x=>x.ProdType).FirstOrDefaultAsync(s=>s.ProdId == id);
+            var product = await _context.Product
+                .Include(x=>x.ProductMedia)
+                .Include(x=>x.Category)
+                .Include(x=>x.ProdType)
+                .Include(x=>x.ProductDetail)
+                .FirstOrDefaultAsync(s=>s.ProdId == id);
 
             if (product == null)
             {
@@ -66,6 +77,7 @@ namespace jupiterCore.Controllers
         // PUT: api/Products/5
         [CheckModelFilter]
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutProduct(int id, ProductModel productModel)
         {
             var result = new Result<string>();
@@ -91,6 +103,7 @@ namespace jupiterCore.Controllers
 
         // POST: api/Products
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Product>> PostProduct(ProductModel productModel )
         {
             var result = new Result<Product>();
@@ -119,6 +132,7 @@ namespace jupiterCore.Controllers
 
         // DELETE: api/Products/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<ActionResult<Product>> DeleteProduct(int id)
         {
             var product = await _context.Product.FindAsync(id);

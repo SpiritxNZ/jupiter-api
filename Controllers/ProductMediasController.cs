@@ -14,6 +14,7 @@ using jupiterCore.jupiterContext;
 using Jupiter.ActionFilter;
 using Jupiter.Controllers;
 using Jupiter.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Newtonsoft.Json;
 using Type = System.Type;
@@ -86,37 +87,20 @@ namespace jupiterCore.Controllers
 
         // POST: api/ProductMedias
         [HttpPost]
-//        public async Task<ActionResult<ProductMedia>> PostProductMedia(ProductMediaModel productMediaModel)
-//        {
-//            var result = new Result<ProductMedia>();
-//            ProductMedia productMedia = new ProductMedia();
-//            _mapper.Map(productMediaModel, productMedia);
-//            try
-//            {
-//                result.Data = productMedia;
-//                await _context.ProductMedia.AddAsync(productMedia);
-//                await _context.SaveChangesAsync();
-//            }
-//            catch (Exception e)
-//            {
-//                result.ErrorMessage = e.Message;
-//                result.IsFound = false;
-//            }
-//            return Ok(result);
-//        }
+        [Authorize]
         public async Task<IActionResult> UploadFile([FromForm] ProductMediaModel productMediaModel)
         {
-            
             var requestForm = Request.Form;
             var file = requestForm.Files[0];
             var result = new Result<string>();
             var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+            var newFileName = $@"{Int32.Parse(productMediaModel.ProdId)}-{fileName}";
             try
             {
                 // add image
                 var folderName = Path.Combine("wwwroot", "Images","ProductImages");
                 var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
-                var path = Path.Combine(pathToSave, fileName);
+                var path = Path.Combine(pathToSave, newFileName);
                 var stream = new FileStream(path, FileMode.Create);
                 await file.CopyToAsync(stream);
                 stream.Close();
@@ -127,18 +111,19 @@ namespace jupiterCore.Controllers
                 await _context.SaveChangesAsync();
 
                 result.Data = $@"{fileName} successfully uploaded";
-
-                return Ok(result);
             }
             catch (Exception e)
             {
                 result.ErrorMessage = e.Message;
                 return BadRequest(result);
             }
+            return Ok(result);
+
         }
 
         // DELETE: api/ProductMedias/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<ActionResult<ProductMedia>> DeleteProductMedia(int id)
         {
             var result = new Result<string>();
