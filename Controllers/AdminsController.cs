@@ -60,6 +60,13 @@ namespace jupiterCore.Controllers
             }
         }
 
+        [Authorize]
+        [HttpPost("[action]")]
+        public Boolean HaveAccess()
+        {
+            return true;
+        }
+
         // PUT: api/Users/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)

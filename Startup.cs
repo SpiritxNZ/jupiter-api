@@ -57,7 +57,8 @@ namespace jupiterCore
                 {
                     ValidateIssuer = true,
                     ValidateAudience = false,
-                    ValidateLifetime = true,
+                    //ValidateLifetime = true,
+                    ValidateLifetime = false,
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = Configuration["Jwt:Issuer"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.
