@@ -159,7 +159,7 @@ namespace jupiterCore.Controllers
             var message = new MimeMessage();
             message.To.Add(new MailboxAddress(cartContactModel.ContactModel.Email));
             message.To.Add(new MailboxAddress("luxedreameventhire@gmail.com"));
-            message.From.Add(new MailboxAddress("luxecontacts94@gmail.com"));
+            message.From.Add(new MailboxAddress("LuxeDreamEventHire","luxecontacts94@gmail.com"));
             message.Subject = "Luxe Dream Event Hire Customer Email";
             var builder = new BodyBuilder();
             var contactDetail = cartContactModel.ContactModel;

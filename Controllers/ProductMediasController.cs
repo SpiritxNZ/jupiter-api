@@ -62,6 +62,7 @@ namespace jupiterCore.Controllers
         // PUT: api/ProductMedias/5
         [CheckModelFilter]
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutProductMedia(int id, ProductMediaModel productMediaMediaModel)
         {
             var result = new Result<string>();
@@ -106,7 +107,7 @@ namespace jupiterCore.Controllers
                 stream.Close();
 
                 //add image name to db
-                ProductMedia productMedia = new ProductMedia {ProdId = Int32.Parse(productMediaModel.ProdId), Url = $@"Images/ProductImages/{fileName}"};
+                ProductMedia productMedia = new ProductMedia {ProdId = Int32.Parse(productMediaModel.ProdId), Url = $@"Images/ProductImages/{newFileName}"};
                 await _context.ProductMedia.AddAsync(productMedia);
                 await _context.SaveChangesAsync();
 

@@ -128,23 +128,39 @@ namespace jupiterCore.Controllers
         public void SendEmail(ContactEmailModel contactEmailModel)
         {
             var message = new MimeMessage();
-            message.To.Add(new MailboxAddress("lgx9587@gmail.com"));
-            message.From.Add(new MailboxAddress("luxecontacts94@gmail.com"));
+            message.To.Add(new MailboxAddress("luxedreameventhire@gmail.com"));
+            message.From.Add(new MailboxAddress("LuxeDreamEventHire","luxecontacts94@gmail.com"));
             message.Subject = "New Customer Email";
             var builder = new BodyBuilder();
-            builder.TextBody = @"New Contact Email";
-            builder.HtmlBody = $@"<b>Name:</b>{contactEmailModel.Name}<br><b>Email:</b>{contactEmailModel.Email}<br>
-<b>Phone Number:</b>{contactEmailModel.PhoneNumber}<br><b>Company:</b>{contactEmailModel.Company}<br>
-                <b>DateOfEvent:</b>{contactEmailModel.DateOfEvent}<br><b>LocationOfEvent</b>:{contactEmailModel.LocationOfEvent}<br>
-<b>How to find us</b>{contactEmailModel.FindUs}<br><b>Type of event:</b>{contactEmailModel.TypeOfEvent}<br>
-<b>Message:</b>{contactEmailModel.Message}";
-            message.Body = builder.ToMessageBody ();
+            builder.HtmlBody = $@"<b>Name: </b>{contactEmailModel.Name}<br><b>Email: </b>{contactEmailModel.Email}<br>
+<b>Phone Number: </b>{contactEmailModel.PhoneNumber}<br><b>Company: </b>{contactEmailModel.Company}<br>
+                <b>DateOfEvent: </b>{contactEmailModel.DateOfEvent}<br><b>LocationOfEvent: </b>{contactEmailModel.LocationOfEvent}<br>
+<b>How to find us: </b>{contactEmailModel.FindUs}<br><b>Type of event: </b>{contactEmailModel.TypeOfEvent}<br>
+<b>Message: </b>{contactEmailModel.Message}";
+            message.Body = builder.ToMessageBody();
+
+
+            var messageToCustomer = new MimeMessage();
+            messageToCustomer.To.Add(new MailboxAddress(contactEmailModel.Email));
+            messageToCustomer.From.Add(new MailboxAddress("LuxeDreamEventHire","luxecontacts94@gmail.com"));
+            messageToCustomer.Subject = "Thanks for your contact Email";
+            var builderCustomer = new BodyBuilder();
+            builderCustomer.HtmlBody = $@"We have received your email.<br>Your contact details are as followings.<br><b>Name: </b>{contactEmailModel.Name}<br><b>Email: </b>{contactEmailModel.Email}<br>
+<b>Phone Number: </b>{contactEmailModel.PhoneNumber}<br><b>Company: </b>{contactEmailModel.Company}<br>
+                <b>DateOfEvent: </b>{contactEmailModel.DateOfEvent}<br><b>LocationOfEvent: </b>{contactEmailModel.LocationOfEvent}<br>
+<b>How to find us: </b>{contactEmailModel.FindUs}<br><b>Type of event: </b>{contactEmailModel.TypeOfEvent}<br>
+<b>Message: </b>{contactEmailModel.Message}<br>
+We will get in touch with you as soon as possible.<br><br>
+                Many thanks<br>
+                Emma, Luxe Dream Event Hire";
+            messageToCustomer.Body = builderCustomer.ToMessageBody ();
 
             using (var emailClient = new SmtpClient())
             {
                 emailClient.Connect("smtp.gmail.com", 587, false);
                 emailClient.Authenticate("luxecontacts94@gmail.com","luxe1234");
                 emailClient.Send(message);
+                emailClient.Send(messageToCustomer);
                 emailClient.Disconnect(true);
             }
         }

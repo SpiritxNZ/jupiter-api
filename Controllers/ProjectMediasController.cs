@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -11,6 +13,7 @@ using jupiterCore.Models;
 using Jupiter.ActionFilter;
 using Jupiter.Controllers;
 using Jupiter.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace jupiterCore.Controllers
 {
@@ -36,9 +39,9 @@ namespace jupiterCore.Controllers
 
         // GET: api/ProjectMedias/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProjectMedia>> GetProjectMedia(int id)
+        public async Task<ActionResult<List<ProjectMedia>>> GetProjectMedia(int id)
         {
-            var projectMedia = await _context.ProjectMedia.Include(x=>x.Project).FirstOrDefaultAsync(s=>s.ProjectId==id);
+            var projectMedia = await _context.ProjectMedia.Where(x => x.ProjectId == id).Select(x => x).ToListAsync();
 
             if (projectMedia == null)
             {
@@ -77,38 +80,63 @@ namespace jupiterCore.Controllers
         // POST: api/ProjectMedias
         [CheckModelFilter]
         [HttpPost]
-        public async Task<ActionResult<ProjectMedia>> PostProjectMedia(ProjectMediaModel projectMediaModel)
+        [Authorize]
+        public async Task<ActionResult<ProjectMedia>> PostProjectMedia([FromForm] ProjectMediaModel projectMediaModel)
         {
-            var result = new Result<ProjectMedia>();
-            ProjectMedia projectMedia = new ProjectMedia();
-            _mapper.Map(projectMediaModel, projectMedia);
+            var requestForm = Request.Form;
+            var file = requestForm.Files[0];
+            var result = new Result<string>();
+            var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+            var newFileName = $@"{Int32.Parse(projectMediaModel.ProjectId)}-{fileName}";
             try
             {
-                result.Data = projectMedia;
+                // add image
+                var folderName = Path.Combine("wwwroot", "Images","GalleryImages");
+                var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+                var path = Path.Combine(pathToSave, newFileName);
+                var stream = new FileStream(path, FileMode.Create);
+                await file.CopyToAsync(stream);
+                stream.Close();
+
+                //add image name to db
+                ProjectMedia projectMedia = new ProjectMedia {ProjectId = Int32.Parse(projectMediaModel.ProjectId), Url = $@"Images/GalleryImages/{newFileName}"};
                 await _context.ProjectMedia.AddAsync(projectMedia);
                 await _context.SaveChangesAsync();
+
+                result.Data = $@"{fileName} successfully uploaded";
             }
             catch (Exception e)
             {
                 result.ErrorMessage = e.Message;
-                result.IsFound = false;
+                return BadRequest(result);
             }
             return Ok(result);
+
         }
 
         // DELETE: api/ProjectMedias/5
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult<ProjectMedia>> DeleteProjectMedia(int id)
         {
             var result = new Result<string>();
-            var projectMedia = await _context.ProjectMedia.FindAsync(id);
-            if (projectMedia == null)
+            var media = await _context.ProjectMedia.FindAsync(id);
+            if (media == null)
             {
-                return NotFound();
+                return NotFound(DataNotFound(result));
             }
-
-            _context.ProjectMedia.Remove(projectMedia);
-
+            try
+            {
+                //remove img from folder
+                var path = Path.Combine("wwwroot", media.Url);
+                FileInfo file = new FileInfo(path); 
+                file.Delete();
+            }
+            catch (Exception e)
+            {
+                return BadRequest("unable to delete image");
+            }
+            _context.ProjectMedia.Remove(media);
             try
             {
                 await _context.SaveChangesAsync();
@@ -117,9 +145,8 @@ namespace jupiterCore.Controllers
             {
                 result.ErrorMessage = e.Message;
                 result.IsSuccess = false;
-                return BadRequest(result);
             }
-            return projectMedia;
+            return Ok(result);
         }
     }
 }

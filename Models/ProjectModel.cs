@@ -11,5 +11,5 @@ namespace Jupiter.Models
         public string Description { get; set; }
         public int? EventtypeId { get; set; }
         public string CustomerName { get; set; }
-}
+    }
 }
