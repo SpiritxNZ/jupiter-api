@@ -179,7 +179,7 @@ namespace jupiterCore.Controllers
 
             builder.HtmlBody =
                 $@"Hi {contactDetail.FirstName} {contactDetail.LastName}<br><br>Thank you for ordering at Luxe Dream Event Hire.<br><br>
-                Your planned event date is: {cartDetail.PlannedTime.ToShortDateString()}<br>
+                Your planned event date is: {cartDetail.PlannedTime:D}<br>
                 Your email address: {contactDetail.Email}<br>
                 Your Phone Number: {contactDetail.PhoneNum}<br><br>
                 Your ordered items are:<br><br>{cartProds}<br>

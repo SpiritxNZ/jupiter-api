@@ -136,7 +136,7 @@ namespace jupiterCore.Controllers
             var builder = new BodyBuilder();
             builder.HtmlBody = $@"Received new contact email from customer.<br> <b>Name: </b>{contactEmailModel.Name}<br><b>Email: </b>{contactEmailModel.Email}<br>
 <b>Phone Number: </b>{contactEmailModel.PhoneNumber}<br><b>Company: </b>{contactEmailModel.Company}<br>
-                <b>Date of event: </b>{contactEmailModel.DateOfEvent.ToShortDateString()}<br><b>Location of event: </b>{contactEmailModel.LocationOfEvent}<br>
+                <b>Date of event: </b>{contactEmailModel.DateOfEvent:D}<br><b>Location of event: </b>{contactEmailModel.LocationOfEvent}<br>
 <b>How to find us: </b>{contactEmailModel.FindUs}<br><b>Type of event: </b>{contactEmailModel.TypeOfEvent}<br>
 <b>Message: </b>{contactEmailModel.Message}";
             message.Body = builder.ToMessageBody();
@@ -153,7 +153,7 @@ namespace jupiterCore.Controllers
             builderCustomer.HtmlBody =
                 $@"Hi {contactEmailModel.Name},<br><br>We have received your email.<br>Your contact details are as followings.<br><br><b>Email: </b>{contactEmailModel.Email}<br>
 <b>Phone Number: </b>{contactEmailModel.PhoneNumber}<br><b>Company: </b>{contactEmailModel.Company}<br>
-                <b>Date of event: </b>{contactEmailModel.DateOfEvent.ToShortDateString()}<br><b>Location of event: </b>{contactEmailModel.LocationOfEvent}<br>
+                <b>Date of event: </b>{contactEmailModel.DateOfEvent:D}<br><b>Location of event: </b>{contactEmailModel.LocationOfEvent}<br>
 <b>How to find us: </b>{contactEmailModel.FindUs}<br><b>Type of event: </b>{contactEmailModel.TypeOfEvent}<br>
 <b>Message: </b>{contactEmailModel.Message}<br><br>
 We will get in touch with you as soon as possible.<br><br>
