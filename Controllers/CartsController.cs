@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -13,6 +14,7 @@ using Jupiter.Models;
 using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Authorization;
 using MimeKit;
+using MimeKit.Utils;
 
 namespace jupiterCore.Controllers
 {
@@ -165,15 +167,19 @@ namespace jupiterCore.Controllers
             var contactDetail = cartContactModel.ContactModel;
             var cartDetail = cartContactModel.CartModel;
 
+            var pathImage = Path.Combine("wwwroot", "Images", "Icon","Icon.png");
+            var image = builder.LinkedResources.Add(pathImage);
+            image.ContentId = MimeUtils.GenerateMessageId ();
+
             var cartProds = "";
             foreach (var cart in cartDetail.CartProd)
             {
-                cartProds = cartProds + "<br>"+cart.Quantity+ " of " + " " + cart.Title + "<br>";
+                cartProds = cartProds +cart.Quantity+ " of " + " " + cart.Title + "<br>";
             }
 
             builder.HtmlBody =
                 $@"Hi {contactDetail.FirstName} {contactDetail.LastName}<br><br>Thank you for ordering at Luxe Dream Event Hire.<br><br>
-                Your planned event date is: <br>{cartDetail.PlannedTime}<br>
+                Your planned event date is: {cartDetail.PlannedTime.ToShortDateString()}<br>
                 Your email address: {contactDetail.Email}<br>
                 Your Phone Number: {contactDetail.PhoneNum}<br><br>
                 Your ordered items are:<br><br>{cartProds}<br>
@@ -181,7 +187,17 @@ namespace jupiterCore.Controllers
                 Please let us know if you would like to change your order.<br><br>
                 We will be in touch very shortly.<br><br>
                 Many thanks<br>
-                Emma, Luxe Dream Event Hire";
+                <br>
+<div style=""display:inline-block;border-right:1.5px solid #e6e6e6;padding-right:10px;float:left;"">
+<b>Emma</b><br> <span style=""font-size:12px;"">Luxe Dream Event Hire</span><br><br>
+<b style=""color: #c48f45;"">E </b> <span style=""font-size:11px;"">luxedreameventhire@gmail.com</span><br>
+<b style=""color: #c48f45;"">P </b> <span style=""font-size:11px;"">(64)2108547654</span><br>
+<span style=""font-size:11px;"">http://luxedreameventhire.co.nz</span>
+</div>
+<div style=""display:inline-block; margin-left:16px;"">
+<img src = ""cid:{image.ContentId}"">
+</div>
+";
             message.Body = builder.ToMessageBody ();
 
             using (var emailClient = new SmtpClient())

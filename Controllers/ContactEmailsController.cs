@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -13,6 +14,7 @@ using Jupiter.Controllers;
 using Jupiter.Models;
 using MailKit.Net.Smtp;
 using MimeKit;
+using MimeKit.Utils;
 
 namespace jupiterCore.Controllers
 {
@@ -132,27 +134,40 @@ namespace jupiterCore.Controllers
             message.From.Add(new MailboxAddress("LuxeDreamEventHire","luxecontacts94@gmail.com"));
             message.Subject = "New Customer Email";
             var builder = new BodyBuilder();
-            builder.HtmlBody = $@"<b>Name: </b>{contactEmailModel.Name}<br><b>Email: </b>{contactEmailModel.Email}<br>
+            builder.HtmlBody = $@"Received new contact email from customer.<br> <b>Name: </b>{contactEmailModel.Name}<br><b>Email: </b>{contactEmailModel.Email}<br>
 <b>Phone Number: </b>{contactEmailModel.PhoneNumber}<br><b>Company: </b>{contactEmailModel.Company}<br>
-                <b>DateOfEvent: </b>{contactEmailModel.DateOfEvent}<br><b>LocationOfEvent: </b>{contactEmailModel.LocationOfEvent}<br>
+                <b>Date of event: </b>{contactEmailModel.DateOfEvent.ToShortDateString()}<br><b>Location of event: </b>{contactEmailModel.LocationOfEvent}<br>
 <b>How to find us: </b>{contactEmailModel.FindUs}<br><b>Type of event: </b>{contactEmailModel.TypeOfEvent}<br>
 <b>Message: </b>{contactEmailModel.Message}";
             message.Body = builder.ToMessageBody();
-
 
             var messageToCustomer = new MimeMessage();
             messageToCustomer.To.Add(new MailboxAddress(contactEmailModel.Email));
             messageToCustomer.From.Add(new MailboxAddress("LuxeDreamEventHire","luxecontacts94@gmail.com"));
             messageToCustomer.Subject = "Thanks for your contact Email";
             var builderCustomer = new BodyBuilder();
-            builderCustomer.HtmlBody = $@"We have received your email.<br>Your contact details are as followings.<br><b>Name: </b>{contactEmailModel.Name}<br><b>Email: </b>{contactEmailModel.Email}<br>
+            var pathImage = Path.Combine("wwwroot", "Images", "Icon","Icon.png");
+            var image = builderCustomer.LinkedResources.Add(pathImage);
+            image.ContentId = MimeUtils.GenerateMessageId ();
+
+            builderCustomer.HtmlBody =
+                $@"Hi {contactEmailModel.Name},<br><br>We have received your email.<br>Your contact details are as followings.<br><br><b>Email: </b>{contactEmailModel.Email}<br>
 <b>Phone Number: </b>{contactEmailModel.PhoneNumber}<br><b>Company: </b>{contactEmailModel.Company}<br>
-                <b>DateOfEvent: </b>{contactEmailModel.DateOfEvent}<br><b>LocationOfEvent: </b>{contactEmailModel.LocationOfEvent}<br>
+                <b>Date of event: </b>{contactEmailModel.DateOfEvent.ToShortDateString()}<br><b>Location of event: </b>{contactEmailModel.LocationOfEvent}<br>
 <b>How to find us: </b>{contactEmailModel.FindUs}<br><b>Type of event: </b>{contactEmailModel.TypeOfEvent}<br>
-<b>Message: </b>{contactEmailModel.Message}<br>
+<b>Message: </b>{contactEmailModel.Message}<br><br>
 We will get in touch with you as soon as possible.<br><br>
-                Many thanks<br>
-                Emma, Luxe Dream Event Hire";
+                Many thanks<br><br>
+<div style=""display:inline-block;border-right:1.5px solid #e6e6e6;padding-right:10px;float:left;"">
+<b>Emma</b><br> <span style=""font-size:12px;"">Luxe Dream Event Hire</span><br><br>
+<b style=""color: #c48f45;"">E </b> <span style=""font-size:11px;"">luxedreameventhire@gmail.com</span><br>
+<b style=""color: #c48f45;"">P </b> <span style=""font-size:11px;"">(64)2108547654</span><br>
+<span style=""font-size:11px;"">http://luxedreameventhire.co.nz</span>
+</div>
+<div style=""display:inline-block; margin-left:16px;"">
+<img src = ""cid:{image.ContentId}"">
+</div>
+";
             messageToCustomer.Body = builderCustomer.ToMessageBody ();
 
             using (var emailClient = new SmtpClient())

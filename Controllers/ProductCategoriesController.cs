@@ -10,6 +10,7 @@ using jupiterCore.jupiterContext;
 using Jupiter.ActionFilter;
 using Jupiter.Controllers;
 using Jupiter.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace jupiterCore.Controllers
 {
@@ -71,16 +72,27 @@ namespace jupiterCore.Controllers
         // PUT: api/ProductCategories/5
         //[CheckModelFilter]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProductCategory(int id, ProductCategoryModel productCategoryModel)
+        [Authorize]
+        public async Task<IActionResult> PutProductCategory(int id, List<ProductCategoryModel> productCategoryModelList)
         {
             var result = new Result<string>();
             Type prodCateType = typeof(ProductCategory);
-            var updateCate = await _context.ProductCategory.Where(x=>x.CategoryId == id).FirstOrDefaultAsync();
-            if (updateCate == null)
+
+            foreach (var cate in productCategoryModelList)
             {
-                return NotFound(DataNotFound(result));
+                if (cate.CategoryId == 0)
+                {
+                    ProductCategory productCategory = new ProductCategory();
+                    _mapper.Map(cate, productCategory);
+                    await _context.ProductCategory.AddAsync(productCategory);
+                }
+                else
+                {
+                    var existProdCategory = await _context.ProductCategory.FirstOrDefaultAsync(x => x.CategoryId == cate.CategoryId);
+                    UpdateTable(cate,prodCateType,existProdCategory);
+                }
             }
-            UpdateTable(productCategoryModel,prodCateType,updateCate);
+
             try
             {
                 await _context.SaveChangesAsync();
@@ -117,19 +129,20 @@ namespace jupiterCore.Controllers
         }
 
         // DELETE: api/ProductCategories/5
-        //[HttpDelete("{id}")]
-        //public async Task<ActionResult<ProductCategory>> DeleteProductCategory(int id)
-        //{
-        //    var productCategory = await _context.ProductCategory.FindAsync(id);
-        //    if (productCategory == null)
-        //    {
-        //        return NotFound();
-        //    }
+        [Authorize]
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<ProductCategory>> DeleteProductCategory(int id)
+        {
+            var productCategory = await _context.ProductCategory.FindAsync(id);
+            if (productCategory == null)
+            {
+                return NotFound();
+            }
 
-        //    _context.ProductCategory.Remove(productCategory);
-        //    await _context.SaveChangesAsync();
+            _context.ProductCategory.Remove(productCategory);
+            await _context.SaveChangesAsync();
 
-        //    return productCategory;
-        //}
+            return productCategory;
+        }
     }
 }

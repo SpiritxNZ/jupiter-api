@@ -48,6 +48,18 @@ namespace jupiterCore.Controllers
             return project;
         }
 
+        [Route("[action]/{id}")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Project>>> GetProjectByType(int id)
+        {
+            var projects = await  _context.Project.Where(x=>x.EventtypeId == id).Include(s=>s.ProjectMedia).ToListAsync();
+            if (projects == null)
+            {
+                return NotFound();
+            }
+            return Ok(projects);
+        }
+
         // PUT: api/Projects/5
         [CheckModelFilter]
         [HttpPut("{id}")]
