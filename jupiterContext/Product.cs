@@ -25,6 +25,7 @@ namespace jupiterCore.jupiterContext
         public decimal? Discount { get; set; }
         public byte? IsActivate { get; set; }
         public DateTime? CreateOn { get; set; }
+        public byte? SpecialOrder { get; set; }
 
         public virtual ProductCategory Category { get; set; }
         public virtual ProductType ProdType { get; set; }

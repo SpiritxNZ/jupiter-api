@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 namespace Jupiter.Controllers
 {
     [ApiController]
-    //public abstract class BaseController : ApiController
     public abstract class BasicController : ControllerBase
 
     {
@@ -32,10 +31,29 @@ namespace Jupiter.Controllers
             foreach (var prop in properties)
             {
                 PropertyInfo piInstance = type.GetProperty(prop.Name);
-                if (piInstance != null && prop.GetValue(model) != null)
+                var propValue = prop.GetValue(model);
+                try
                 {
-                    piInstance.SetValue(tableRow,prop.GetValue(model));
-                }           
+                    var propValueInt = Convert.ToInt32(propValue);
+                    // the value of property is 200, then set null to this field
+                    if (piInstance != null && propValueInt == 200)
+                    {
+                        piInstance.SetValue(tableRow, null);
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
+
+                }
+                catch (Exception e)
+                // if propValue can not converted into int
+                {
+                    if (piInstance != null && propValue != null)
+                    {
+                        piInstance.SetValue(tableRow,propValue);
+                    }
+                }
             }
         }
 

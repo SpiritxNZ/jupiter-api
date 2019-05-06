@@ -271,6 +271,8 @@ namespace jupiterCore.jupiterContext
 
                 entity.Property(e => e.SpcOrDisct).HasColumnType("smallint(6)");
 
+                entity.Property(e => e.SpecialOrder).HasColumnType("tinyint(4)");
+
                 entity.Property(e => e.SubTitle)
                     .HasMaxLength(255)
                     .IsUnicode(false);

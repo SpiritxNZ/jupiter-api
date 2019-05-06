@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -45,7 +46,10 @@ namespace jupiterCore.Controllers
         public ActionResult<IEnumerable<Product>> GetSpecialProduct()
         {
             var result = new Result<IEnumerable<Product>>();
-            var specialProducts = _context.Product.Where(x => x.Discount > 0 && x.Discount != null).Select(x => x).Include(s=>s.ProductMedia).ToList();
+            var specialProducts = _context.Product.Where(x=>x.IsActivate == 1 && x.SpecialOrder > 0).Select(x => x)
+                .Include(s=>s.ProductMedia)
+                .Include(s=>s.ProductDetail)
+                .OrderBy(x=>x.SpecialOrder).ToList();
             result.Data = specialProducts;
             if (specialProducts.Count == 0)
             {
@@ -142,6 +146,26 @@ namespace jupiterCore.Controllers
             }
 //            _context.Product.Remove(product);
             product.IsActivate = 0;
+            // delete product images
+            var imageList = await _context.ProductMedia.Where(x => x.ProdId == id).ToListAsync();
+            if (imageList.Count() > 0)
+            {
+                foreach (var image in imageList)
+                {
+                    var path = Path.Combine("wwwroot", image.Url);
+                    FileInfo file = new FileInfo(path); 
+                    file.Delete();
+                    _context.ProductMedia.Remove(image);
+                }
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception e)
+                {
+                    return BadRequest(e.Message);
+                }
+            }
             try
             {
                 await _context.SaveChangesAsync();

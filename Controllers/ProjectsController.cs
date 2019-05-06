@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -118,12 +119,15 @@ namespace jupiterCore.Controllers
             var result = new Result<string>();
             var project = await _context.Project.FindAsync(id);
             var proMedias = await _context.ProjectMedia.Where(x => x.ProjectId == id).ToListAsync();
-            if (proMedias != null)
+            if (proMedias.Count() > 0)
             {
                 foreach (var media in proMedias)
                 {
                     try
                     {
+                        var path = Path.Combine("wwwroot", media.Url);
+                        FileInfo file = new FileInfo(path); 
+                        file.Delete();
                         _context.ProjectMedia.Remove(media);
                     }
                     catch (Exception e)

@@ -35,6 +35,8 @@ namespace Jupiter.Models
         [Range(0, 1, ErrorMessage = "IsActivate must be a number between 0 and 1")]
         public byte? IsActivate { get; set; }
         public DateTime? CreateOn { get; set; }
+        public byte? SpecialOrder { get; set; }
+
         public IEnumerable<string> ProdMedias { get; set; }
         public IFormFile ProductImage { get; set; }
     }
