@@ -21,7 +21,6 @@ namespace jupiterCore.jupiterContext
         public virtual DbSet<Contact> Contact { get; set; }
         public virtual DbSet<ContactEmail> ContactEmail { get; set; }
         public virtual DbSet<EventType> EventType { get; set; }
-        public virtual DbSet<Example> Example { get; set; }
         public virtual DbSet<Faq> Faq { get; set; }
         public virtual DbSet<Product> Product { get; set; }
         public virtual DbSet<ProductCategory> ProductCategory { get; set; }
@@ -37,7 +36,7 @@ namespace jupiterCore.jupiterContext
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySQL("server=35.197.166.191;port=3306;user=root;password=qwer1234;database=jupiter");
+                optionsBuilder.UseMySQL("server=35.197.166.191;port=3306;user=dbuser;password=***;database=jupiter");
             }
         }
 
@@ -52,12 +51,10 @@ namespace jupiterCore.jupiterContext
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
                 entity.Property(e => e.Password)
-                    .IsRequired()
                     .HasMaxLength(160)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Username)
-                    .IsRequired()
                     .HasMaxLength(80)
                     .IsUnicode(false);
             });
@@ -209,24 +206,9 @@ namespace jupiterCore.jupiterContext
                     .IsUnicode(false);
             });
 
-            modelBuilder.Entity<Example>(entity =>
-            {
-                entity.ToTable("example", "jupiter");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasColumnType("smallint(5) unsigned");
-
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasColumnName("name")
-                    .HasMaxLength(20)
-                    .IsUnicode(false);
-            });
-
             modelBuilder.Entity<Faq>(entity =>
             {
-                entity.ToTable("FAQ", "jupiter");
+                entity.ToTable("Faq", "jupiter");
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
@@ -312,7 +294,7 @@ namespace jupiterCore.jupiterContext
                 entity.ToTable("ProductDetail", "jupiter");
 
                 entity.HasIndex(e => e.ProdId)
-                    .HasName("detail_product_id_fk");
+                    .HasName("FK_Reference_15");
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
@@ -325,7 +307,6 @@ namespace jupiterCore.jupiterContext
                 entity.Property(e => e.ProdId).HasColumnType("int(11)");
 
                 entity.Property(e => e.ProductDetail1)
-                    .HasColumnName("ProductDetail")
                     .HasMaxLength(500)
                     .IsUnicode(false);
 
@@ -334,8 +315,7 @@ namespace jupiterCore.jupiterContext
                 entity.HasOne(d => d.Prod)
                     .WithMany(p => p.ProductDetail)
                     .HasForeignKey(d => d.ProdId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("detail_product_id_fk");
+                    .HasConstraintName("FK_Reference_15");
             });
 
             modelBuilder.Entity<ProductMedia>(entity =>
@@ -438,7 +418,7 @@ namespace jupiterCore.jupiterContext
                 entity.Property(e => e.EventtypeId).HasColumnType("int(11)");
 
                 entity.Property(e => e.Message)
-                    .HasMaxLength(255)
+                    .HasMaxLength(2500)
                     .IsUnicode(false);
 
                 entity.HasOne(d => d.Eventtype)

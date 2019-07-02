@@ -36,7 +36,7 @@ namespace Jupiter.Controllers
                 {
                     var propValueInt = Convert.ToInt32(propValue);
                     // the value of property is 200, then set null to this field
-                    if (piInstance != null && propValueInt == 200)
+                    if (piInstance != null && propValueInt == 200 && prop.Name == "SpecialOrder")
                     {
                         piInstance.SetValue(tableRow, null);
                     }

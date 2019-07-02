@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using Jupiter.ActionFilter;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -39,11 +40,12 @@ namespace jupiterCore
             });
 
             services.AddDbContext<jupiterContext.jupiterContext>(options => 
-                options.UseMySQL("server=35.197.166.191;port=3306;user=root;password=qwer1234;database=jupiter"));
+                options.UseMySQL("server=35.197.166.191;port=3306;user=dbuser;password=***;database=jupiter"));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddJsonOptions(option =>
                     option.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddCors();
             services.AddAutoMapper();
