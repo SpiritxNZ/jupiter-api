@@ -13,6 +13,7 @@ namespace jupiterCore.jupiterContext
 
         public int TypeId { get; set; }
         public string EventName { get; set; }
+        public string EventTypeImage { get; set; }
 
         public virtual ICollection<Project> Project { get; set; }
         public virtual ICollection<Testimonial> Testimonial { get; set; }

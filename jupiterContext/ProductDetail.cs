@@ -6,7 +6,7 @@ namespace jupiterCore.jupiterContext
     public partial class ProductDetail
     {
         public int Id { get; set; }
-        public int ProdId { get; set; }
+        public int? ProdId { get; set; }
         public string ProductDetail1 { get; set; }
         public int? TotalStock { get; set; }
         public int? AvailableStock { get; set; }

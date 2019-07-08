@@ -42,7 +42,7 @@ namespace jupiterCore.jupiterContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasAnnotation("ProductVersion", "2.2.3-servicing-35854");
+            modelBuilder.HasAnnotation("ProductVersion", "2.2.4-servicing-10062");
 
             modelBuilder.Entity<Admin>(entity =>
             {
@@ -202,6 +202,10 @@ namespace jupiterCore.jupiterContext
                 entity.Property(e => e.TypeId).HasColumnType("int(11)");
 
                 entity.Property(e => e.EventName)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.EventTypeImage)
                     .HasMaxLength(255)
                     .IsUnicode(false);
             });
