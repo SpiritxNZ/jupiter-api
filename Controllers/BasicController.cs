@@ -1,11 +1,16 @@
 ﻿using Jupiter.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Web.Http;
+using Microsoft.AspNetCore.Http;
 //using System.Web.Http.ModelBinding;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -81,6 +86,35 @@ namespace Jupiter.Controllers
             //};
             UriBuilder uriBuilder = new UriBuilder();
             return uriBuilder.Uri;
+        }
+
+        protected async Task<bool> StoreImage(string folder, string newFileName, IFormFile file)
+        {
+            try
+            {
+                var folderName = Path.Combine("wwwroot", "Images", folder);
+                var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+                var path = Path.Combine(pathToSave, newFileName);
+                var stream = new FileStream(path, FileMode.Create);
+                await file.CopyToAsync(stream);
+                stream.Close();
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+
+            return true;
+        }
+        protected void DeleteImage(string imagePath)
+        {
+            var pathNeedToBeDeleted = Path.Combine("wwwroot", imagePath);
+            FileInfo fileNeedToBeDeleted = new FileInfo(pathNeedToBeDeleted);
+            fileNeedToBeDeleted.Delete();
+        }
+        protected string RemoveWhitespace(string name)
+        {
+            return Regex.Replace(name, @"\s+", "");
         }
     }
 }

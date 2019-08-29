@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -40,7 +41,7 @@ namespace jupiterCore.Controllers
                 .ToListAsync();
             return productValue;
         }
-
+        // GET: api/Products/GetSpecialProduct
         [Route("[action]")]
         [HttpGet]
         public ActionResult<IEnumerable<Product>> GetSpecialProduct()
@@ -56,6 +57,31 @@ namespace jupiterCore.Controllers
                 return NotFound(DataNotFound(result));
             }
 
+            return Ok(result);
+        }
+        // GET: api/Products/GetSearchedProduct/{id},{name}
+        [Route("[action]/{id}")]
+        [HttpPost]
+        public async Task<IActionResult> GetSearchedProduct(int id)
+        {
+            var result = new Result<List<Product>>();
+            try
+            {
+                using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
+                {
+                    string searchString = await reader.ReadToEndAsync();
+                    var data = await _context.Product.Where(x => x.ProdTypeId==id && x.Title.Contains(searchString))
+                        .ToListAsync();
+                    result.Data = data;
+                }
+
+            }
+            catch(Exception e)
+            {
+                result.ErrorMessage = e.Message;
+                result.IsSuccess = false;
+                return BadRequest(result);
+            }
             return Ok(result);
         }
 

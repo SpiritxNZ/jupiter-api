@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace jupiterCore.jupiterContext
 {
@@ -12,7 +13,11 @@ namespace jupiterCore.jupiterContext
 
         public int CategoryId { get; set; }
         public string CategoryName { get; set; }
+        public int? ProdTypeId { get; set; }
 
+        [JsonIgnore]
+        public virtual ProductType ProdType { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Product> Product { get; set; }
     }
 }

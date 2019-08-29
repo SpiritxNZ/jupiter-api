@@ -22,6 +22,7 @@ namespace jupiterCore.jupiterContext
         public virtual DbSet<ContactEmail> ContactEmail { get; set; }
         public virtual DbSet<EventType> EventType { get; set; }
         public virtual DbSet<Faq> Faq { get; set; }
+        public virtual DbSet<HomepageCarouselMedia> HomepageCarouselMedia { get; set; }
         public virtual DbSet<Product> Product { get; set; }
         public virtual DbSet<ProductCategory> ProductCategory { get; set; }
         public virtual DbSet<ProductDetail> ProductDetail { get; set; }
@@ -36,13 +37,13 @@ namespace jupiterCore.jupiterContext
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySQL("server=35.197.166.191;port=3306;user=dbuser;password=***;database=jupiter");
+                optionsBuilder.UseMySQL("server=35.197.166.191;port=3306;user=dbuser;password=ToMPyaJzCW88JPRqBkxqZpiiEElX7Tv1;database=jupiter");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasAnnotation("ProductVersion", "2.2.4-servicing-10062");
+            modelBuilder.HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
 
             modelBuilder.Entity<Admin>(entity =>
             {
@@ -225,6 +226,17 @@ namespace jupiterCore.jupiterContext
                     .IsUnicode(false);
             });
 
+            modelBuilder.Entity<HomepageCarouselMedia>(entity =>
+            {
+                entity.ToTable("HomepageCarouselMedia", "jupiter");
+
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.Property(e => e.ImageUrl)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+            });
+
             modelBuilder.Entity<Product>(entity =>
             {
                 entity.HasKey(e => e.ProdId);
@@ -286,11 +298,21 @@ namespace jupiterCore.jupiterContext
 
                 entity.ToTable("ProductCategory", "jupiter");
 
+                entity.HasIndex(e => e.ProdTypeId)
+                    .HasName("FK_Reference_17");
+
                 entity.Property(e => e.CategoryId).HasColumnType("int(11)");
 
                 entity.Property(e => e.CategoryName)
                     .HasMaxLength(100)
                     .IsUnicode(false);
+
+                entity.Property(e => e.ProdTypeId).HasColumnType("int(11)");
+
+                entity.HasOne(d => d.ProdType)
+                    .WithMany(p => p.ProductCategory)
+                    .HasForeignKey(d => d.ProdTypeId)
+                    .HasConstraintName("FK_Reference_17");
             });
 
             modelBuilder.Entity<ProductDetail>(entity =>

@@ -4,9 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Jupiter.Controllers;
 using Jupiter.Models;
 using jupiterCore.jupiterContext;
 using jupiterCore.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +17,7 @@ namespace jupiterCore.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProjectTypeImageController : ControllerBase
+    public class ProjectTypeImageController : BasicController
     {
         private readonly jupiterContext.jupiterContext _context;
         public ProjectTypeImageController(jupiterContext.jupiterContext context)
@@ -47,11 +49,11 @@ namespace jupiterCore.Controllers
         }
 
         // PUT: api/ProjectTypeImage/5
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> Put([FromForm] EventTypeImageModel eventTypeImageModel)
         {
-            var requestForm = Request.Form;
-            var file = requestForm.Files[0];
+            var file = Request.Form.Files[0];
             var result = new Result<string>();
             var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
             var newFileName = $@"{Int32.Parse(eventTypeImageModel.Id)}-{fileName}";
@@ -67,9 +69,7 @@ namespace jupiterCore.Controllers
                 // remove the old image if there is one
                 if (selectedEventType.EventTypeImage != null)
                 {
-                    var pathNeedToBeDeleted = Path.Combine("wwwroot", selectedEventType.EventTypeImage);
-                    FileInfo fileNeedToBeDeleted = new FileInfo(pathNeedToBeDeleted); 
-                    fileNeedToBeDeleted.Delete();
+                    DeleteImage(selectedEventType.EventTypeImage);
                 }
 
                 //update image name on db
@@ -77,12 +77,11 @@ namespace jupiterCore.Controllers
                 await _context.SaveChangesAsync();
 
                 // add new image
-                var folderName = Path.Combine("wwwroot", "Images","EventTypeImages");
-                var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
-                var path = Path.Combine(pathToSave, newFileName);
-                var stream = new FileStream(path, FileMode.Create);
-                await file.CopyToAsync(stream);
-                stream.Close();
+                bool isStoreSuccess = await StoreImage("ProductImages", newFileName, file);
+                if (!isStoreSuccess)
+                {
+                    throw new Exception("Store image locally failed.");
+                }
 
                 result.Data = $@"{fileName} successfully uploaded";
             }

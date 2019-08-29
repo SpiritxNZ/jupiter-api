@@ -23,6 +23,7 @@
   <ItemGroup>
     <Folder Include="wwwroot\Images\GalleryImages\" />
     <Folder Include="wwwroot\Images\EventTypeImages\" />
+    <Folder Include="wwwroot\Images\HomepageCarouselImages\" />
     <Folder Include="wwwroot\Images\ProductImages\" />
   </ItemGroup>
 

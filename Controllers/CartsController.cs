@@ -191,7 +191,7 @@ namespace jupiterCore.Controllers
 <div style=""display:inline-block;border-right:1.5px solid #e6e6e6;padding-right:10px;float:left;"">
 <b>Emma</b><br> <span style=""font-size:12px;"">Luxe Dream Event Hire</span><br><br>
 <b style=""color: #c48f45;"">E </b> <span style=""font-size:11px;"">luxedreameventhire@gmail.com</span><br>
-<b style=""color: #c48f45;"">P </b> <span style=""font-size:11px;"">(64)2108547654</span><br>
+<b style=""color: #c48f45;"">P </b> <span style=""font-size:11px;"">(64) 2108793899</span><br>
 <span style=""font-size:11px;"">http://luxedreameventhire.co.nz</span>
 </div>
 <div style=""display:inline-block; margin-left:16px;"">

@@ -99,15 +99,14 @@ namespace jupiterCore.Controllers
             try
             {
                 // add image
-                var folderName = Path.Combine("wwwroot", "Images","ProductImages");
-                var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
-                var path = Path.Combine(pathToSave, newFileName);
-                var stream = new FileStream(path, FileMode.Create);
-                await file.CopyToAsync(stream);
-                stream.Close();
+                bool isStoreSuccess = await StoreImage("ProductImages", newFileName, file);
+                if (!isStoreSuccess)
+                {
+                    throw new Exception("Store image locally failed.");
+                }
 
                 //add image name to db
-                ProductMedia productMedia = new ProductMedia {ProdId = Int32.Parse(productMediaModel.ProdId), Url = $@"Images/ProductImages/{newFileName}"};
+                ProductMedia productMedia = new ProductMedia { ProdId = Int32.Parse(productMediaModel.ProdId), Url = $@"Images/ProductImages/{newFileName}" };
                 await _context.ProductMedia.AddAsync(productMedia);
                 await _context.SaveChangesAsync();
 
@@ -137,9 +136,7 @@ namespace jupiterCore.Controllers
             try
             {
                 //remove img from folder
-                var path = Path.Combine("wwwroot", media.Url);
-                FileInfo file = new FileInfo(path); 
-                file.Delete();
+                DeleteImage(media.Url);
             }
             catch (Exception e)
             {

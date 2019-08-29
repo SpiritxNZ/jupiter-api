@@ -27,11 +27,19 @@ namespace jupiterCore.Controllers
             _mapper = mapper;
         }
 
-        // GET: api/ProductCategories
+//        [HttpGet]
+//        public async Task<List<ProductCategory>> GetProductCategories()
+//        {
+//            return await _context.ProductCategory.ToListAsync();
+//        }
+
+        // GET: api/ProductCategories/GetProductCategoriesByType
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductCategory>>> GetProductCategory()
+        [Route("{action}/{id}")]
+        public async Task<ProductType> GetProductCategoriesByType(int id)
         {
-            return await _context.ProductCategory.Include(x=>x.Product).ThenInclude(s=>s.ProductMedia).ToListAsync();
+            return await _context.ProductType.Where(x => x.ProdTypeId == id)
+                .Include(x => x.ProductCategory).FirstOrDefaultAsync();
         }
 
         // GET: api/ProductCategories/5
@@ -62,9 +70,9 @@ namespace jupiterCore.Controllers
 //            return productCategory;
 
             var prodCategory = await _context.Product
+                .Where(x => x.CategoryId == id && x.IsActivate == 1)
                 .Include(x => x.ProductMedia)
                 .Include(x=>x.Category)
-                .Where(x => x.CategoryId == id && x.IsActivate == 1)
                 .Select(x => x).ToListAsync();
             return Ok(prodCategory);
         }
