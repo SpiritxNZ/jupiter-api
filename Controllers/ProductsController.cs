@@ -60,6 +60,7 @@ namespace jupiterCore.Controllers
             return Ok(result);
         }
         // GET: api/Products/GetSearchedProduct/{id},{name}
+        [Authorize]
         [Route("[action]/{id}")]
         [HttpPost]
         public async Task<IActionResult> GetSearchedProduct(int id)
@@ -70,7 +71,7 @@ namespace jupiterCore.Controllers
                 using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
                 {
                     string searchString = await reader.ReadToEndAsync();
-                    var data = await _context.Product.Where(x => x.ProdTypeId==id && x.Title.Contains(searchString))
+                    var data = await _context.Product.Where(x => x.ProdTypeId==id && x.Title.Contains(searchString) && x.IsActivate == 1)
                         .ToListAsync();
                     result.Data = data;
                 }

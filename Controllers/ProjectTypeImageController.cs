@@ -77,7 +77,7 @@ namespace jupiterCore.Controllers
                 await _context.SaveChangesAsync();
 
                 // add new image
-                bool isStoreSuccess = await StoreImage("ProductImages", newFileName, file);
+                bool isStoreSuccess = await StoreImage("EventTypeImages", newFileName, file);
                 if (!isStoreSuccess)
                 {
                     throw new Exception("Store image locally failed.");
