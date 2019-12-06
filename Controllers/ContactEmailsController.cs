@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -12,9 +13,13 @@ using jupiterCore.Models;
 using Jupiter.ActionFilter;
 using Jupiter.Controllers;
 using Jupiter.Models;
-using MailKit.Net.Smtp;
 using MimeKit;
 using MimeKit.Utils;
+using SendGrid;
+using SendGrid.Helpers.Mail;
+using Attachment = SendGrid.Helpers.Mail.Attachment;
+using SmtpClient = MailKit.Net.Smtp.SmtpClient;
+
 
 namespace jupiterCore.Controllers
 {
@@ -129,55 +134,51 @@ namespace jupiterCore.Controllers
 
         public void SendEmail(ContactEmailModel contactEmailModel)
         {
-            var message = new MimeMessage();
-            message.To.Add(new MailboxAddress("luxedreameventhire@gmail.com"));
-            message.From.Add(new MailboxAddress("LuxeDreamEventHire","luxecontacts94@gmail.com"));
-            message.Subject = "New Customer Email";
-            var builder = new BodyBuilder();
-            builder.HtmlBody = $@"Received new contact email from customer.<br> <b>Name: </b>{contactEmailModel.Name}<br><b>Email: </b>{contactEmailModel.Email}<br>
-<b>Phone Number: </b>{contactEmailModel.PhoneNumber}<br><b>Company: </b>{contactEmailModel.Company}<br>
-                <b>Date of event: </b>{contactEmailModel.DateOfEvent:D}<br><b>Location of event: </b>{contactEmailModel.LocationOfEvent}<br>
-<b>How to find us: </b>{contactEmailModel.FindUs}<br><b>Type of event: </b>{contactEmailModel.TypeOfEvent}<br>
-<b>Message: </b>{contactEmailModel.Message}";
-            message.Body = builder.ToMessageBody();
 
-            var messageToCustomer = new MimeMessage();
-            messageToCustomer.To.Add(new MailboxAddress(contactEmailModel.Email));
-            messageToCustomer.From.Add(new MailboxAddress("LuxeDreamEventHire","luxecontacts94@gmail.com"));
-            messageToCustomer.Subject = "Thanks for your contact Email";
-            var builderCustomer = new BodyBuilder();
-            var pathImage = Path.Combine("wwwroot", "Images", "Icon","Icon.png");
-            var image = builderCustomer.LinkedResources.Add(pathImage);
-            image.ContentId = MimeUtils.GenerateMessageId ();
+            var sendGridClient = new SendGridClient("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");
 
-            builderCustomer.HtmlBody =
-                $@"Hi {contactEmailModel.Name},<br><br>We have received your email.<br>Your contact details are as followings.<br><br><b>Email: </b>{contactEmailModel.Email}<br>
-<b>Phone Number: </b>{contactEmailModel.PhoneNumber}<br><b>Company: </b>{contactEmailModel.Company}<br>
-                <b>Date of event: </b>{contactEmailModel.DateOfEvent:D}<br><b>Location of event: </b>{contactEmailModel.LocationOfEvent}<br>
-<b>How to find us: </b>{contactEmailModel.FindUs}<br><b>Type of event: </b>{contactEmailModel.TypeOfEvent}<br>
-<b>Message: </b>{contactEmailModel.Message}<br><br>
-We will get in touch with you as soon as possible.<br><br>
-                Many thanks<br><br>
-<div style=""display:inline-block;border-right:1.5px solid #e6e6e6;padding-right:10px;float:left;"">
-<b>Emma</b><br> <span style=""font-size:12px;"">Luxe Dream Event Hire</span><br><br>
-<b style=""color: #c48f45;"">E </b> <span style=""font-size:11px;"">luxedreameventhire@gmail.com</span><br>
-<b style=""color: #c48f45;"">P </b> <span style=""font-size:11px;"">(64) 2108793899</span><br>
-<span style=""font-size:11px;"">http://luxedreameventhire.co.nz</span>
-</div>
-<div style=""display:inline-block; margin-left:16px;"">
-<img src = ""cid:{image.ContentId}"">
-</div>
-";
-            messageToCustomer.Body = builderCustomer.ToMessageBody ();
+            var myMessage = new SendGridMessage();
 
-            using (var emailClient = new SmtpClient())
+            myMessage.AddTo("Info@luxedreameventhire.co.nz");
+            myMessage.From = new EmailAddress("Info@luxedreameventhire.co.nz", "LuxeDreamEventHire");
+            myMessage.SetTemplateId("d-fa12e602e09041339338a5869708e195");
+            myMessage.SetTemplateData(new
             {
-                emailClient.Connect("smtp.gmail.com", 587, false);
-                emailClient.Authenticate("luxecontacts94@gmail.com","luxe1234");
-                emailClient.Send(message);
-                emailClient.Send(messageToCustomer);
-                emailClient.Disconnect(true);
-            }
+                Name = contactEmailModel.Name,
+                Email = contactEmailModel.Email,
+                PhoneNumber = contactEmailModel.PhoneNumber,
+                Company = contactEmailModel.Company,
+                DateOfEvent = contactEmailModel.DateOfEvent.ToString("D"),
+                LocationOfEvent = contactEmailModel.LocationOfEvent,
+                FindUs = contactEmailModel.FindUs,
+                TypeOfEvent = contactEmailModel.TypeOfEvent,
+                Message = contactEmailModel.Message
+            });
+
+
+            var messageToCustomer = new SendGridMessage();
+
+
+            messageToCustomer.AddTo(contactEmailModel.Email);
+            messageToCustomer.From = new EmailAddress("Info@luxedreameventhire.co.nz", "LuxeDreamEventHire");
+            messageToCustomer.SetTemplateId("d-2978c7005cdb4dfd8bd47ab5e8257094");
+            messageToCustomer.SetTemplateData(new
+            {
+                Name = contactEmailModel.Name,
+                Email = contactEmailModel.Email,
+                PhoneNumber = contactEmailModel.PhoneNumber,
+                Company = contactEmailModel.Company,
+                DateOfEvent = contactEmailModel.DateOfEvent.ToString("D"),
+                LocationOfEvent = contactEmailModel.LocationOfEvent,
+                FindUs = contactEmailModel.FindUs,
+                TypeOfEvent = contactEmailModel.TypeOfEvent,
+                Message = contactEmailModel.Message
+            });
+
+
+            sendGridClient.SendEmailAsync(myMessage);
+            sendGridClient.SendEmailAsync(messageToCustomer);
+
         }
     }
 }

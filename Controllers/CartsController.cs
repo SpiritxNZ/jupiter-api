@@ -15,6 +15,8 @@ using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Authorization;
 using MimeKit;
 using MimeKit.Utils;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
 namespace jupiterCore.Controllers
 {
@@ -36,7 +38,7 @@ namespace jupiterCore.Controllers
         [Authorize]
         public ActionResult<List<Cart>> GetCart()
         {
-            var cartsValue = _context.Cart.Where(x=>x.IsActivate==1).Include(s => s.Contact).Include(s => s.CartProd).ToList();
+            var cartsValue = _context.Cart.Where(x => x.IsActivate == 1).Include(s => s.Contact).Include(s => s.CartProd).ToList();
             return Ok(cartsValue);
         }
 
@@ -46,7 +48,7 @@ namespace jupiterCore.Controllers
 
         public ActionResult GetCart(int id)
         {
-            var cart1 =  _context.Cart.Include(s => s.Contact).Include(s => s.CartProd)
+            var cart1 = _context.Cart.Include(s => s.Contact).Include(s => s.CartProd)
                 .FirstOrDefault(s => s.CartId == id);
             return Ok(cart1);
         }
@@ -55,16 +57,16 @@ namespace jupiterCore.Controllers
         [CheckModelFilter]
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<ActionResult> PutCart(int id,  CartModel cartModel)
+        public async Task<ActionResult> PutCart(int id, CartModel cartModel)
         {
             var result = new Result<string>();
             Type cartType = typeof(Cart);
-            var updateCart = await _context.Cart.Where(x=>x.CartId == id).FirstOrDefaultAsync();
+            var updateCart = await _context.Cart.Where(x => x.CartId == id).FirstOrDefaultAsync();
             if (updateCart == null)
             {
                 return NotFound(DataNotFound(result));
             }
-            UpdateTable(cartModel,cartType,updateCart);
+            UpdateTable(cartModel, cartType, updateCart);
             updateCart.UpdateOn = DateTime.Now;
             try
             {
@@ -103,7 +105,7 @@ namespace jupiterCore.Controllers
                 await _context.Contact.AddAsync(contact);
                 await _context.SaveChangesAsync();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 result.ErrorMessage = e.Message;
                 result.IsSuccess = false;
@@ -158,55 +160,40 @@ namespace jupiterCore.Controllers
 
         public void SendCartEmail(CartContactModel cartContactModel)
         {
-            var message = new MimeMessage();
-            message.To.Add(new MailboxAddress(cartContactModel.ContactModel.Email));
-            message.To.Add(new MailboxAddress("luxedreameventhire@gmail.com"));
-            message.From.Add(new MailboxAddress("LuxeDreamEventHire","luxecontacts94@gmail.com"));
-            message.Subject = "Luxe Dream Event Hire Customer Email";
-            var builder = new BodyBuilder();
+
+
+            var sendGridClient = new SendGridClient("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");
+
+            var myMessage = new SendGridMessage();
+
+            myMessage.AddTo("Info@luxedreameventhire.co.nz");
+            myMessage.AddTo(cartContactModel.ContactModel.Email);
+            myMessage.From = new EmailAddress("Info@luxedreameventhire.co.nz", "LuxeDreamEventHire");
+            myMessage.SetTemplateId("d-8b50f89729a24c0590fcee9ef8bee1fe");
+
             var contactDetail = cartContactModel.ContactModel;
             var cartDetail = cartContactModel.CartModel;
+            //return Ok(cartDetail.CartProd;
+            //var cartProds = "";
+            //foreach (var cart in cartDetail.CartProd)
+            //{
+            //    cartProds = cartProds + cart.Quantity + " of " + " " + cart.Title + "\r\n";
+            //}
 
-            var pathImage = Path.Combine("wwwroot", "Images", "Icon","Icon.png");
-            var image = builder.LinkedResources.Add(pathImage);
-            image.ContentId = MimeUtils.GenerateMessageId ();
-
-            var cartProds = "";
-            foreach (var cart in cartDetail.CartProd)
+            myMessage.SetTemplateData(new
             {
-                cartProds = cartProds +cart.Quantity+ " of " + " " + cart.Title + "<br>";
-            }
+                FirstName = contactDetail.FirstName,
+                LastName = contactDetail.LastName,
+                PlannedTime = cartDetail.PlannedTime.ToString("D"),
+                Email = contactDetail.Email,
+                PhoneNum = contactDetail.PhoneNum,
+                //cartProds = cartProds,
+                cartProds = cartDetail.CartProd,
+                Message = contactDetail.Message
+            });
+            sendGridClient.SendEmailAsync(myMessage);
 
-            builder.HtmlBody =
-                $@"Hi {contactDetail.FirstName} {contactDetail.LastName}<br><br>Thank you for ordering at Luxe Dream Event Hire.<br><br>
-                Your planned event date is: {cartDetail.PlannedTime:D}<br>
-                Your email address: {contactDetail.Email}<br>
-                Your Phone Number: {contactDetail.PhoneNum}<br><br>
-                Your ordered items are:<br><br>{cartProds}<br>
-                Your Message: {contactDetail.Message}<br><br>
-                Please let us know if you would like to change your order.<br><br>
-                We will be in touch very shortly.<br><br>
-                Many thanks<br>
-                <br>
-<div style=""display:inline-block;border-right:1.5px solid #e6e6e6;padding-right:10px;float:left;"">
-<b>Emma</b><br> <span style=""font-size:12px;"">Luxe Dream Event Hire</span><br><br>
-<b style=""color: #c48f45;"">E </b> <span style=""font-size:11px;"">luxedreameventhire@gmail.com</span><br>
-<b style=""color: #c48f45;"">P </b> <span style=""font-size:11px;"">(64) 2108793899</span><br>
-<span style=""font-size:11px;"">http://luxedreameventhire.co.nz</span>
-</div>
-<div style=""display:inline-block; margin-left:16px;"">
-<img src = ""cid:{image.ContentId}"">
-</div>
-";
-            message.Body = builder.ToMessageBody ();
-
-            using (var emailClient = new SmtpClient())
-            {
-                emailClient.Connect("smtp.gmail.com", 587, false);
-                emailClient.Authenticate("luxecontacts94@gmail.com","luxe1234");
-                emailClient.Send(message);
-                emailClient.Disconnect(true);
-            }
+        
         }
     }
 }
