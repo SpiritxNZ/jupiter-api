@@ -31,6 +31,7 @@ namespace jupiterCore.jupiterContext
         public virtual DbSet<Project> Project { get; set; }
         public virtual DbSet<ProjectMedia> ProjectMedia { get; set; }
         public virtual DbSet<Testimonial> Testimonial { get; set; }
+        public virtual DbSet<ApiKey> ApiKeys { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -44,6 +45,21 @@ namespace jupiterCore.jupiterContext
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
+
+            modelBuilder.Entity<ApiKey>(entity =>
+            {
+                entity.ToTable("Admin", "jupiter");
+
+                entity.Property(e => e.key_id).HasColumnType("int(11)");
+
+                entity.Property(e => e.api_name)
+                    .HasMaxLength(80)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.api_key)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+            });
 
             modelBuilder.Entity<Admin>(entity =>
             {
