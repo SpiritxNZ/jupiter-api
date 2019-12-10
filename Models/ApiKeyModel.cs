@@ -3,7 +3,7 @@ namespace jupiterCore.Models
 {
     public class ApiKeyModel
     {
-        string api_name{ get; set; }
-        string api_key { get; set; }
+        public string api_name{ get; set; }
+        public string api_key { get; set; }
     }
 }

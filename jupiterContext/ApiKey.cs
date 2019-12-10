@@ -1,7 +1,7 @@
 ﻿using System;
 namespace jupiterCore.jupiterContext
 {
-    public class ApiKey
+    public partial class ApiKey
     {
         public int key_id { get; set; }
         public string api_name { get; set; }

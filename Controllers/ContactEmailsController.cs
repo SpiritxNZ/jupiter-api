@@ -134,8 +134,8 @@ namespace jupiterCore.Controllers
 
         public void SendEmail(ContactEmailModel contactEmailModel)
         {
-            var sendgrid_api = _context.ApiKeys.Where(x => x.api_name == "sendgrid").FirstOrDefault().ToString();
-            var sendGridClient = new SendGridClient(sendgrid_api);
+            var sendgrid = _context.ApiKey.Find(1);
+            var sendGridClient = new SendGridClient(sendgrid.api_key);
 
             var myMessage = new SendGridMessage();
 

@@ -161,9 +161,8 @@ namespace jupiterCore.Controllers
         public void SendCartEmail(CartContactModel cartContactModel)
         {
 
-            var sendgrid_api = _context.ApiKeys.Where(x => x.api_name == "sendgrid").FirstOrDefault().ToString();
-            var sendGridClient = new SendGridClient(sendgrid_api);
-            //var sendGridClient = new SendGridClient("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");
+            var sendgrid = _context.ApiKey.Find(1);
+            var sendGridClient = new SendGridClient(sendgrid.api_key);
 
             var myMessage = new SendGridMessage();
 

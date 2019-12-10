@@ -31,7 +31,7 @@ namespace jupiterCore.jupiterContext
         public virtual DbSet<Project> Project { get; set; }
         public virtual DbSet<ProjectMedia> ProjectMedia { get; set; }
         public virtual DbSet<Testimonial> Testimonial { get; set; }
-        public virtual DbSet<ApiKey> ApiKeys { get; set; }
+        public virtual DbSet<ApiKey> ApiKey { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -48,7 +48,9 @@ namespace jupiterCore.jupiterContext
 
             modelBuilder.Entity<ApiKey>(entity =>
             {
-                entity.ToTable("Admin", "jupiter");
+                entity.HasKey(e => e.key_id);
+
+                entity.ToTable("ApiKey", "jupiter");
 
                 entity.Property(e => e.key_id).HasColumnType("int(11)");
 
