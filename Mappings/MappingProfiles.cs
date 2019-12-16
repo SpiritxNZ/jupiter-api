@@ -28,6 +28,8 @@ namespace jupiterCore.Mappings
             CreateMap<ContactEmailModel, ContactEmail>();
             CreateMap<FaqModel, Faq>();
             CreateMap<ProductDetailModel, ProductDetail>();
+            CreateMap<UserModel, User>();
+
         }
     }
 }

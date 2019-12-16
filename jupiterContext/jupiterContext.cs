@@ -16,6 +16,7 @@ namespace jupiterCore.jupiterContext
         }
 
         public virtual DbSet<Admin> Admin { get; set; }
+        public virtual DbSet<ApiKey> ApiKey { get; set; }
         public virtual DbSet<Cart> Cart { get; set; }
         public virtual DbSet<CartProd> CartProd { get; set; }
         public virtual DbSet<Contact> Contact { get; set; }
@@ -27,41 +28,25 @@ namespace jupiterCore.jupiterContext
         public virtual DbSet<ProductCategory> ProductCategory { get; set; }
         public virtual DbSet<ProductDetail> ProductDetail { get; set; }
         public virtual DbSet<ProductMedia> ProductMedia { get; set; }
+        public virtual DbSet<ProductTimetable> ProductTimetable { get; set; }
         public virtual DbSet<ProductType> ProductType { get; set; }
         public virtual DbSet<Project> Project { get; set; }
         public virtual DbSet<ProjectMedia> ProjectMedia { get; set; }
         public virtual DbSet<Testimonial> Testimonial { get; set; }
-        public virtual DbSet<ApiKey> ApiKey { get; set; }
+        public virtual DbSet<User> User { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySQL("server=localhost;port=3306;user=dbuser;password=ToMPyaJzCW88JPRqBkxqZpiiEElX7Tv1;database=jupiter");
+                optionsBuilder.UseMySQL("server=localhost;port=3306;user=lyric;password=Lychy31623;database=jupiter");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
-
-            modelBuilder.Entity<ApiKey>(entity =>
-            {
-                entity.HasKey(e => e.key_id);
-
-                entity.ToTable("ApiKey", "jupiter");
-
-                entity.Property(e => e.key_id).HasColumnType("int(11)");
-
-                entity.Property(e => e.api_name)
-                    .HasMaxLength(80)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.api_key)
-                    .HasMaxLength(255)
-                    .IsUnicode(false);
-            });
+            modelBuilder.HasAnnotation("ProductVersion", "2.2.4-servicing-10062");
 
             modelBuilder.Entity<Admin>(entity =>
             {
@@ -74,6 +59,27 @@ namespace jupiterCore.jupiterContext
                     .IsUnicode(false);
 
                 entity.Property(e => e.Username)
+                    .HasMaxLength(80)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<ApiKey>(entity =>
+            {
+                entity.HasKey(e => e.KeyId);
+
+                entity.ToTable("ApiKey", "jupiter");
+
+                entity.Property(e => e.KeyId)
+                    .HasColumnName("key_id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.ApiKey1)
+                    .HasColumnName("api_key")
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ApiName)
+                    .HasColumnName("api_name")
                     .HasMaxLength(80)
                     .IsUnicode(false);
             });
@@ -384,6 +390,25 @@ namespace jupiterCore.jupiterContext
                     .HasConstraintName("FK_Reference_3");
             });
 
+            modelBuilder.Entity<ProductTimetable>(entity =>
+            {
+                entity.ToTable("ProductTimetable", "jupiter");
+
+                entity.HasIndex(e => e.ProdId)
+                    .HasName("fk_prodtimetable_idx");
+
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.Property(e => e.ProdId).HasColumnType("int(11)");
+
+                entity.Property(e => e.Quantity).HasColumnType("int(11)");
+
+                entity.HasOne(d => d.Prod)
+                    .WithMany(p => p.ProductTimetable)
+                    .HasForeignKey(d => d.ProdId)
+                    .HasConstraintName("fk_prodtimetable");
+            });
+
             modelBuilder.Entity<ProductType>(entity =>
             {
                 entity.HasKey(e => e.ProdTypeId);
@@ -469,6 +494,25 @@ namespace jupiterCore.jupiterContext
                     .WithMany(p => p.Testimonial)
                     .HasForeignKey(d => d.EventtypeId)
                     .HasConstraintName("FK_Reference_13");
+            });
+
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.ToTable("User", "jupiter");
+
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.Property(e => e.Email)
+                    .IsRequired()
+                    .HasColumnName("email")
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Password)
+                    .IsRequired()
+                    .HasColumnName("password")
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
             });
         }
     }

@@ -162,7 +162,7 @@ namespace jupiterCore.Controllers
         {
 
             var sendgrid = _context.ApiKey.Find(1);
-            var sendGridClient = new SendGridClient(sendgrid.api_key);
+            var sendGridClient = new SendGridClient(sendgrid.ApiKey1);
 
             var myMessage = new SendGridMessage();
 

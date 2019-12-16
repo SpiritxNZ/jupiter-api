@@ -16,5 +16,7 @@ namespace jupiterCore.Models
         public int? AvailableStock { get; set; }
         public decimal? Price { get; set; }
         public decimal? Discount { get; set; }
+
+        public IEnumerable<ProductTimetableModel> ProdTime { get; set; }
     }
 }
