@@ -14,6 +14,7 @@ using System.Security.Claims;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
 
 namespace jupiterCore.Controllers
 {
@@ -35,27 +36,65 @@ namespace jupiterCore.Controllers
 
         public class JsonResult
         {
-            public string Email { get; set; }
-            public string Token { get; set; }
+            public int userId { get; set; }
+            public string email { get; set; }
+            public string token { get; set; }
         }
 
+        //[HttpPost]
+        //[Route("ForgotPassword")]
+        //public IActionResult ForgotPassword(string email)
+        //{
+        //    var result = new Result<Object>();
+        //    var user = _context.User.FirstOrDefault(x => x.Email == email);
+        //    if (user == null)
+        //    {
+        //        throw new Exception("Email not exist");
+        //    }
+            
+        //    var tokenString = GenerateJwt(email);
+
+        //    result.Data = new JsonResult { Email = user.Email, Token = tokenString };
+        //    return Ok(result);
+        //}
+
+
+        public class ForgotPasswordModel
+        {
+            public string Email { get; set; }
+        }
         [HttpPost]
         [Route("ForgotPassword")]
-        public IActionResult ForgotPassword(string email)
+        [AllowAnonymous]
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword ([FromBody]ForgotPasswordModel email)
         {
             var result = new Result<Object>();
-            var user = _context.User.FirstOrDefault(x => x.Email == email);
+            var user = _context.User.Select(x=>new { x.Email, x.Id}).FirstOrDefault(x => x.Email == email.Email);
+
             if (user == null)
             {
-                throw new Exception("Email not exist");
+                result.IsSuccess = false;
+                result.IsFound = false;
+                result.Data = "This user does not exist.";
+                return Ok(result);
             }
-            
-            var tokenString = GenerateJwt(email);
+            var tokenString = GenerateJwt(user.Email);
+            //var callbackUrl = Url.Action("EmailResetPassword", "User", new { userId = user.Id, code = tokenString }, protocol: HttpContext.Request.Scheme);
+            var callbackUrl = "http://luxedreameventhire.co.nz/" + "userId="+user.Id + "code="+tokenString;
+            var sendgrid = _context.ApiKey.Find(1);
+            var sendGridClient = new SendGridClient(sendgrid.ApiKey1);
 
-            result.Data = new JsonResult { Email = user.Email, Token = tokenString };
+            var myMessage = new SendGridMessage();
+
+            myMessage.AddTo(user.Email);
+            myMessage.From = new EmailAddress("Info@luxedreameventhire.co.nz", "LuxeDreamEventHire");
+            myMessage.Subject = "ResetPassword";
+            myMessage.HtmlContent = $"Please reset your password by clicking here: <a href='{callbackUrl}'>link</a>";
+            await sendGridClient.SendEmailAsync(myMessage);
+
+            result.Data = new JsonResult { userId = user.Id, email = user.Email, token = tokenString };
             return Ok(result);
-
-
         }
 
         [HttpPut]
@@ -66,7 +105,7 @@ namespace jupiterCore.Controllers
         {
             var result = new Result<string>();
             Type userType = typeof(User);
-            var user = _context.User.FirstOrDefault(x => x.Email == resetPasswordModel.Email);
+            var user = _context.User.FirstOrDefault(x => x.Id == resetPasswordModel.userId);
             if (user != null)
             {
                 user.Password = resetPasswordModel.Password;
@@ -86,6 +125,7 @@ namespace jupiterCore.Controllers
             result.IsSuccess = true;
             return Ok(result);
         }
+
 
         [HttpPost]
         [Route("register")]

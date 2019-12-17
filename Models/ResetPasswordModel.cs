@@ -6,7 +6,7 @@ namespace jupiterCore.Models
     public class ResetPasswordModel
     {
         public string token { get; set; }
-        public string Email { get; set; }
+        public int userId { get; set; }
 
         [Required]
         public string Password { get; set; }
