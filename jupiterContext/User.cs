@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace jupiterCore.jupiterContext
 {
@@ -17,6 +18,11 @@ namespace jupiterCore.jupiterContext
         public virtual ICollection<UserContactInfo> UserContactInfo { get; set; }
 
         public static implicit operator string(User v)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static implicit operator User(Task<List<User>> v)
         {
             throw new NotImplementedException();
         }

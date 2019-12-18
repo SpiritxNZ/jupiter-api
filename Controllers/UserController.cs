@@ -15,6 +15,8 @@ using SendGrid;
 using SendGrid.Helpers.Mail;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace jupiterCore.Controllers
 {
@@ -45,6 +47,29 @@ namespace jupiterCore.Controllers
         {
             public string Email { get; set; }
         }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<User>>> GetUser()
+        {
+            var result = new Result<object>();
+
+            var user = _context.User.Include(x => x.UserContactInfo).Select(s=>new { s.Id,s.Email,UserInfo=s.UserContactInfo}).ToListAsync();
+            result.Data = user;
+
+            return Ok(result);
+        }
+
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<User>> GetUserByid(int id)
+        {
+            Result<Object> result = new Result<Object>();
+
+            var user = await _context.User.Include(x => x.UserContactInfo).Where(x => x.Id == id).Select(s => new { s.Id, s.Email, UserInfo = s.UserContactInfo }).ToListAsync();
+            result.Data = user;
+            return Ok(result);
+        }
+
 
 
         [HttpPut]
