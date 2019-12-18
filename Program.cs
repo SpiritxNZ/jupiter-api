@@ -25,7 +25,7 @@ namespace jupiterCore
 
             var hostUrl = configuration["hosturl"];
             if (string.IsNullOrEmpty(hostUrl))
-                hostUrl = "http://*:5001";
+                hostUrl = "http://*:5000";
 
 
             var host = new WebHostBuilder()

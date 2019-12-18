@@ -41,28 +41,52 @@ namespace jupiterCore.Controllers
             public string token { get; set; }
         }
 
-        //[HttpPost]
-        //[Route("ForgotPassword")]
-        //public IActionResult ForgotPassword(string email)
-        //{
-        //    var result = new Result<Object>();
-        //    var user = _context.User.FirstOrDefault(x => x.Email == email);
-        //    if (user == null)
-        //    {
-        //        throw new Exception("Email not exist");
-        //    }
-            
-        //    var tokenString = GenerateJwt(email);
-
-        //    result.Data = new JsonResult { Email = user.Email, Token = tokenString };
-        //    return Ok(result);
-        //}
-
-
         public class ForgotPasswordModel
         {
             public string Email { get; set; }
         }
+
+
+        [HttpPut]
+        [Route("ChangePassword")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordModel changePasswordModel)
+        {
+            var result = new Result<string>();
+            try
+            {
+                var user = _context.User.FirstOrDefault(s => s.Email == changePasswordModel.email);
+                if (user == null)
+                {
+                    throw new Exception("email does not exist");
+                }
+
+                if (user.Password != changePasswordModel.oldPassword)
+                {
+                    result.IsSuccess = false;
+                    result.ErrorMessage = "The old password is incorrect";
+                    return StatusCode(401, result);
+                }
+
+                if (user.Password == changePasswordModel.newPassword)
+                {
+                    throw new Exception("The new password is same as the old password");
+                }
+
+                user.Password = changePasswordModel.newPassword;
+                _context.Update(user);
+                await _context.SaveChangesAsync();
+                result.Data = "success";
+            }
+            catch (Exception ex)
+            {
+                result.IsSuccess = false;
+                result.ErrorMessage = ex.Message;
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+
         [HttpPost]
         [Route("ForgotPassword")]
         [AllowAnonymous]
@@ -79,9 +103,10 @@ namespace jupiterCore.Controllers
                 result.Data = "This user does not exist.";
                 return Ok(result);
             }
-            var tokenString = GenerateJwt(user.Email);
-            //var callbackUrl = Url.Action("EmailResetPassword", "User", new { userId = user.Id, code = tokenString }, protocol: HttpContext.Request.Scheme);
-            var callbackUrl = "http://luxedreameventhire.co.nz/" + "userId="+user.Id + "code="+tokenString;
+            var tokenString = GenerateJwt(user.Id);
+
+            //var callbackUrl = Url.Action("EmailResetPassword", "User", new { userId = user.Id, code = tokenToClient }, protocol: HttpContext.Request.Scheme);
+            var callbackUrl = "http://luxedreameventhire.co.nz/" + "userId=" + user.Id + "code=" + tokenString;
             var sendgrid = _context.ApiKey.Find(1);
             var sendGridClient = new SendGridClient(sendgrid.ApiKey1);
 
@@ -103,9 +128,10 @@ namespace jupiterCore.Controllers
         [Route("EmailResetPassword")]
         public IActionResult EmailResetPassword(ResetPasswordModel resetPasswordModel)
         {
+            var userId = int.Parse(User.Claims.First(s => s.Type == "id").Value);
             var result = new Result<string>();
             Type userType = typeof(User);
-            var user = _context.User.FirstOrDefault(x => x.Id == resetPasswordModel.userId);
+            var user = _context.User.FirstOrDefault(x => x.Id == userId);
             if (user != null)
             {
                 user.Password = resetPasswordModel.Password;
@@ -164,7 +190,7 @@ namespace jupiterCore.Controllers
             string result = ValidateUser(loginModel);
             if(result == "Success")
             {
-                var tokenString = GenerateJwt(user.Email);
+                var tokenString = GenerateJwt(user.Id);
                 return Ok(new { token = tokenString });
             }
             else
@@ -176,11 +202,11 @@ namespace jupiterCore.Controllers
 
 
 
-        private string GenerateJwt(string email)
+        private string GenerateJwt(int id)
         {
             var claims = new[]
             {
-                new Claim(ClaimTypes.Email,email)
+                new Claim("id",id.ToString())
             };
             var issuer = _configuration["Jwt:Issuer"];
             var audience = _configuration["Jwt:Audience"];
@@ -190,9 +216,9 @@ namespace jupiterCore.Controllers
             var credentials = new SigningCredentials
                 (securityKey, SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken(issuer: issuer,
-                audience: audience,
-                claims:claims,
+            var token = new JwtSecurityToken(issuer,
+                audience,
+                claims,
                 expires: DateTime.Now.AddMinutes(120),
                 signingCredentials: credentials);
 
