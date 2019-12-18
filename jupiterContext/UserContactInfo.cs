@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace jupiterCore.jupiterContext
 {
@@ -12,6 +13,7 @@ namespace jupiterCore.jupiterContext
         public string PhoneNumber { get; set; }
         public string Company { get; set; }
 
+        [JsonIgnore]
         public virtual User User { get; set; }
     }
 }
