@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AutoMapper;
 using Jupiter.Controllers;
 using Microsoft.AspNetCore.Mvc;
