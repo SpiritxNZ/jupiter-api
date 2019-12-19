@@ -132,7 +132,10 @@ namespace jupiterCore.Controllers
                 //dateList.Add(DateTime.Now.AddDays(avaliable[j]));
                 dateList.Add(checkProdStockModel.ToArray()[0].beginDate.AddDays(avaliable[j]));
             }
-            return dateList;
+
+            List<DateTime> allDateList = GenerateDate(checkProdStockModel.ToArray()[0].beginDate);
+            List<DateTime> unavaliable = new List<DateTime>(allDateList.Except(dateList));
+            return unavaliable;
         }
 
 
