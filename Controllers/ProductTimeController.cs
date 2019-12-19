@@ -62,14 +62,14 @@ namespace jupiterCore.Controllers
         }
 
         //get the total stock of the product
-        public int GetProdStock(int proDetailId)
+        private int GetProdStock(int proDetailId)
         {
             var productQuantity = _context.ProductDetail.Find(proDetailId);
             return (int)productQuantity.TotalStock;
         }
 
         //calculate the available stock of the produdct in the time period
-        public int[] CalculateQuantity (int proDetailId, DateTime beginDate)
+        private int[] CalculateQuantity (int proDetailId, DateTime beginDate)
         {
             List<DateTime> dateList = GenerateDate(beginDate);
             int totalStock = GetProdStock(proDetailId);
@@ -141,29 +141,5 @@ namespace jupiterCore.Controllers
 
 
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/values
-        //[HttpPost]
-        public void Post([FromBody]string value)
-        {
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }

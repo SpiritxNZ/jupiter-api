@@ -132,7 +132,7 @@ namespace jupiterCore.Controllers
             return _context.ContactEmail.Any(e => e.Id == id);
         }
 
-        public void SendEmail(ContactEmailModel contactEmailModel)
+        private void SendEmail(ContactEmailModel contactEmailModel)
         {
             var sendgrid = _context.ApiKey.Find(1);
             var sendGridClient = new SendGridClient(sendgrid.ApiKey1);

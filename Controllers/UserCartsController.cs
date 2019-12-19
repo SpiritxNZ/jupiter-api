@@ -129,6 +129,25 @@ namespace jupiterCore.Controllers
                 result.IsFound = false;
                 return BadRequest(result);
             }
+            cartContactModel.ProductTimetableModel.ToList().ForEach(s => {
+                _context.ProductTimetable.Add(new ProductTimetable {
+                    ProdDetailId = s.ProdDetailId,
+                    BeginDate = s.BeginDate,
+                    EndDate = s.EndDate,
+                    Quantity = s.Quantity
+                });
+            });
+            try
+            {
+                //await _context.ProductTimetable.AddAsync(productTimetable);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                result.ErrorMessage = e.Message;
+                result.IsSuccess = false;
+                return BadRequest(result);
+            }
 
             return Ok(result);
         }
@@ -158,7 +177,7 @@ namespace jupiterCore.Controllers
             return Ok(result);
         }
 
-        public void SendCartEmail(CartContactModel cartContactModel)
+        private void SendCartEmail(CartContactModel cartContactModel)
         {
 
             var sendgrid = _context.ApiKey.Find(1);

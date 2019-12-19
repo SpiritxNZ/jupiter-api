@@ -157,7 +157,7 @@ namespace jupiterCore.Controllers
             return Ok(result);
         }
 
-        public void SendCartEmail(CartContactModel cartContactModel)
+        private void SendCartEmail(CartContactModel cartContactModel)
         {
 
             var sendgrid = _context.ApiKey.Find(1);
