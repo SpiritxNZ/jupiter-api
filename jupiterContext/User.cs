@@ -16,15 +16,6 @@ namespace jupiterCore.jupiterContext
         public string Password { get; set; }
 
         public virtual ICollection<UserContactInfo> UserContactInfo { get; set; }
-
-        public static implicit operator string(User v)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static implicit operator User(Task<List<User>> v)
-        {
-            throw new NotImplementedException();
-        }
+        public virtual ICollection<Cart> Cart { get; set; }
     }
 }

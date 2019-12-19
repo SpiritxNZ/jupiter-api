@@ -22,12 +22,12 @@ namespace jupiterCore.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CartsController : BasicController
+    public class UserCartsController : BasicController
     {
         private readonly jupiterContext.jupiterContext _context;
         private readonly IMapper _mapper;
 
-        public CartsController(jupiterContext.jupiterContext context, IMapper mapper)
+        public UserCartsController(jupiterContext.jupiterContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
@@ -35,20 +35,20 @@ namespace jupiterCore.Controllers
 
         // GET: api/Carts
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public ActionResult<List<Cart>> GetCart()
         {
-            var cartsValue = _context.Cart.Where(x => x.IsActivate == 1).Include(s => s.Contact).Include(s => s.CartProd).ToList();
+            var cartsValue = _context.Cart.Where(x => x.IsActivate == 1 && x.UserId == null).Include(s => s.Contact).Include(s => s.CartProd).ToList();
             return Ok(cartsValue);
         }
 
         // GET: api/Carts/5
-        [HttpGet("{id}")]
-        [Authorize]
-        public ActionResult GetCart(int id)
+        [HttpGet("{userId}")]
+        //[Authorize]
+        public ActionResult GetCart(int userId)
         {
             var cart1 = _context.Cart.Include(s => s.Contact).Include(s => s.CartProd)
-                .FirstOrDefault(s => s.CartId == id);
+                .Where(s => s.UserId == userId);
             return Ok(cart1);
         }
 
@@ -82,8 +82,8 @@ namespace jupiterCore.Controllers
 
         // POST: api/Carts
         [CheckModelFilter]
-        [HttpPost]
-        public async Task<ActionResult<Cart>> PostCart(CartContactModel cartContactModel)
+        [HttpPost("{id}")]
+        public async Task<ActionResult<Cart>> PostCart(int id,CartContactModel cartContactModel)
         {
 
             var result = new Result<Cart>();
@@ -116,6 +116,7 @@ namespace jupiterCore.Controllers
             cart.CreateOn = DateTime.Now;
             cart.IsActivate = 1;
             cart.ContactId = contact.ContactId;
+            cart.UserId = id;
 
             try
             {
@@ -166,7 +167,7 @@ namespace jupiterCore.Controllers
             var myMessage = new SendGridMessage();
 
             //myMessage.AddTo("Info@luxedreameventhire.co.nz");
-            myMessage.AddTo(cartContactModel.ContactModel.Email);
+            //myMessage.AddTo(cartContactModel.ContactModel.Email);
             myMessage.From = new EmailAddress("Info@luxedreameventhire.co.nz", "LuxeDreamEventHire");
             myMessage.SetTemplateId("d-8b50f89729a24c0590fcee9ef8bee1fe");
 
@@ -192,7 +193,7 @@ namespace jupiterCore.Controllers
             });
             sendGridClient.SendEmailAsync(myMessage);
 
-        
+
         }
     }
 }

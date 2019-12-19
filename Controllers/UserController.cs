@@ -131,12 +131,11 @@ namespace jupiterCore.Controllers
             var tokenString = GenerateJwt(user.Id);
 
             //var callbackUrl = Url.Action("EmailResetPassword", "User", new { userId = user.Id, code = tokenToClient }, protocol: HttpContext.Request.Scheme);
-            var callbackUrl = "http://luxedreameventhire.co.nz/" + "userId=" + user.Id + "code=" + tokenString;
+            var callbackUrl = "http://localhost:4239/reset?" + "code=" + tokenString;
             var sendgrid = _context.ApiKey.Find(1);
             var sendGridClient = new SendGridClient(sendgrid.ApiKey1);
 
             var myMessage = new SendGridMessage();
-
             myMessage.AddTo(user.Email);
             myMessage.From = new EmailAddress("Info@luxedreameventhire.co.nz", "LuxeDreamEventHire");
             myMessage.Subject = "ResetPassword";
@@ -150,7 +149,7 @@ namespace jupiterCore.Controllers
         [HttpPut]
         [Authorize]
         //[ValidateAntiForgeryToken]
-        [Route("EmailResetPassword")]
+        [Route("ResetPassword")]
         public IActionResult EmailResetPassword(ResetPasswordModel resetPasswordModel)
         {
             var userId = int.Parse(User.Claims.First(s => s.Type == "id").Value);
@@ -235,7 +234,7 @@ namespace jupiterCore.Controllers
             };
             var issuer = _configuration["Jwt:Issuer"];
             var audience = _configuration["Jwt:Audience"];
-            var expiry = DateTime.Now.AddMinutes(120);
+            var expiry = DateTime.Now.AddMinutes(1);
             var securityKey = new SymmetricSecurityKey
                 (Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var credentials = new SigningCredentials
@@ -244,7 +243,7 @@ namespace jupiterCore.Controllers
             var token = new JwtSecurityToken(issuer,
                 audience,
                 claims,
-                expires: DateTime.Now.AddMinutes(120),
+                expires: DateTime.Now.AddMinutes(1),
                 signingCredentials: credentials);
 
             var tokenHandler = new JwtSecurityTokenHandler();

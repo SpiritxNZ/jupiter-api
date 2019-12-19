@@ -37,10 +37,10 @@ namespace jupiterCore.Controllers
 
         //get product rent time
         [HttpGet]
-        [Route("[action]/{ProdId}")]
+        [Route("[action]/{ProdDetailId}")]
         public List<ProductTimetable> GetProductTime(int proDetailId)
         {
-            var productTime = _context.ProductTimetable.Where(x => x.ProdId == proDetailId).ToList();
+            var productTime = _context.ProductTimetable.Where(x => x.ProdDetailId == proDetailId).ToList();
             return productTime;
         }
 
@@ -50,7 +50,8 @@ namespace jupiterCore.Controllers
         private List<DateTime> GenerateDate(DateTime beginDate)
         {
             //DateTime startDay = DateTime.Parse(DateTime.Now.ToShortDateString());
-            var endMonth = DateTime.Parse(beginDate.AddDays(1 - beginDate.Day).AddMonths(1).AddDays(-1).ToShortDateString());
+            //var endMonth = DateTime.Parse(beginDate.AddDays(1 - beginDate.Day).AddMonths(4).AddDays(-1).ToShortDateString());
+            var endMonth = DateTime.Parse(beginDate.AddDays(90).ToShortDateString());
             List<DateTime> dateList = new List<DateTime>();
             for (DateTime dt = beginDate; dt <= endMonth; dt = dt.AddDays(1))
             {
@@ -103,7 +104,7 @@ namespace jupiterCore.Controllers
             int i = 0;
             foreach(var prod in checkProdStockModel)
             {
-                storeAvaliableStock[i] = CalculateQuantity(prod.id, prod.beginDate);
+                storeAvaliableStock[i] = CalculateQuantity(prod.proddetailid, prod.beginDate);
                 rentNum[i] = prod.quantity;
                 i++;
             }
@@ -128,7 +129,8 @@ namespace jupiterCore.Controllers
             List<DateTime> dateList = new List<DateTime>();
             for (int j = 0;j<avaliable.Count;j++)
             {
-                dateList.Add(DateTime.Now.AddDays(avaliable[j]));
+                //dateList.Add(DateTime.Now.AddDays(avaliable[j]));
+                dateList.Add(checkProdStockModel.ToArray()[0].beginDate.AddDays(avaliable[j]));
             }
             return dateList;
         }

@@ -33,7 +33,7 @@ namespace jupiterCore.Controllers
         [HttpPut]
         //[Authorize]
         //[ValidateAntiForgeryToken]
-        [Route("MdifyInfo")]
+        [Route("ModifyInfo")]
         public async Task<ActionResult<UserContactInfo>> ModifyInfo([FromBody] UserContactInfoModel userContactInfoModel)
         {
             //var result = new Result<string>();
@@ -61,6 +61,7 @@ namespace jupiterCore.Controllers
             {
                 //_context.Update(user);
                 _context.SaveChanges();
+                result.Data = user;
             }
             catch (Exception ex)
             {

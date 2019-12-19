@@ -106,10 +106,17 @@ namespace jupiterCore.jupiterContext
 
                 entity.Property(e => e.Price).HasColumnType("decimal(10,2)");
 
+                entity.Property(e => e.UserId).HasColumnType("int(11)");
+
                 entity.HasOne(d => d.Contact)
                     .WithMany(p => p.Cart)
                     .HasForeignKey(d => d.ContactId)
                     .HasConstraintName("FK_Reference_11");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Cart)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_Reference_22");
             });
 
             modelBuilder.Entity<CartProd>(entity =>
@@ -395,18 +402,18 @@ namespace jupiterCore.jupiterContext
             {
                 entity.ToTable("ProductTimetable", "luxedream");
 
-                entity.HasIndex(e => e.ProdId)
+                entity.HasIndex(e => e.ProdDetailId)
                     .HasName("fk_prodtimetable_idx");
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
-                entity.Property(e => e.ProdId).HasColumnType("int(11)");
+                entity.Property(e => e.ProdDetailId).HasColumnType("int(11)");
 
                 entity.Property(e => e.Quantity).HasColumnType("int(11)");
 
                 entity.HasOne(d => d.Prod)
                     .WithMany(p => p.ProductTimetable)
-                    .HasForeignKey(d => d.ProdId)
+                    .HasForeignKey(d => d.ProdDetailId)
                     .HasConstraintName("fk_prodtimetable");
             });
 

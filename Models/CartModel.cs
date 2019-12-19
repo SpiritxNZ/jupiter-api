@@ -20,7 +20,7 @@ namespace Jupiter.Models
         public DateTime? UpdateOn { get; set; }
         public int? ContactId { get; set; }
 
-        
+        public int? UserId { get; set; }
         public Contact Contact { get; set; }
         public IEnumerable<CartProd> CartProd { get; set; }
     }
