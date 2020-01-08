@@ -409,6 +409,8 @@ namespace jupiterCore.jupiterContext
 
                 entity.Property(e => e.ProdDetailId).HasColumnType("int(11)");
 
+                entity.Property(e => e.ProdId).HasColumnType("int(11)");
+
                 entity.Property(e => e.Quantity).HasColumnType("int(11)");
 
                 entity.Property(e => e.CartId).HasColumnType("int(11)");

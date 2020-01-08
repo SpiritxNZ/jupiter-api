@@ -132,6 +132,7 @@ namespace jupiterCore.Controllers
             cartContactModel.ProductTimetableModel.ToList().ForEach(s => {
                 _context.ProductTimetable.Add(new ProductTimetable {
                     ProdDetailId = s.ProdDetailId,
+                    ProdId = s.ProdId,
                     BeginDate = s.BeginDate,
                     EndDate = s.EndDate,
                     Quantity = s.Quantity,

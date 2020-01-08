@@ -38,9 +38,19 @@ namespace jupiterCore.Controllers
         //get product rent time
         [HttpGet("{id}")]
         //[Route("[action]/{ProdDetailId}")]
-        public List<ProductTimetable> GetProductTime(int id)
+        public List<ProductTimetable> GetProductTime(int id,int isDetailId)
         {
-            var productTime = _context.ProductTimetable.Where(x => x.ProdDetailId == id).ToList();
+            var productTime = new List<ProductTimetable>();
+            if (isDetailId == 1)
+            {
+                productTime = _context.ProductTimetable.Where(x => x.ProdDetailId == id).ToList();
+            }
+            else if (isDetailId == 0)
+            {
+                productTime = _context.ProductTimetable.Where(x => x.ProdId == id).ToList();
+            }
+
+
             return productTime;
         }
 
@@ -49,8 +59,6 @@ namespace jupiterCore.Controllers
         //generate the date between now and the end of this month
         private List<DateTime> GenerateDate(DateTime beginDate)
         {
-            //DateTime startDay = DateTime.Parse(DateTime.Now.ToShortDateString());
-            //var endMonth = DateTime.Parse(beginDate.AddDays(1 - beginDate.Day).AddMonths(4).AddDays(-1).ToShortDateString());
             var endMonth = DateTime.Parse(beginDate.AddDays(90).ToShortDateString());
             List<DateTime> dateList = new List<DateTime>();
             for (DateTime dt = beginDate; dt <= endMonth; dt = dt.AddDays(1))
@@ -62,19 +70,27 @@ namespace jupiterCore.Controllers
         }
 
         //get the total stock of the product
-        private int GetProdStock(int proDetailId)
+        private int GetProdStock(int proDetailId,int isDetailId)
         {
-            var productQuantity = _context.ProductDetail.Find(proDetailId);
+            if (isDetailId == 1)
+            {
+                var productQuantity1 = _context.ProductDetail.Find(proDetailId);
+                return (int)productQuantity1.TotalStock;
+            }
+
+            var productQuantity = _context.Product.First(x=>x.ProdId==proDetailId);
             return (int)productQuantity.TotalStock;
+
+            
         }
 
         //calculate the available stock of the produdct in the time period
-        private int[] CalculateQuantity (int proDetailId, DateTime beginDate)
+        private int[] CalculateQuantity (int proDetailId, DateTime beginDate, int isDetailId)
         {
             List<DateTime> dateList = GenerateDate(beginDate);
-            int totalStock = GetProdStock(proDetailId);
+            int totalStock = GetProdStock(proDetailId,isDetailId);
 
-            var productTime = GetProductTime(proDetailId);
+            var productTime = GetProductTime(proDetailId,isDetailId);
             int prodTimeLength = productTime.Count();
             int[] prodQuantity = new int[dateList.Count];
             for (int i = 0; i < dateList.Count(); i++)
@@ -104,7 +120,15 @@ namespace jupiterCore.Controllers
             int i = 0;
             foreach(var prod in checkProdStockModel)
             {
-                storeAvaliableStock[i] = CalculateQuantity(prod.proddetailid, prod.beginDate);
+                if(prod.prodid == null)
+                {
+                    storeAvaliableStock[i] = CalculateQuantity((int)prod.proddetailid, prod.beginDate,1);
+                }
+                else if (prod.prodid != null)
+                {
+                    storeAvaliableStock[i] = CalculateQuantity((int)prod.prodid, prod.beginDate,0);
+                }
+                
                 rentNum[i] = prod.quantity;
                 i++;
             }
@@ -129,7 +153,6 @@ namespace jupiterCore.Controllers
             List<DateTime> dateList = new List<DateTime>();
             for (int j = 0;j<avaliable.Count;j++)
             {
-                //dateList.Add(DateTime.Now.AddDays(avaliable[j]));
                 dateList.Add(checkProdStockModel.ToArray()[0].beginDate.AddDays(avaliable[j]));
             }
 
@@ -137,12 +160,6 @@ namespace jupiterCore.Controllers
             List<DateTime> unavaliable = new List<DateTime>(allDateList.Except(dateList));
             return unavaliable;
         }
-
-
-
-
-
-
 
     }
 }

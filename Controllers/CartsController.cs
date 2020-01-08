@@ -89,7 +89,7 @@ namespace jupiterCore.Controllers
             var result = new Result<Cart>();
             try
             {
-                SendCartEmail(cartContactModel);
+                //SendCartEmail(cartContactModel);
             }
             catch (Exception e)
             {
@@ -133,6 +133,7 @@ namespace jupiterCore.Controllers
                 _context.ProductTimetable.Add(new ProductTimetable
                 {
                     ProdDetailId = s.ProdDetailId,
+                    ProdId = s.ProdId,
                     BeginDate = s.BeginDate,
                     EndDate = s.EndDate,
                     Quantity = s.Quantity,
