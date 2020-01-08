@@ -79,7 +79,7 @@ namespace jupiterCore.Controllers
             return Ok(result);
         }
 
-        public async Task<int> GetMailchimp(string email)
+        private async Task<int> GetMailchimp(string email)
         {
             var mailchimp = _context.ApiKey.Find(2);
 
