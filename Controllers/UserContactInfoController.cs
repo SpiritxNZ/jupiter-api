@@ -79,24 +79,6 @@ namespace jupiterCore.Controllers
             return Ok(result);
         }
 
-        private async Task<int> GetMailchimp(string email)
-        {
-            var mailchimp = _context.ApiKey.Find(2);
-
-            IMailChimpManager mailChimpManager = new MailChimpManager(mailchimp.ApiKey1);
-            var listId = "c8326de226";
-
-            var members = await mailChimpManager.Members.GetAllAsync(listId).ConfigureAwait(false);
-            var member = members.FirstOrDefault(x => x.EmailAddress == email);
-
-            if (member == null)
-            {
-                return 0;
-            }
-
-            return 1;
-        }
-
         private async Task<IActionResult> UserSubscribe(UserContactInfoModel userContactInfoModel)
         {
             var result = new Result<string>();
