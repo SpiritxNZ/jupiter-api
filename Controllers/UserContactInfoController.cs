@@ -9,6 +9,9 @@ using jupiterCore.jupiterContext;
 using jupiterCore.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MailChimp.Net.Interfaces;
+using MailChimp.Net;
+using MailChimp.Net.Models;
 
 namespace jupiterCore.Controllers
 {
@@ -30,36 +33,38 @@ namespace jupiterCore.Controllers
             _configuration = configuration;
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         //[Authorize]
         //[ValidateAntiForgeryToken]
-        [Route("ModifyInfo")]
-        public async Task<ActionResult<UserContactInfo>> ModifyInfo([FromBody] UserContactInfoModel userContactInfoModel)
+        //[Route("ModifyInfo")]
+        public async Task<ActionResult<UserContactInfo>> ModifyInfo(int id,[FromBody] UserContactInfoModel userContactInfoModel)
         {
             //var result = new Result<string>();
             var result = new Result<UserContactInfo>();
-            //Type userType = typeof(User);
-            var user = await _context.UserContactInfo.Where(x => x.UserId == userContactInfoModel.UserId).FirstOrDefaultAsync();
+
+            var user = await _context.UserContactInfo.Where(x => x.UserId == id).FirstOrDefaultAsync();
+            var updateSubscribe = await _context.User.FirstAsync(x => x.Id == id);
+
             if (user == null)
             {
                 UserContactInfo userContactInfo = new UserContactInfo();
                 _mapper.Map(userContactInfoModel, userContactInfo);
+
                 await _context.UserContactInfo.AddAsync(userContactInfo);
-                //await _context.SaveChangesAsync();
             }
             else
             {
                 user.FirstName = userContactInfoModel.FirstName;
                 user.LastName = userContactInfoModel.LastName;
                 user.PhoneNumber = userContactInfoModel.PhoneNumber;
-                //_mapper.Map(userContactInfoModel, user);
                 _context.UserContactInfo.Update(user);
-                //await _context.SaveChangesAsync();
 
             }
+            updateSubscribe.IsSubscribe = userContactInfoModel.IsSubscribe;
+            _context.User.Update(updateSubscribe);
             try
             {
-                //_context.Update(user);
+                await UserSubscribe(userContactInfoModel);
                 _context.SaveChanges();
                 result.Data = user;
             }
@@ -73,5 +78,52 @@ namespace jupiterCore.Controllers
             result.IsSuccess = true;
             return Ok(result);
         }
+
+        public async Task<int> GetMailchimp(string email)
+        {
+            var mailchimp = _context.ApiKey.Find(2);
+
+            IMailChimpManager mailChimpManager = new MailChimpManager(mailchimp.ApiKey1);
+            var listId = "c8326de226";
+
+            var members = await mailChimpManager.Members.GetAllAsync(listId).ConfigureAwait(false);
+            var member = members.FirstOrDefault(x => x.EmailAddress == email);
+
+            if (member == null)
+            {
+                return 0;
+            }
+
+            return 1;
+        }
+
+        private async Task<IActionResult> UserSubscribe(UserContactInfoModel userContactInfoModel)
+        {
+            var result = new Result<string>();
+            var mailchimp = _context.ApiKey.Find(2);
+
+            IMailChimpManager mailChimpManager = new MailChimpManager(mailchimp.ApiKey1);
+            var listId = "c8326de226";
+            var user = await _context.User.FirstAsync(x => x.Id == userContactInfoModel.UserId);
+            var members = await mailChimpManager.Members.GetAllAsync(listId).ConfigureAwait(false);
+            var member = members.First(x => x.EmailAddress == user.Email);
+
+            // Use the Status property if updating an existing member
+            member.MergeFields.Clear();
+            member.MergeFields.Add("FNAME", userContactInfoModel.FirstName);
+            member.MergeFields.Add("LNAME", userContactInfoModel.LastName);
+            if (userContactInfoModel.IsSubscribe == 0)
+            {
+                member.Status = Status.Unsubscribed;
+            }
+            else if (userContactInfoModel.IsSubscribe == 1)
+            {
+                member.Status = Status.Subscribed;
+            }
+            
+            await mailChimpManager.Members.AddOrUpdateAsync(listId, member);
+            return Ok(result);
+        }
+
     }
 }

@@ -36,11 +36,11 @@ namespace jupiterCore.Controllers
         //}
 
         //get product rent time
-        [HttpGet]
-        [Route("[action]/{ProdDetailId}")]
-        public List<ProductTimetable> GetProductTime(int proDetailId)
+        [HttpGet("{id}")]
+        //[Route("[action]/{ProdDetailId}")]
+        public List<ProductTimetable> GetProductTime(int id)
         {
-            var productTime = _context.ProductTimetable.Where(x => x.ProdDetailId == proDetailId).ToList();
+            var productTime = _context.ProductTimetable.Where(x => x.ProdDetailId == id).ToList();
             return productTime;
         }
 

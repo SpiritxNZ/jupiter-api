@@ -41,7 +41,7 @@ namespace jupiterCore.jupiterContext
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySQL("server=45.76.123.59;port=3306;user=dbuser;password=qwer1234;database=luxedream");
+                optionsBuilder.UseMySQL("server=45.76.123.59;port=3306;user=dbuser;password=8Tg01UyW7rOg6PZatvvFTuoPWOQ58wvT;database=luxedream");
             }
         }
 
@@ -411,6 +411,8 @@ namespace jupiterCore.jupiterContext
 
                 entity.Property(e => e.Quantity).HasColumnType("int(11)");
 
+                entity.Property(e => e.CartId).HasColumnType("int(11)");
+
                 entity.HasOne(d => d.Prod)
                     .WithMany(p => p.ProductTimetable)
                     .HasForeignKey(d => d.ProdDetailId)
@@ -509,6 +511,8 @@ namespace jupiterCore.jupiterContext
                 entity.ToTable("User", "luxedream");
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.Property(e => e.IsSubscribe).HasColumnType("tinyint(4)").HasDefaultValue(0);
 
                 entity.Property(e => e.Email)
                     .IsRequired()

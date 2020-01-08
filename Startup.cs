@@ -48,7 +48,7 @@ namespace jupiterCore
             services.AddDbContext<jupiterContext.jupiterContext>(options =>
                             //options.UseMySQL("server=localhost;port=3306;user=lyric;password=Lychy31623;database=jupiter"));
 
-                options.UseMySQL("server=45.76.123.59;port=3306;user=dbuser;password=qwer1234;database=luxedream"));
+                options.UseMySQL("server=45.76.123.59;port=3306;user=dbuser;password=8Tg01UyW7rOg6PZatvvFTuoPWOQ58wvT;database=luxedream"));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddJsonOptions(option =>
@@ -82,6 +82,8 @@ namespace jupiterCore
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "jupiter API", Version = "v1" });
             });
 
+         
+
 
         }
 
@@ -98,7 +100,6 @@ namespace jupiterCore
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
             app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseStaticFiles();

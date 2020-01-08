@@ -35,7 +35,7 @@ namespace jupiterCore.Controllers
 
         // GET: api/Carts
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public ActionResult<List<Cart>> GetCart()
         {
             var cartsValue = _context.Cart.Where(x => x.IsActivate == 1).Include(s => s.Contact).Include(s => s.CartProd).ToList();
@@ -44,7 +44,7 @@ namespace jupiterCore.Controllers
 
         // GET: api/Carts/5
         [HttpGet("{id}")]
-        [Authorize]
+        //[Authorize]
         public ActionResult GetCart(int id)
         {
             var cart1 = _context.Cart.Include(s => s.Contact).Include(s => s.CartProd)
@@ -126,6 +126,28 @@ namespace jupiterCore.Controllers
             {
                 result.ErrorMessage = e.Message;
                 result.IsFound = false;
+                return BadRequest(result);
+            }
+
+            cartContactModel.ProductTimetableModel.ToList().ForEach(s => {
+                _context.ProductTimetable.Add(new ProductTimetable
+                {
+                    ProdDetailId = s.ProdDetailId,
+                    BeginDate = s.BeginDate,
+                    EndDate = s.EndDate,
+                    Quantity = s.Quantity,
+                    CartId = cart.CartId,
+
+                });
+            });
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                result.ErrorMessage = e.Message;
+                result.IsSuccess = false;
                 return BadRequest(result);
             }
 

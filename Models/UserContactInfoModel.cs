@@ -11,6 +11,7 @@ namespace jupiterCore.Models
         public string LastName { get; set; }
         public string PhoneNumber { get; set; }
         public string Company { get; set; }
+        public byte IsSubscribe { get; set; }
 
         public User User { get; set; }
     }

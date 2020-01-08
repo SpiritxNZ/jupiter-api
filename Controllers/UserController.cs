@@ -17,6 +17,10 @@ using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using MailChimp;
+using MailChimp.Net.Models;
+using MailChimp.Net.Interfaces;
+using MailChimp.Net;
 
 namespace jupiterCore.Controllers
 {
@@ -53,7 +57,7 @@ namespace jupiterCore.Controllers
         {
             var result = new Result<object>();
 
-            var user = _context.User.Include(x => x.UserContactInfo).Select(s=>new { s.Id,s.Email,UserInfo=s.UserContactInfo}).ToListAsync();
+            var user = _context.User.Include(x => x.UserContactInfo).Select(s=>new { s.Id,s.Email,s.IsSubscribe,UserInfo=s.UserContactInfo}).ToListAsync();
             result.Data = user;
 
             return Ok(result);
@@ -65,7 +69,7 @@ namespace jupiterCore.Controllers
         {
             Result<Object> result = new Result<Object>();
 
-            var user = await _context.User.Include(x => x.UserContactInfo).Where(x => x.Id == id).Select(s => new { s.Id, s.Email, UserInfo = s.UserContactInfo }).ToListAsync();
+            var user = await _context.User.Include(x => x.UserContactInfo).Where(x => x.Id == id).Select(s => new { s.Id, s.Email, s.IsSubscribe, UserInfo = s.UserContactInfo }).ToListAsync();
             result.Data = user;
             return Ok(result);
         }
@@ -179,7 +183,7 @@ namespace jupiterCore.Controllers
 
         [HttpPost]
         [Route("register")]
-        public IActionResult Register([FromBody] UserModel userModel)
+        public async Task<IActionResult> Register([FromBody] UserModel userModel)
         {
             var result = new Result<User>();
 
@@ -191,8 +195,13 @@ namespace jupiterCore.Controllers
             User newUser = new User();
             _mapper.Map(userModel, newUser);
             result.Data = newUser;
-            _context.User.AddAsync(newUser);
-            _context.SaveChangesAsync();
+            //if (newUser.IsSubscribe == 1)
+            //{
+            //    await UserSubscribe(userModel);
+            //}
+            await UserSubscribe(userModel);
+            await _context.User.AddAsync(newUser);
+            await _context.SaveChangesAsync();
 
             return Ok(result);
         }
@@ -224,7 +233,35 @@ namespace jupiterCore.Controllers
             
         }
 
+        //[HttpPut]
+        //[Route("modifyInfo")]
+        //public async Task<IActionResult> ModifyInfo([FromBody] UserModel userModel)
+        //{
+        //    var user = await _context.User
+        //}
 
+        private async Task<IActionResult> UserSubscribe(UserModel userModel)
+        {
+            var result = new Result<string>();
+            var mailchimp = _context.ApiKey.Find(2);
+
+            IMailChimpManager mailChimpManager = new MailChimpManager(mailchimp.ApiKey1);
+            var listId = "c8326de226";
+
+            if (userModel.IsSubscribe == 0)
+            {
+                var member = new Member { EmailAddress = userModel.Email, StatusIfNew = Status.Unsubscribed };
+                await mailChimpManager.Members.AddOrUpdateAsync(listId, member);
+            }
+            else if(userModel.IsSubscribe == 1)
+            {
+                var member = new Member { EmailAddress = userModel.Email, StatusIfNew = Status.Subscribed };
+                await mailChimpManager.Members.AddOrUpdateAsync(listId, member);
+            }
+
+            
+            return Ok(result);
+        }
 
         private string GenerateJwt(int id)
         {

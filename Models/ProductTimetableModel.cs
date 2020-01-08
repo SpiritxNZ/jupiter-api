@@ -9,6 +9,7 @@ namespace jupiterCore.Models
         public DateTime? BeginDate { get; set; }
         public DateTime? EndDate { get; set; }
         public int? Quantity { get; set; }
+        public int? CartId { get; set; }
 
         //public ProductDetailModel ProdDetail { get; set; }
     }

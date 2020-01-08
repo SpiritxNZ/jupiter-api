@@ -134,12 +134,13 @@ namespace jupiterCore.Controllers
                     ProdDetailId = s.ProdDetailId,
                     BeginDate = s.BeginDate,
                     EndDate = s.EndDate,
-                    Quantity = s.Quantity
+                    Quantity = s.Quantity,
+                    CartId = cart.CartId,
+                    
                 });
             });
             try
             {
-                //await _context.ProductTimetable.AddAsync(productTimetable);
                 await _context.SaveChangesAsync();
             }
             catch (Exception e)

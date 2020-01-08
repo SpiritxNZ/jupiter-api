@@ -15,6 +15,8 @@ namespace jupiterCore.Models
         [MinLength(6)]
         public string Password { get; set; }
 
+        public byte IsSubscribe { get; set; }
+
         //[DataType(DataType.Password)]
         //[Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         //public string ComfirmPassword { get; set; }
