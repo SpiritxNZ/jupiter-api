@@ -106,6 +106,10 @@ namespace jupiterCore.jupiterContext
 
                 entity.Property(e => e.Price).HasColumnType("decimal(10,2)");
 
+                entity.Property(e => e.DeliveryFee).HasColumnType("decimal(10,2)");
+
+                entity.Property(e => e.DepositFee).HasColumnType("decimal(10,2)");
+
                 entity.Property(e => e.UserId).HasColumnType("int(11)");
 
                 entity.HasOne(d => d.Contact)

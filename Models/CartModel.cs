@@ -21,6 +21,9 @@ namespace Jupiter.Models
         public int? ContactId { get; set; }
 
         public int? UserId { get; set; }
+        public decimal? DeliveryFee { get; set; }
+        public decimal? DepositFee { get; set; }
+
         public Contact Contact { get; set; }
         public IEnumerable<CartProd> CartProd { get; set; }
     }

@@ -21,6 +21,9 @@ namespace jupiterCore.jupiterContext
 
         public int? UserId { get; set; }
 
+        public decimal? DeliveryFee { get; set; }
+        public decimal? DepositFee { get; set; }
+
         public virtual User User { get; set; }
         public virtual Contact Contact { get; set; }
         public virtual ICollection<CartProd> CartProd { get; set; }
