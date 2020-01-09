@@ -112,6 +112,12 @@ namespace jupiterCore.jupiterContext
 
                 entity.Property(e => e.UserId).HasColumnType("int(11)");
 
+                entity.Property(e => e.IsPickup).HasColumnType("tinyint(4)");
+
+                entity.Property(e => e.Region)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
                 entity.HasOne(d => d.Contact)
                     .WithMany(p => p.Cart)
                     .HasForeignKey(d => d.ContactId)
