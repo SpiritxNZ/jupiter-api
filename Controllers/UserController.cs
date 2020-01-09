@@ -210,6 +210,7 @@ namespace jupiterCore.Controllers
         [Route("login")]
         public IActionResult Login([FromBody] LoginModel loginModel)
         {
+            var result1 = new Result<Object>();
             var user = _context.User.FirstOrDefault(x => x.Email == loginModel.Email);
             if (user == null)
             {
@@ -224,6 +225,8 @@ namespace jupiterCore.Controllers
             if(result == "Success")
             {
                 var tokenString = GenerateJwt(user.Id);
+                result1.Data = new JsonResult { userId = user.Id, email = user.Email, token = tokenString };
+                return Ok(result1);
                 return Ok(new { token = tokenString });
             }
             else
