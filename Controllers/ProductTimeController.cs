@@ -22,6 +22,11 @@ namespace jupiterCore.Controllers
             _context = context;
             _mapper = mapper;
         }
+        public class JsonResult
+        {
+            public int? ProdDetailId { get; set; }
+            public int? ProdId { get; set; }
+        }
 
         // GET: api/values
         //[HttpGet]
@@ -159,6 +164,66 @@ namespace jupiterCore.Controllers
             List<DateTime> allDateList = GenerateDate(checkProdStockModel.ToArray()[0].beginDate);
             List<DateTime> unavaliable = new List<DateTime>(allDateList.Except(dateList));
             return unavaliable;
+        }
+
+        [HttpPost]
+        [Route("[action]")]
+        public IActionResult CheckIfAvaliable([FromBody] IEnumerable<ProductTimetableModel> productTimetableModel)
+        {
+            //var result = new Result<Object>();
+            var result = new Result<string>();
+            //var checkif = new List<JsonResult>();
+            var checkProdStockModel = new List<CheckProdStockModel>();
+            productTimetableModel.ToList().ForEach(s =>
+            {
+                checkProdStockModel.Add(new CheckProdStockModel
+                {
+                    proddetailid = s.ProdDetailId,
+                    prodid = s.ProdId,
+                    beginDate = (DateTime)s.BeginDate,
+                    quantity = (int)s.Quantity,
+
+                });
+            });
+            List<DateTime> unavaliables = CalculateTime(checkProdStockModel);
+            DateTime begindate = (DateTime)productTimetableModel.ToArray()[0].BeginDate;
+            DateTime enddate = (DateTime)productTimetableModel.ToArray()[0].EndDate;
+
+            foreach (var unavaliable in unavaliables)
+            {
+                if (unavaliable >= begindate && unavaliable <= enddate)
+                {
+                    result.IsSuccess = false ;
+                    break;
+
+                }
+            }
+
+            //foreach (var productTimetable in productTimetableModel)
+            //{
+            //    foreach (var unavaliable in unavaliables)
+            //    {
+            //        if (unavaliable >= productTimetable.BeginDate && unavaliable <= productTimetable.EndDate)
+            //        {
+            //            if (productTimetable.ProdId != null)
+            //            {
+            //                checkif.Add(new JsonResult
+            //                {
+            //                    ProdId = productTimetable.ProdId,
+            //                });
+            //                break;
+            //            }
+            //            checkif.Add(new JsonResult
+            //            {
+            //                ProdDetailId = productTimetable.ProdDetailId,
+            //            });
+            //            break;
+
+            //        }
+            //    }
+            //}
+
+            return Ok(result);
         }
 
     }

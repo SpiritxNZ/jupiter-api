@@ -85,7 +85,6 @@ namespace jupiterCore.Controllers
         [HttpPost]
         public async Task<ActionResult<Cart>> PostCart(CartContactModel cartContactModel)
         {
-
             var result = new Result<Cart>();
             try
             {
