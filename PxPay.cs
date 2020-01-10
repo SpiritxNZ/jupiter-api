@@ -20,6 +20,8 @@ using System.IO;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using jupiterCore;
+using System.Text;
+
 namespace PaymentExpress
 {
     namespace PxPay
@@ -88,21 +90,35 @@ namespace PaymentExpress
                 
                 webReq.Method = "POST";
 
-                byte[] reqBytes;
+                //byte[] reqBytes;
 
-                reqBytes = System.Text.Encoding.UTF8.GetBytes(InputXml);
+                var reqBytes = Encoding.ASCII.GetBytes(InputXml);
                 webReq.ContentType = "application/x-www-form-urlencoded";
                 webReq.ContentLength = reqBytes.Length;
-                webReq.Timeout = 5000;
+                //webReq.Timeout = 5000;
                 Stream requestStream = webReq.GetRequestStream();
                 requestStream.Write(reqBytes, 0, reqBytes.Length);
                 requestStream.Close();
 
-                HttpWebResponse webResponse = (HttpWebResponse)webReq.GetResponse();
-                using (StreamReader sr = new StreamReader(webResponse.GetResponseStream(), System.Text.Encoding.ASCII))
+                //HttpWebResponse webResponse = (HttpWebResponse)webReq.GetResponse();
+                //using (StreamReader sr = new StreamReader(webResponse.GetResponseStream(), System.Text.Encoding.ASCII))
+                //{
+                //    return sr.ReadToEnd();
+                //}
+                // The using block ensures the stream is automatically closed.
+                WebResponse response = webReq.GetResponse();
+                using (requestStream = response.GetResponseStream())
                 {
-                    return sr.ReadToEnd();
+                    // Open the stream using a StreamReader for easy access.  
+                    StreamReader reader = new StreamReader(requestStream);
+                    // Read the content.  
+                    string responseFromServer = reader.ReadToEnd();
+                    response.Close();
+                    return responseFromServer;
+                    // Display the content.  
+                    //Console.WriteLine(responseFromServer);
                 }
+                
             }
 
             /// <summary>
@@ -461,10 +477,11 @@ namespace PaymentExpress
             private void SetProperty()
             {
 
-                XmlReaderSettings settings = new XmlReaderSettings();
-                settings.DtdProcessing = DtdProcessing.Parse;
+                //XmlReaderSettings settings = new XmlReaderSettings();
+                //settings.DtdProcessing = DtdProcessing.Parse;
 
-                //using (XmlReader reader = XmlReader.Create(new StringReader(_Xml), settings))
+                //XmlReader reader = XmlReader.Create(new StringReader(_Xml));
+                //while (reader.Read())
                 //{
                 //    PropertyInfo prop;
                 //    if (reader.NodeType == XmlNodeType.Element)
@@ -490,8 +507,8 @@ namespace PaymentExpress
                 //        }
                 //    }
                 //}
-                //XmlReader reader = XmlReader.Create(new StringReader(_Xml), settings);
                 XmlReader reader = XmlReader.Create(new StringReader(_Xml));
+
                 while (reader.Read())
                 {
                     PropertyInfo prop;
@@ -518,7 +535,6 @@ namespace PaymentExpress
                         }
                     }
                 }
-
             }
         }
 
