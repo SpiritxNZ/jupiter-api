@@ -46,9 +46,9 @@ namespace jupiterCore
             //services.AddDbContext<jupiterContext.jupiterContext>(options => 
             //    options.UseMySQL("server=localhost;port=3306;user=dbuser;password=ToMPyaJzCW88JPRqBkxqZpiiEElX7Tv1;database=jupiter"));
             services.AddDbContext<jupiterContext.jupiterContext>(options =>
-                            //options.UseMySQL("server=localhost;port=3306;user=lyric;password=Lychy31623;database=jupiter"));
+                //options.UseMySQL("server=localhost;port=3306;user=lyric;password=Lychy31623;database=jupiter"));
 
-                options.UseMySQL("server=45.76.123.59;port=3306;user=dbuser;password=qwer1234;database=luxedream"));
+                options.UseMySQL("server=45.76.123.59;port=3306;user=dbuser;password=8Tg01UyW7rOg6PZatvvFTuoPWOQ58wvT;database=luxedream"));
             //8Tg01UyW7rOg6PZatvvFTuoPWOQ58wvT
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddJsonOptions(option =>
@@ -58,12 +58,12 @@ namespace jupiterCore
             services.AddCors();
             services.AddAutoMapper();
             services.AddAuthentication(options =>
-                {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                }).AddJwtBearer(options =>
-                {
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
@@ -75,14 +75,14 @@ namespace jupiterCore
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.
                         GetBytes(Configuration.GetSection("JWT:Key").Value)),
                 };
-                });
+            });
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "jupiter API", Version = "v1" });
             });
 
-         
+
 
 
         }
