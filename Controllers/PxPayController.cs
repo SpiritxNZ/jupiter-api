@@ -67,8 +67,8 @@ namespace jupiterCore.Controllers
             //input.UrlSuccess = Request.Url.GetLeftPart(UriPartial.Path);
 
 
-            input.UrlFail = "http://www.gradspace.org:5005/paymentresult";
-            input.UrlSuccess = "http://www.gradspace.org:5005/paymentresult";
+            input.UrlFail = "http://www.gradspace.org:80/paymentresult";
+            input.UrlSuccess = "http://www.gradspace.org:80/paymentresult";
             // TODO: GUID representing unique identifier for the transaction within the shopping cart (normally would be an order ID or similar)
             Guid orderId = Guid.NewGuid();
             input.TxnId = orderId.ToString().Substring(0, 16);
@@ -169,32 +169,33 @@ namespace jupiterCore.Controllers
         }
 
 
-        [HttpGet]
-        public string checkpay()
-        {
-            //HttpWebRequest webReq = (HttpWebRequest)WebRequest.Create("https://sec.paymentexpress.com/pxmi3/EF4054F622D6C4C1B78D12B0DD6083868DEF04F43C26F5542A2797505507C04BF622922849AEF0087");
+        //[HttpGet]
+        //public string checkpay()
+        //{
+        //    //HttpWebRequest webReq = (HttpWebRequest)WebRequest.Create("https://sec.paymentexpress.com/pxmi3/EF4054F622D6C4C1B78D12B0DD6083868DEF04F43C26F5542A2797505507C04BF622922849AEF0087");
 
-            // Create a request for the URL. 		
-            WebRequest request = WebRequest.Create("https://sec.paymentexpress.com/pxmi3/EF4054F622D6C4C1B78D12B0DD6083868DEF04F43C26F5542A2797505507C04BF622922849AEF0087");
-            // If required by the server, set the credentials.
-            request.Credentials = CredentialCache.DefaultCredentials;
-            // Get the response.
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            // Display the status.
-            Console.WriteLine(response.StatusDescription);
-            // Get the stream containing content returned by the server.
-            Stream dataStream = response.GetResponseStream();
-            // Open the stream using a StreamReader for easy access.
-            StreamReader reader = new StreamReader(dataStream);
-            // Read the content.
-            string responseFromServer = reader.ReadToEnd();
-            // Display the content.
+        //    // Create a request for the URL. 		
+        //    WebRequest request = WebRequest.Create("http://www.gradspace.org:5005/paymentresult?result=00001200025586540cd5f2bd37039e56&userid=LuxeDreamEventHire_Dev");
+        //    // If required by the server, set the credentials.
+        //    request.Credentials = CredentialCache.DefaultCredentials;
+        //    request.Method = "GET";
+        //    // Get the response.
+        //    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+        //    // Display the status.
+        //    Console.WriteLine(response.StatusDescription);
+        //    // Get the stream containing content returned by the server.
+        //    Stream dataStream = response.GetResponseStream();
+        //    // Open the stream using a StreamReader for easy access.
+        //    StreamReader reader = new StreamReader(dataStream);
+        //    // Read the content.
+        //    string responseFromServer = reader.ReadToEnd();
+        //    // Display the content.
 
-            // Cleanup the streams and the response.
-            reader.Close();
-            dataStream.Close();
-            response.Close();
-            return responseFromServer;
-        }
+        //    // Cleanup the streams and the response.
+        //    reader.Close();
+        //    dataStream.Close();
+        //    response.Close();
+        //    return responseFromServer;
+        //}
     }
 }
