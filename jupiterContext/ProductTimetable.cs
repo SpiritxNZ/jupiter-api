@@ -12,6 +12,7 @@ namespace jupiterCore.jupiterContext
         public DateTime? EndDate { get; set; }
         public int? Quantity { get; set; }
         public int? CartId { get; set; }
+        public byte? IsActive { get; set; }
 
         public virtual ProductDetail Prod { get; set; }
     }

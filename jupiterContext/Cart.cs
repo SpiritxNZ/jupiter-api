@@ -26,6 +26,7 @@ namespace jupiterCore.jupiterContext
 
         public byte? IsPickup { get; set; }
         public string Region { get; set; }
+        public byte? IsPay { get; set; }
 
         public virtual User User { get; set; }
         public virtual Contact Contact { get; set; }

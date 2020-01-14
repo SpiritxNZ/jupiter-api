@@ -38,7 +38,7 @@ namespace jupiterCore.Controllers
         //[Authorize]
         public ActionResult<List<Cart>> GetCart()
         {
-            var cartsValue = _context.Cart.Where(x => x.IsActivate == 1 && x.UserId == null).Include(s => s.Contact).Include(s => s.CartProd).ToList();
+            var cartsValue = _context.Cart.Where(x => x.IsActivate == 1 && x.UserId != null).Include(s => s.Contact).Include(s => s.CartProd).ToList();
             return Ok(cartsValue);
         }
 
@@ -117,6 +117,7 @@ namespace jupiterCore.Controllers
             cart.IsActivate = 1;
             cart.ContactId = contact.ContactId;
             cart.UserId = id;
+            cart.IsPay = 0;
 
             try
             {
@@ -137,7 +138,7 @@ namespace jupiterCore.Controllers
                     EndDate = s.EndDate,
                     Quantity = s.Quantity,
                     CartId = cart.CartId,
-                    
+                    IsActive = 0,
                 });
             });
             try
@@ -150,7 +151,7 @@ namespace jupiterCore.Controllers
                 result.IsSuccess = false;
                 return BadRequest(result);
             }
-
+            result.Data = cart;
             return Ok(result);
         }
 
@@ -186,6 +187,9 @@ namespace jupiterCore.Controllers
             var sendGridClient = new SendGridClient(sendgrid.ApiKey1);
 
             var myMessage = new SendGridMessage();
+
+
+            //Todo:Uncommand when need to send email
 
             //myMessage.AddTo("Info@luxedreameventhire.co.nz");
             //myMessage.AddTo(cartContactModel.ContactModel.Email);

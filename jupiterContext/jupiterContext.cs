@@ -35,6 +35,7 @@ namespace jupiterCore.jupiterContext
         public virtual DbSet<Testimonial> Testimonial { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserContactInfo> UserContactInfo { get; set; }
+        public virtual DbSet<Payment> Payment { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -85,6 +86,58 @@ namespace jupiterCore.jupiterContext
                     .IsUnicode(false);
             });
 
+            modelBuilder.Entity<Payment>(entity =>
+            {
+                entity.HasKey(e => e.PaymentId);
+
+                entity.ToTable("Payment", "luxedream");
+
+                entity.Property(e => e.PaymentId)
+                    .HasColumnName("PaymentId")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.Success).HasColumnType("int(11)");
+                entity.Property(e => e.CardId).HasColumnType("int(11)");
+
+                entity.Property(e => e.TxnId)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+                entity.Property(e => e.ClientInfo)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+                entity.Property(e => e.ResponseText)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+                entity.Property(e => e.AmountSettlemen)
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
+                entity.Property(e => e.cardName)
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
+                entity.Property(e => e.cardNumber)
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
+                entity.Property(e => e.dateExpiry)
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
+                entity.Property(e => e.cardHolderName)
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
+                entity.Property(e => e.currencySettlement)
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
+                entity.Property(e => e.currencyInput)
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
+                entity.Property(e => e.txnMac)
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
+                entity.Property(e => e.url)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+            });
+
             modelBuilder.Entity<Cart>(entity =>
             {
                 entity.ToTable("Cart", "luxedream");
@@ -113,6 +166,8 @@ namespace jupiterCore.jupiterContext
                 entity.Property(e => e.UserId).HasColumnType("int(11)");
 
                 entity.Property(e => e.IsPickup).HasColumnType("tinyint(4)");
+
+                entity.Property(e => e.IsPay).HasColumnType("tinyint(4)");
 
                 entity.Property(e => e.Region)
                     .HasMaxLength(255)
@@ -424,6 +479,8 @@ namespace jupiterCore.jupiterContext
                 entity.Property(e => e.Quantity).HasColumnType("int(11)");
 
                 entity.Property(e => e.CartId).HasColumnType("int(11)");
+
+                entity.Property(e => e.IsActive).HasColumnType("tinyint(4)");
 
                 entity.HasOne(d => d.Prod)
                     .WithMany(p => p.ProductTimetable)

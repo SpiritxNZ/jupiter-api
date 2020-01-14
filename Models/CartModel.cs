@@ -26,6 +26,7 @@ namespace Jupiter.Models
         public byte? IsPickup { get; set; }
         public string Region { get; set; }
 
+        public byte? IsPay { get; set; }
         public Contact Contact { get; set; }
         public IEnumerable<CartProd> CartProd { get; set; }
     }

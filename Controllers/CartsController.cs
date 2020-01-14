@@ -114,6 +114,7 @@ namespace jupiterCore.Controllers
             _mapper.Map(cartContactModel.CartModel, cart);
             cart.CreateOn = DateTime.Now;
             cart.IsActivate = 1;
+            cart.IsPay = 0;
             cart.ContactId = contact.ContactId;
 
             try
@@ -137,6 +138,7 @@ namespace jupiterCore.Controllers
                     EndDate = s.EndDate,
                     Quantity = s.Quantity,
                     CartId = cart.CartId,
+                    IsActive = 0,
 
                 });
             });

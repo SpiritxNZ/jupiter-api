@@ -48,11 +48,11 @@ namespace jupiterCore.Controllers
             var productTime = new List<ProductTimetable>();
             if (isDetailId == 1)
             {
-                productTime = _context.ProductTimetable.Where(x => x.ProdDetailId == id).ToList();
+                productTime = _context.ProductTimetable.Where(x => x.ProdDetailId == id && x.IsActive==1).ToList();
             }
             else if (isDetailId == 0)
             {
-                productTime = _context.ProductTimetable.Where(x => x.ProdId == id).ToList();
+                productTime = _context.ProductTimetable.Where(x => x.ProdId == id && x.IsActive==1).ToList();
             }
 
 
