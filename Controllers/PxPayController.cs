@@ -67,8 +67,8 @@ namespace jupiterCore.Controllers
             //input.UrlSuccess = Request.Url.GetLeftPart(UriPartial.Path);
 
 
-            input.UrlFail = "http://www.gradspace.org:80/paymentresult";
-            input.UrlSuccess = "http://www.gradspace.org:80/paymentresult";
+            input.UrlFail = "http://www.gradspace.org:443/paymentresult";
+            input.UrlSuccess = "http://www.gradspace.org:443/paymentresult";
             // TODO: GUID representing unique identifier for the transaction within the shopping cart (normally would be an order ID or similar)
             Guid orderId = Guid.NewGuid();
             input.TxnId = orderId.ToString().Substring(0, 16);
