@@ -73,6 +73,7 @@ namespace jupiterCore.Controllers
 
             input.UrlFail = "http://45.76.123.59:80/paymentresult";
             input.UrlSuccess = "http://45.76.123.59:80/paymentresult";
+            //input.UrlCallback = "http://45.76.123.59:80/paymentresult";
 
             // TODO: GUID representing unique identifier for the transaction within the shopping cart (normally would be an order ID or similar)
             Guid orderId = Guid.NewGuid();
@@ -129,7 +130,7 @@ namespace jupiterCore.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public ResponseOutput ResponseOutput(string url)
+        public ResponseOutput ResponseOutput(Url url)
         {
             string PxPayUserId = _configuration.GetSection("WindCave:PxPayUserId").Value;//.AppSettings["PxPayUserId"];
             string PxPayKey = _configuration.GetSection("WindCave:PxPayKey").Value;
@@ -137,7 +138,7 @@ namespace jupiterCore.Controllers
 
             PxPay WS = new PxPay(PxPayUserId, PxPayKey);
             
-            ResponseOutput response = WS.ProcessResponse(url);
+            ResponseOutput response = WS.ProcessResponse(url.url);
             var payment = _context.Payment.Where(x => x.TxnId == response.TxnId).First();
             var cart = _context.Cart.Where(x => x.CartId == payment.CardId).First();
             var producttimes = _context.ProductTimetable.Where(x => x.CartId == payment.CardId).ToList();
