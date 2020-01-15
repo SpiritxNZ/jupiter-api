@@ -128,7 +128,7 @@ namespace jupiterCore.Controllers
             public string url { get; set; }
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("[action]")]
         public ResponseOutput ResponseOutput(Url url)
         {
