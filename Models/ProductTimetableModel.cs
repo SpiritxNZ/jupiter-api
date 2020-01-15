@@ -12,7 +12,7 @@ namespace jupiterCore.Models
         public int? Quantity { get; set; }
         public int? CartId { get; set; }
         public byte? IsActive { get; set; }
-
+        //public byte? IsExpired { get; set; }
         //public ProductDetailModel ProdDetail { get; set; }
     }
 }

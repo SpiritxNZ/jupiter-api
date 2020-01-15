@@ -112,10 +112,11 @@ namespace jupiterCore.Controllers
 
             Cart cart = new Cart();
             _mapper.Map(cartContactModel.CartModel, cart);
-            cart.CreateOn = DateTime.Now;
+            cart.CreateOn = toNZTimezone(DateTime.UtcNow);
             cart.IsActivate = 1;
             cart.IsPay = 0;
             cart.ContactId = contact.ContactId;
+            cart.IsExpired = 0;
 
             try
             {
@@ -138,7 +139,8 @@ namespace jupiterCore.Controllers
                     EndDate = s.EndDate,
                     Quantity = s.Quantity,
                     CartId = cart.CartId,
-                    IsActive = 0,
+                    IsActive = 1,
+                    //IsExpired = 0,
 
                 });
             });

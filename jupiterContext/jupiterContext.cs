@@ -169,6 +169,8 @@ namespace jupiterCore.jupiterContext
 
                 entity.Property(e => e.IsPay).HasColumnType("tinyint(4)");
 
+                entity.Property(e => e.IsExpired).HasColumnType("tinyint(4)");
+
                 entity.Property(e => e.Region)
                     .HasMaxLength(255)
                     .IsUnicode(false);
@@ -481,6 +483,8 @@ namespace jupiterCore.jupiterContext
                 entity.Property(e => e.CartId).HasColumnType("int(11)");
 
                 entity.Property(e => e.IsActive).HasColumnType("tinyint(4)");
+
+                //entity.Property(e => e.IsExpired).HasColumnType("tinyint(4)");
 
                 entity.HasOne(d => d.Prod)
                     .WithMany(p => p.ProductTimetable)

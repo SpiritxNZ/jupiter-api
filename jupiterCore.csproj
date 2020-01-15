@@ -31,6 +31,7 @@
     <Folder Include="wwwroot\Images\EventTypeImages\" />
     <Folder Include="wwwroot\Images\HomepageCarouselImages\" />
     <Folder Include="wwwroot\Images\ProductImages\" />
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

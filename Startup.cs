@@ -21,6 +21,7 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Reflection;
 using System.IO;
+using jupiterCore.Services;
 
 namespace jupiterCore
 {
@@ -76,6 +77,11 @@ namespace jupiterCore
                         GetBytes(Configuration.GetSection("JWT:Key").Value)),
                 };
             });
+
+
+
+            services.AddHostedService<TimedHostedService>();
+
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
