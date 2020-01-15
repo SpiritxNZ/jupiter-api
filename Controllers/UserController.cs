@@ -195,12 +195,21 @@ namespace jupiterCore.Controllers
             User newUser = new User();
             _mapper.Map(userModel, newUser);
             result.Data = newUser;
-            
+
             //if (newUser.IsSubscribe == 1)
             //{
             //    await UserSubscribe(userModel);
             //}
-            await UserSubscribe(userModel);
+            try
+            {
+                await UserSubscribe(userModel);
+            }
+            catch (Exception ex)
+            {
+                result.IsSuccess = false;
+                result.ErrorMessage = ex.ToString();
+                return BadRequest(result);
+            }
             await _context.User.AddAsync(newUser);
 
             UserContactInfo userContactInfo = new UserContactInfo();
@@ -259,11 +268,31 @@ namespace jupiterCore.Controllers
             if (userModel.IsSubscribe == 0)
             {
                 var member = new Member { EmailAddress = userModel.Email, StatusIfNew = Status.Unsubscribed };
+                //try
+                //{
+                //    await mailChimpManager.Members.AddOrUpdateAsync(listId, member);
+                //}
+                //catch (Exception ex)
+                //{
+                //    result.IsSuccess = false;
+                //    result.ErrorMessage = ex.ToString();
+                //    return BadRequest(result);
+                //}
                 await mailChimpManager.Members.AddOrUpdateAsync(listId, member);
             }
             else if(userModel.IsSubscribe == 1)
             {
                 var member = new Member { EmailAddress = userModel.Email, StatusIfNew = Status.Subscribed };
+                //try
+                //{
+                //    await mailChimpManager.Members.AddOrUpdateAsync(listId, member);
+                //}
+                //catch (Exception ex)
+                //{
+                //    result.IsSuccess = false;
+                //    result.ErrorMessage = ex.ToString();
+                //    return BadRequest(result);
+                //}
                 await mailChimpManager.Members.AddOrUpdateAsync(listId, member);
             }
 
