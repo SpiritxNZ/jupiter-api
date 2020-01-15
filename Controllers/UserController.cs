@@ -207,7 +207,7 @@ namespace jupiterCore.Controllers
             catch (Exception ex)
             {
                 result.IsSuccess = false;
-                result.ErrorMessage = ex.ToString();
+                result.ErrorMessage = userModel.Email + "looks fake or invalid";
                 return BadRequest(result);
             }
             await _context.User.AddAsync(newUser);
