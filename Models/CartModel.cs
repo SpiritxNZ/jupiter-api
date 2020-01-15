@@ -28,6 +28,7 @@ namespace Jupiter.Models
 
         public byte? IsPay { get; set; }
         public byte? IsExpired { get; set; }
+        public int? CartStatusId { get; set; }
 
         public Contact Contact { get; set; }
         public IEnumerable<CartProd> CartProd { get; set; }
