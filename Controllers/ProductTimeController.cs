@@ -7,11 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 using jupiterCore.jupiterContext;
 using Jupiter.Models;
 using jupiterCore.Models;
+using Jupiter.Controllers;
 
 namespace jupiterCore.Controllers
 {
     [Route("api/[controller]")]
-    public class ProductTimeController : Controller
+    public class ProductTimeController : BasicController
     {
 
         private readonly jupiterContext.jupiterContext _context;
@@ -92,7 +93,7 @@ namespace jupiterCore.Controllers
         //calculate the available stock of the produdct in the time period
         private int[] CalculateQuantity (int proDetailId, DateTime beginDate, int isDetailId)
         {
-            List<DateTime> dateList = GenerateDate(beginDate);
+            List<DateTime> dateList = GenerateDate(toNZTimezone(beginDate));
             int totalStock = GetProdStock(proDetailId,isDetailId);
 
             var productTime = GetProductTime(proDetailId,isDetailId);

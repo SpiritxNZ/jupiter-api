@@ -36,6 +36,7 @@ namespace jupiterCore.jupiterContext
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserContactInfo> UserContactInfo { get; set; }
         public virtual DbSet<Payment> Payment { get; set; }
+        public virtual DbSet<CartStatus> CartStatuses { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -63,6 +64,20 @@ namespace jupiterCore.jupiterContext
                 entity.Property(e => e.Username)
                     .HasMaxLength(80)
                     .IsUnicode(false);
+            });
+
+
+
+            modelBuilder.Entity<CartStatus>(entity =>
+            {
+                entity.ToTable("CartStatus", "luxedream");
+
+                entity.Property(e => e.CartStatusId).HasColumnType("int(11)");
+
+                entity.Property(e => e.CartStatusName)
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
+
             });
 
             modelBuilder.Entity<ApiKey>(entity =>
@@ -184,6 +199,11 @@ namespace jupiterCore.jupiterContext
                     .WithMany(p => p.Cart)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK_Reference_22");
+
+                entity.HasOne(d => d.CartStatus)
+                    .WithMany(p => p.Cart)
+                    .HasForeignKey(d => d.CartStatusId)
+                    .HasConstraintName("FK_Reference_25");
             });
 
             modelBuilder.Entity<CartProd>(entity =>
@@ -327,7 +347,7 @@ namespace jupiterCore.jupiterContext
 
             modelBuilder.Entity<HomepageCarouselMedia>(entity =>
             {
-                entity.ToTable("HomepageCarouselMedia", "jupiter");
+                entity.ToTable("HomepageCarouselMedia", "luxedream");
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
