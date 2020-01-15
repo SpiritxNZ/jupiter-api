@@ -195,12 +195,17 @@ namespace jupiterCore.Controllers
             User newUser = new User();
             _mapper.Map(userModel, newUser);
             result.Data = newUser;
+            
             //if (newUser.IsSubscribe == 1)
             //{
             //    await UserSubscribe(userModel);
             //}
             await UserSubscribe(userModel);
             await _context.User.AddAsync(newUser);
+
+            UserContactInfo userContactInfo = new UserContactInfo();
+            userContactInfo.UserId = newUser.Id;
+            await _context.UserContactInfo.AddAsync(userContactInfo);
             await _context.SaveChangesAsync();
 
             return Ok(result);
