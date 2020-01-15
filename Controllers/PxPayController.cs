@@ -69,8 +69,11 @@ namespace jupiterCore.Controllers
 
             //input.UrlFail = "http://www.gradspace.org:80/paymentresult";
             //input.UrlSuccess = "http://www.gradspace.org:80/paymentresult";
+
+
             input.UrlFail = "http://45.76.123.59:80/paymentresult";
             input.UrlSuccess = "http://45.76.123.59:80/paymentresult";
+
             // TODO: GUID representing unique identifier for the transaction within the shopping cart (normally would be an order ID or similar)
             Guid orderId = Guid.NewGuid();
             input.TxnId = orderId.ToString().Substring(0, 16);
@@ -124,9 +127,9 @@ namespace jupiterCore.Controllers
             public string url { get; set; }
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("[action]")]
-        public ResponseOutput ResponseOutput(Url url)
+        public ResponseOutput ResponseOutput(string url)
         {
             string PxPayUserId = _configuration.GetSection("WindCave:PxPayUserId").Value;//.AppSettings["PxPayUserId"];
             string PxPayKey = _configuration.GetSection("WindCave:PxPayKey").Value;
@@ -134,7 +137,7 @@ namespace jupiterCore.Controllers
 
             PxPay WS = new PxPay(PxPayUserId, PxPayKey);
             
-            ResponseOutput response = WS.ProcessResponse(url.url);
+            ResponseOutput response = WS.ProcessResponse(url);
             var payment = _context.Payment.Where(x => x.TxnId == response.TxnId).First();
             var cart = _context.Cart.Where(x => x.CartId == payment.CardId).First();
             var producttimes = _context.ProductTimetable.Where(x => x.CartId == payment.CardId).ToList();
@@ -170,6 +173,7 @@ namespace jupiterCore.Controllers
 
         }
 
+        
 
         //[HttpGet]
         //public string checkpay()

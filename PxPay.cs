@@ -225,6 +225,7 @@ namespace PaymentExpress
             private string _TxnId;
             private string _UrlFail;
             private string _UrlSuccess;
+            private string _UrlCallback;
             //private string _Opt;
 
 
@@ -242,6 +243,18 @@ namespace PaymentExpress
                 set
                 {
                     _AmountInput = value;
+                }
+            }
+
+            public string UrlCallback
+            {
+                get
+                {
+                    return _UrlCallback;
+                }
+                set
+                {
+                    _UrlCallback = value;
                 }
             }
 
