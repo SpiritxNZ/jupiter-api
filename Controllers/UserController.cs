@@ -190,7 +190,9 @@ namespace jupiterCore.Controllers
             var user = _context.User.FirstOrDefault(x => x.Email == userModel.Email);
             if (user != null)
             {
-                return Ok("This email has been registed.");
+                result.IsSuccess = false;
+                result.ErrorMessage = "This email has been registed.";
+                return BadRequest(result);
             }
             User newUser = new User();
             _mapper.Map(userModel, newUser);
