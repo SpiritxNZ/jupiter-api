@@ -185,7 +185,7 @@ namespace jupiterCore.Controllers
         [Route("register")]
         public async Task<IActionResult> Register([FromBody] UserModel userModel)
         {
-            var result = new Result<User>();
+            var result = new Result<Object>();
 
             var user = _context.User.FirstOrDefault(x => x.Email == userModel.Email);
             if (user != null)
@@ -197,11 +197,6 @@ namespace jupiterCore.Controllers
             User newUser = new User();
             _mapper.Map(userModel, newUser);
             
-
-            //if (newUser.IsSubscribe == 1)
-            //{
-            //    await UserSubscribe(userModel);
-            //}
             try
             {
                 await UserSubscribe(userModel);
@@ -218,7 +213,9 @@ namespace jupiterCore.Controllers
             userContactInfo.UserId = newUser.Id;
             await _context.UserContactInfo.AddAsync(userContactInfo);
             await _context.SaveChangesAsync();
-            result.Data = newUser;
+            var tokenString = GenerateJwt(newUser.Id);
+            result.Data = new JsonResult { userId = newUser.Id, email = newUser.Email, token = tokenString };
+            //result.Data = newUser;
             return Ok(result);
         }
 
@@ -252,12 +249,6 @@ namespace jupiterCore.Controllers
             
         }
 
-        //[HttpPut]
-        //[Route("modifyInfo")]
-        //public async Task<IActionResult> ModifyInfo([FromBody] UserModel userModel)
-        //{
-        //    var user = await _context.User
-        //}
 
         private async Task<IActionResult> UserSubscribe(UserModel userModel)
         {
@@ -270,34 +261,13 @@ namespace jupiterCore.Controllers
             if (userModel.IsSubscribe == 0)
             {
                 var member = new Member { EmailAddress = userModel.Email, StatusIfNew = Status.Unsubscribed };
-                //try
-                //{
-                //    await mailChimpManager.Members.AddOrUpdateAsync(listId, member);
-                //}
-                //catch (Exception ex)
-                //{
-                //    result.IsSuccess = false;
-                //    result.ErrorMessage = ex.ToString();
-                //    return BadRequest(result);
-                //}
                 await mailChimpManager.Members.AddOrUpdateAsync(listId, member);
             }
             else if(userModel.IsSubscribe == 1)
             {
                 var member = new Member { EmailAddress = userModel.Email, StatusIfNew = Status.Subscribed };
-                //try
-                //{
-                //    await mailChimpManager.Members.AddOrUpdateAsync(listId, member);
-                //}
-                //catch (Exception ex)
-                //{
-                //    result.IsSuccess = false;
-                //    result.ErrorMessage = ex.ToString();
-                //    return BadRequest(result);
-                //}
                 await mailChimpManager.Members.AddOrUpdateAsync(listId, member);
             }
-
             
             return Ok(result);
         }
