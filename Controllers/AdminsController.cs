@@ -34,7 +34,7 @@ namespace jupiterCore.Controllers
         {
             return new string[] { "value3", "value4" };
         }
-
+        
         // GET: api/Users/5
         [HttpGet("{id}", Name = "Get")]
         public string Get(int id)

@@ -42,7 +42,7 @@ namespace jupiterCore.Controllers
         }
 
 
-        [HttpPost]
+        [HttpGet]
         [Route("[action]")]
         public string RequestPaymentUrl(int cartId)
         {
