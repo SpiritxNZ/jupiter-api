@@ -60,7 +60,23 @@ namespace jupiterCore.Controllers
             return productTime;
         }
 
+        [HttpGet]
+        [Route("[action]/{id}")]
+        public List<ProductTimetable> GetProductTimeByMonth(int id, int isDetailId,DateTime beginDate)
+        {
+            var productTime = new List<ProductTimetable>();
+            if (isDetailId == 1)
+            {
+                productTime = _context.ProductTimetable.Where(x => x.ProdDetailId == id && x.IsActive == 1 && x.BeginDate <= beginDate.AddDays(90) && x.BeginDate >= beginDate.AddDays(-90)).ToList();
+            }
+            else if (isDetailId == 0)
+            {
+                productTime = _context.ProductTimetable.Where(x => x.ProdId == id && x.IsActive == 1 && x.BeginDate <= beginDate.AddDays(90) && x.BeginDate >= beginDate.AddDays(-90)).ToList();
+            }
 
+
+            return productTime;
+        }
 
         //generate the date between now and the end of this month
         private List<DateTime> GenerateDate(DateTime beginDate)
