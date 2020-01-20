@@ -154,7 +154,7 @@ namespace jupiterCore.Controllers
                 result.IsSuccess = false;
                 return BadRequest(result);
             }
-
+            result.Data = cart;
             return Ok(result);
         }
 
