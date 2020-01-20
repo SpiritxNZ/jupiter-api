@@ -14,6 +14,8 @@ using PaymentExpress.PxPay;
 using jupiterCore.jupiterContext;
 using jupiterCore.Models;
 using System.Linq;
+using NetBarcode;
+using System.Drawing.Imaging;
 
 namespace jupiterCore.Controllers
 {
@@ -137,15 +139,15 @@ namespace jupiterCore.Controllers
             //string PxPayKey = ConfigurationManager.AppSettings["PxPayKey"];
 
             PxPay WS = new PxPay(PxPayUserId, PxPayKey);
-            
+
             ResponseOutput response = WS.ProcessResponse(url.url);
             var payment = _context.Payment.Where(x => x.TxnId == response.TxnId).First();
             var cart = _context.Cart.Where(x => x.CartId == payment.CardId).First();
             var producttimes = _context.ProductTimetable.Where(x => x.CartId == payment.CardId).ToList();
 
 
-            
-            payment.Success= int.Parse(response.Success);
+
+            payment.Success = int.Parse(response.Success);
             //payment.TxnId = response.TxnId;
             payment.ClientInfo = response.ClientInfo;
             payment.ResponseText = response.ResponseText;
@@ -160,7 +162,7 @@ namespace jupiterCore.Controllers
             if (payment.Success == 1)
             {
                 cart.IsPay = 1;
-                foreach(var producttime in producttimes)
+                foreach (var producttime in producttimes)
                 {
                     producttime.IsActive = 1;
                     _context.ProductTimetable.Update(producttime);
@@ -168,12 +170,22 @@ namespace jupiterCore.Controllers
             }
             _context.Payment.Update(payment);
             _context.Cart.Update(cart);
-            
+
             _context.SaveChanges();
             return response;
 
         }
 
+
+        //[HttpGet]
+        //[Route("[action]")]
+        //public void createBarcode()
+        //{
+        //    var barcode = new Barcode("1313131313234", NetBarcode.Type.EAN13, true);
+        //    var path = System.IO.Path.C
+        //    var value = barcode.SaveImageFile();
+
+        //} 
         
 
         //[HttpGet]
