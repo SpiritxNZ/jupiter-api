@@ -43,10 +43,14 @@ namespace jupiterCore.Controllers
             _PxPayKey = _configuration.GetSection("WindCave:PxPayKey").Value;
         }
 
+        public class RequestJson
+        {
+            public string Url { get; set; }
+        }
 
         [HttpGet]
         [Route("[action]")]
-        public string RequestPaymentUrl(int cartId)
+        public RequestJson RequestPaymentUrl(int cartId)
         {
             string PxPayUserId = _configuration.GetSection("WindCave:PxPayUserId").Value;//.AppSettings["PxPayUserId"];
             string PxPayKey = _configuration.GetSection("WindCave:PxPayKey").Value;
@@ -95,10 +99,10 @@ namespace jupiterCore.Controllers
                 payment.url = output.Url;
                 _context.Payment.AddAsync(payment);
                 _context.SaveChangesAsync();
-                return output.Url;
+                return new RequestJson { Url = output.Url };
             }
 
-            return output.Url;
+            return new RequestJson { Url = output.Url };
             //PxPay WS = new PxPay(PxPayUserId, PxPayKey);
 
             //RequestInput input = new RequestInput();
