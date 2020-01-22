@@ -47,7 +47,7 @@ namespace jupiterCore.Controllers
         //[Authorize]
         public ActionResult GetCart(int userId)
         {
-            var cart1 = _context.Cart.Include(s => s.Contact).Include(s => s.CartProd)
+            var cart1 = _context.Cart.Include(s => s.Contact).Include(s => s.CartProd).Include(s=>s.CartStatus)
                 .Where(s => s.UserId == userId);
             return Ok(cart1);
         }
@@ -112,12 +112,17 @@ namespace jupiterCore.Controllers
             }
 
             Cart cart = new Cart();
-            _mapper.Map(cartContactModel.CartModel, cart);
+            //_mapper.Map(cartContactModel.CartModel, cart);
             cart.CreateOn = toNZTimezone(DateTime.UtcNow);
             cart.IsActivate = 1;
-            cart.ContactId = contact.ContactId;
-            cart.UserId = id;
             cart.IsPay = 0;
+            cart.ContactId = contact.ContactId;
+            cart.Location = cartContactModel.CartModel.Location;
+            cart.Price = cartContactModel.CartModel.Price;
+            cart.PlannedTime = cartContactModel.CartModel.PlannedTime;
+            cart.IsPickup = cartContactModel.CartModel.IsPickup;
+            cart.Region = cartContactModel.CartModel.Region;           
+            cart.UserId = id;
             cart.IsExpired = 0;
 
             try

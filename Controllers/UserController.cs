@@ -21,6 +21,7 @@ using MailChimp;
 using MailChimp.Net.Models;
 using MailChimp.Net.Interfaces;
 using MailChimp.Net;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace jupiterCore.Controllers
 {
@@ -32,12 +33,14 @@ namespace jupiterCore.Controllers
         private readonly jupiterContext.jupiterContext _context;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
+        private string _pswKey;
 
         public UserController(jupiterContext.jupiterContext context, IMapper mapper, IConfiguration configuration)
         {
             _context = context;
             _mapper = mapper;
             _configuration = configuration;
+            _pswKey = _configuration.GetSection("PasswordKey").Value;
         }
 
         public class JsonResult
@@ -89,19 +92,19 @@ namespace jupiterCore.Controllers
                     throw new Exception("email does not exist");
                 }
 
-                if (user.Password != changePasswordModel.oldPassword)
+                if (user.Password != HashPassword(changePasswordModel.oldPassword))
                 {
                     result.IsSuccess = false;
                     result.ErrorMessage = "The old password is incorrect";
                     return StatusCode(401, result);
                 }
 
-                if (user.Password == changePasswordModel.newPassword)
+                if (user.Password == HashPassword(changePasswordModel.newPassword))
                 {
                     throw new Exception("The new password is same as the old password");
                 }
 
-                user.Password = changePasswordModel.newPassword;
+                user.Password = HashPassword(changePasswordModel.newPassword);
                 _context.Update(user);
                 await _context.SaveChangesAsync();
                 result.Data = "success";
@@ -162,7 +165,7 @@ namespace jupiterCore.Controllers
             var user = _context.User.FirstOrDefault(x => x.Id == userId);
             if (user != null)
             {
-                user.Password = resetPasswordModel.Password;
+                user.Password = HashPassword(resetPasswordModel.Password);
             }
             try
             {
@@ -196,7 +199,7 @@ namespace jupiterCore.Controllers
             }
             User newUser = new User();
             _mapper.Map(userModel, newUser);
-            
+            newUser.Password = HashPassword(userModel.Password);
             try
             {
                 await UserSubscribe(userModel);
@@ -230,7 +233,7 @@ namespace jupiterCore.Controllers
                 throw new Exception( "Email not exist");
             }
             //bad password
-            if (user.Password != loginModel.Password)
+            if (user.Password != HashPassword(loginModel.Password))
             {
                 throw new Exception("Password is wrong");
             }
@@ -306,12 +309,26 @@ namespace jupiterCore.Controllers
                 return "Email not exist";
             }
             //bad password
-            if (user.Password != loginModel.Password)
+            if (user.Password != HashPassword(loginModel.Password))
             {
                 return "Password is wrong";
             }
 
             return "Success";
+        }
+
+
+        private string HashPassword(string password)
+        {
+            byte[] salt = new byte[128 / 8];
+
+            string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+            password: password,
+            salt: salt,
+            prf: KeyDerivationPrf.HMACSHA1,
+            iterationCount: 10000,
+            numBytesRequested: 256 / 8));
+            return hashed;
         }
 
     }
