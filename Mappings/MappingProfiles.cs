@@ -32,6 +32,7 @@ namespace jupiterCore.Mappings
             CreateMap<UserContactInfoModel, UserContactInfo>();
             CreateMap<ProductTimetableModel, ProductTimetable>();
             CreateMap<PaymentModel, Payment>();
+            CreateMap<ContactUsModel, ContactEmail>();
 
         }
     }

@@ -111,6 +111,31 @@ namespace jupiterCore.Controllers
             }
             return Ok(result);
         }
+
+        [CheckModelFilter]
+        [HttpPost("[action]")]
+        public async Task<ActionResult<ContactEmail>> CustomerMessage(ContactUsModel contactUsModel)
+        {
+            var result = new Result<ContactEmail>();
+            ContactEmail contactEmail = new ContactEmail();
+            _mapper.Map(contactUsModel, contactEmail);
+            result.Data = contactEmail;
+            await _context.ContactEmail.AddAsync(contactEmail);
+
+            try
+            {
+                SendEmailToLuxe(contactUsModel);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                result.ErrorMessage = e.Message;
+                result.IsFound = false;
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+
         // DELETE: api/ContactEmails/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<ContactEmail>> DeleteContactEmail(int id)
@@ -180,5 +205,28 @@ namespace jupiterCore.Controllers
             sendGridClient.SendEmailAsync(messageToCustomer);
 
         }
+
+
+        private void SendEmailToLuxe (ContactUsModel contactUsModel)
+        {
+            var sendgrid = _context.ApiKey.Find(1);
+            var sendGridClient = new SendGridClient(sendgrid.ApiKey1);
+
+            var myMessage = new SendGridMessage();
+
+            myMessage.AddTo("lluvialau@outlook.com");
+            myMessage.From = new EmailAddress("Info@luxedreameventhire.co.nz", "LuxeDreamEventHire");
+            myMessage.SetTemplateId("d-fa12e602e09041339338a5869708e195");
+            myMessage.SetTemplateData(new
+            {
+                Email = contactUsModel.Email,
+                PhoneNumber = contactUsModel.PhoneNumber,
+                FindUs = contactUsModel.FindUs,
+
+            });
+            sendGridClient.SendEmailAsync(myMessage);
+        }
     }
+
+
 }

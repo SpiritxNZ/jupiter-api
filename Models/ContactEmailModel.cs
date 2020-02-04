@@ -26,4 +26,13 @@ namespace jupiterCore.Models
         [Required]
         public string Message { get; set; }
     }
+
+    public class ContactUsModel
+    {
+        [Required]
+        public string Email { get; set; }
+        [Required]
+        public string PhoneNumber { get; set; }
+        public string FindUs { get; set; }
+    }
 }
