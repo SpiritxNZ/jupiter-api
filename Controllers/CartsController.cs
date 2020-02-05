@@ -119,7 +119,8 @@ namespace jupiterCore.Controllers
             cart.ContactId = contact.ContactId;
             cart.Location = cartContactModel.CartModel.Location;
             cart.Price = cartContactModel.CartModel.Price;
-            cart.PlannedTime = null;
+            cart.EventStartDate = cartContactModel.CartModel.EventStartDate;
+            cart.EventEndDate = cartContactModel.CartModel.EventEndDate;
             cart.IsPickup = cartContactModel.CartModel.IsPickup;
             cart.Region = cartContactModel.CartModel.Region;
             cart.UserId = null;
@@ -190,42 +191,42 @@ namespace jupiterCore.Controllers
             return Ok(result);
         }
 
-        private void SendCartEmail(CartContactModel cartContactModel)
-        {
+        //private void SendCartEmail(CartContactModel cartContactModel)
+        //{
 
-            var sendgrid = _context.ApiKey.Find(1);
-            var sendGridClient = new SendGridClient(sendgrid.ApiKey1);
+        //    var sendgrid = _context.ApiKey.Find(1);
+        //    var sendGridClient = new SendGridClient(sendgrid.ApiKey1);
 
-            var myMessage = new SendGridMessage();
+        //    var myMessage = new SendGridMessage();
 
-            //myMessage.AddTo("Info@luxedreameventhire.co.nz");
-            myMessage.AddTo(cartContactModel.ContactModel.Email);
-            myMessage.From = new EmailAddress("Info@luxedreameventhire.co.nz", "LuxeDreamEventHire");
-            myMessage.SetTemplateId("d-8b50f89729a24c0590fcee9ef8bee1fe");
+        //    //myMessage.AddTo("Info@luxedreameventhire.co.nz");
+        //    myMessage.AddTo(cartContactModel.ContactModel.Email);
+        //    myMessage.From = new EmailAddress("Info@luxedreameventhire.co.nz", "LuxeDreamEventHire");
+        //    myMessage.SetTemplateId("d-8b50f89729a24c0590fcee9ef8bee1fe");
 
-            var contactDetail = cartContactModel.ContactModel;
-            var cartDetail = cartContactModel.CartModel;
-            //return Ok(cartDetail.CartProd;
-            //var cartProds = "";
-            //foreach (var cart in cartDetail.CartProd)
-            //{
-            //    cartProds = cartProds + cart.Quantity + " of " + " " + cart.Title + "\r\n";
-            //}
+        //    var contactDetail = cartContactModel.ContactModel;
+        //    var cartDetail = cartContactModel.CartModel;
+        //    //return Ok(cartDetail.CartProd;
+        //    //var cartProds = "";
+        //    //foreach (var cart in cartDetail.CartProd)
+        //    //{
+        //    //    cartProds = cartProds + cart.Quantity + " of " + " " + cart.Title + "\r\n";
+        //    //}
 
-            myMessage.SetTemplateData(new
-            {
-                FirstName = contactDetail.FirstName,
-                LastName = contactDetail.LastName,
-                PlannedTime = cartDetail.PlannedTime.ToString("D"),
-                Email = contactDetail.Email,
-                PhoneNum = contactDetail.PhoneNum,
-                //cartProds = cartProds,
-                cartProds = cartDetail.CartProd,
-                Message = contactDetail.Message
-            });
-            sendGridClient.SendEmailAsync(myMessage);
+        //    myMessage.SetTemplateData(new
+        //    {
+        //        FirstName = contactDetail.FirstName,
+        //        LastName = contactDetail.LastName,
+        //        PlannedTime = cartDetail.PlannedTime.ToString("D"),
+        //        Email = contactDetail.Email,
+        //        PhoneNum = contactDetail.PhoneNum,
+        //        //cartProds = cartProds,
+        //        cartProds = cartDetail.CartProd,
+        //        Message = contactDetail.Message
+        //    });
+        //    sendGridClient.SendEmailAsync(myMessage);
 
         
-        }
+        //}
     }
 }

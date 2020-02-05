@@ -196,7 +196,8 @@ namespace jupiterCore.Controllers
             {
                 FirstName = contactDetail.FirstName,
                 LastName = contactDetail.LastName,
-                PlannedTime = cartDetail.PlannedTime.ToString("D"),
+                EventStartDate = cartDetail.EventStartDate.ToString("D"),
+                EventEndDate = cartDetail.EventEndDate.ToString("D"),
                 Email = contactDetail.Email,
                 PhoneNum = contactDetail.PhoneNum,
                 //cartProds = cartProds,

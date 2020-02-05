@@ -13,7 +13,8 @@ namespace jupiterCore.jupiterContext
         public int CartId { get; set; }
         public decimal? Price { get; set; }
         public string Location { get; set; }
-        public DateTime? PlannedTime { get; set; }
+        public DateTime? EventStartDate { get; set; }
+        public DateTime? EventEndDate { get; set; }
         public byte? IsActivate { get; set; }
         public DateTime? CreateOn { get; set; }
         public DateTime? UpdateOn { get; set; }
