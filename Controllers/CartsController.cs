@@ -111,7 +111,7 @@ namespace jupiterCore.Controllers
             }
 
             Cart cart = new Cart();
-            //_mapper.Map(cartContactModel.CartModel, cart);
+            _mapper.Map(cartContactModel.CartModel, cart);
             cart.CreateOn = toNZTimezone(DateTime.UtcNow);
             cart.IsActivate = 1;
             cart.IsPay = 0;
@@ -122,6 +122,7 @@ namespace jupiterCore.Controllers
             cart.PlannedTime = cartContactModel.CartModel.PlannedTime;
             cart.IsPickup = cartContactModel.CartModel.IsPickup;
             cart.Region = cartContactModel.CartModel.Region;
+            //cart.CartProd = cart
 
             try
             {

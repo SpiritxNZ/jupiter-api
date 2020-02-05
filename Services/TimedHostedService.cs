@@ -23,7 +23,7 @@ namespace jupiterCore.Services
         {
             //TimeSpan scheduleTime = new TimeSpan(23, 59, 59);
             _timer = new Timer(DoWork, null, TimeSpan.Zero,
-           TimeSpan.FromMinutes(2));
+           TimeSpan.FromMinutes(1));
 
             return Task.CompletedTask;
         }
@@ -35,7 +35,7 @@ namespace jupiterCore.Services
             foreach(var cart in carts)
             {
                 DateTime dateTime = (DateTime)cart.CreateOn;
-                DateTime expireDate = dateTime.AddMinutes(15);
+                DateTime expireDate = dateTime.AddMinutes(10);
                 DateTime now = toNZTimezone(DateTime.UtcNow);
                 if (DateTime.Compare(expireDate, now)<0)
                 {

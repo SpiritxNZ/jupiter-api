@@ -89,7 +89,7 @@ namespace jupiterCore.Controllers
             var result = new Result<Cart>();
             try
             {
-                SendCartEmail(cartContactModel);
+                //SendCartEmail(cartContactModel);
             }
             catch (Exception e)
             {

@@ -5,7 +5,13 @@ using Microsoft.Extensions.Configuration;
 using PaymentExpress.PxPay;
 using jupiterCore.jupiterContext;
 using System.Linq;
-
+using jupiterCore.Models;
+using SendGrid;
+using SendGrid.Helpers.Mail;
+using Microsoft.EntityFrameworkCore;
+using Jupiter.Models;
+using System.Collections.Generic;
+using AutoMapper;
 
 namespace jupiterCore.Controllers
 {
@@ -17,16 +23,19 @@ namespace jupiterCore.Controllers
         private string _PxPayKey;
         private readonly IConfiguration _configuration;
         private readonly jupiterContext.jupiterContext _context;
+        private readonly IMapper _mapper;
+
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="PxPayUserId"></param>
         /// <param name="PxPayKey"></param>
-        public PxPayController(IConfiguration configuration, jupiterContext.jupiterContext context)
+        public PxPayController(IConfiguration configuration, jupiterContext.jupiterContext context, IMapper mapper)
         {
             _context = context;
             _configuration = configuration;
+            _mapper = mapper;
             _PxPayUserId = _configuration.GetSection("WindCave:PxPayUserId").Value;
             _PxPayKey = _configuration.GetSection("WindCave:PxPayKey").Value;
         }
@@ -48,7 +57,6 @@ namespace jupiterCore.Controllers
             RequestInput input = new RequestInput();
             var card = _context.Cart.Find(cartId);
 
-
             input.AmountInput = card.Price.ToString();
             input.CurrencyInput = "NZD";
             input.MerchantReference = "My Reference";
@@ -56,7 +64,9 @@ namespace jupiterCore.Controllers
 
             input.UrlFail = "http://45.76.123.59:80/paymentresult";
             input.UrlSuccess = "http://45.76.123.59:80/paymentresult";
-            //input.UrlCallback = "http://45.76.123.59:80/paymentresult";
+
+            //input.UrlFail = "http://localhost:4240/paymentresult";
+            //input.UrlSuccess = "http://localhost:4240/paymentresult";
 
             // TODO: GUID representing unique identifier for the transaction within the shopping cart (normally would be an order ID or similar)
             Guid orderId = Guid.NewGuid();
@@ -97,7 +107,32 @@ namespace jupiterCore.Controllers
             ResponseOutput response = WS.ProcessResponse(url.url);
             var payment = _context.Payment.Where(x => x.TxnId == response.TxnId).First();
             var cart = _context.Cart.Where(x => x.CartId == payment.CardId).First();
+
+            var cartpord = _context.CartProd.Where(x => x.CartId == payment.CardId).ToList();
+            var contact = _context.Contact.Where(x => x.ContactId == cart.ContactId).First();
             var producttimes = _context.ProductTimetable.Where(x => x.CartId == payment.CardId).ToList();
+
+
+            List<CartProd> cartProd = new List<CartProd>();
+            cartpord.ForEach(s => {
+                cartProd.Add(new CartProd
+                {
+                    ProdId = s.ProdId,
+                    Price = s.Price,
+                    Title = s.Title,
+                    Quantity = s.Quantity
+
+                });
+            });
+
+            CartModel cartModel = new CartModel
+            {
+                Location = cart.Location,
+                Price = cart.Price,
+                PlannedTime = (DateTime)cart.PlannedTime,
+                CartProd = cartProd,
+                Contact = contact,
+            };
 
 
 
@@ -115,7 +150,11 @@ namespace jupiterCore.Controllers
             payment.txnMac = response.TxnMac;
             if (payment.Success == 1)
             {
+
+                SendCartEmail(cartModel);
+
                 cart.IsPay = 1;
+                cart.CartStatusId = 1;
                 foreach (var producttime in producttimes)
                 {
                     producttime.IsActive = 1;
@@ -127,6 +166,45 @@ namespace jupiterCore.Controllers
 
             _context.SaveChanges();
             return response;
+
+        }
+
+
+        private void SendCartEmail(CartModel cartContactModel)
+        {
+
+            var sendgrid = _context.ApiKey.Find(1);
+            var sendGridClient = new SendGridClient(sendgrid.ApiKey1);
+
+            var myMessage = new SendGridMessage();
+
+            myMessage.AddTo("Info@luxedreameventhire.co.nz");
+            myMessage.AddTo(cartContactModel.Contact.Email);
+            myMessage.From = new EmailAddress("Info@luxedreameventhire.co.nz", "LuxeDreamEventHire");
+            myMessage.SetTemplateId("d-8b50f89729a24c0590fcee9ef8bee1fe");
+
+            var contactDetail = cartContactModel.Contact;
+            var cartDetail = cartContactModel;
+            //return Ok(cartDetail.CartProd;
+            //var cartProds = "";
+            //foreach (var cart in cartDetail.CartProd)
+            //{
+            //    cartProds = cartProds + cart.Quantity + " of " + " " + cart.Title + "\r\n";
+            //}
+
+            myMessage.SetTemplateData(new
+            {
+                FirstName = contactDetail.FirstName,
+                LastName = contactDetail.LastName,
+                PlannedTime = cartDetail.PlannedTime.ToString("D"),
+                Email = contactDetail.Email,
+                PhoneNum = contactDetail.PhoneNum,
+                //cartProds = cartProds,
+                cartProds = cartDetail.CartProd,
+                Message = contactDetail.Message
+            });
+            sendGridClient.SendEmailAsync(myMessage);
+
 
         }
 

@@ -214,7 +214,7 @@ namespace jupiterCore.Controllers
 
             var myMessage = new SendGridMessage();
 
-            myMessage.AddTo("lluvialau@outlook.com");
+            myMessage.AddTo("Info@luxedreameventhire.co.nz");
             myMessage.From = new EmailAddress("Info@luxedreameventhire.co.nz", "LuxeDreamEventHire");
             myMessage.SetTemplateId("d-fa12e602e09041339338a5869708e195");
             myMessage.SetTemplateData(new
