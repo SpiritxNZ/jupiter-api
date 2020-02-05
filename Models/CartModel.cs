@@ -13,7 +13,7 @@ namespace Jupiter.Models
         public decimal? Price { get; set; }
         [Required (ErrorMessage ="Location is Required.")]
         public string Location { get; set; }
-        //public DateTime PlannedTime { get; set; }
+        public DateTime PlannedTime { get; set; }
         [Range(0, 1, ErrorMessage = "IsActivate must be either 0 or 1")]
         public byte? IsActivate { get; set; }
         public DateTime? CreateOn { get; set; }
