@@ -119,7 +119,7 @@ namespace jupiterCore.Controllers
             cart.ContactId = contact.ContactId;
             cart.Location = cartContactModel.CartModel.Location;
             cart.Price = cartContactModel.CartModel.Price;
-            cart.PlannedTime = cartContactModel.CartModel.PlannedTime;
+            //cart.PlannedTime = cartContactModel.CartModel.PlannedTime;
             cart.IsPickup = cartContactModel.CartModel.IsPickup;
             cart.Region = cartContactModel.CartModel.Region;           
             cart.UserId = id;
