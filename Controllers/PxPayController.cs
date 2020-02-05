@@ -129,7 +129,7 @@ namespace jupiterCore.Controllers
             {
                 Location = cart.Location,
                 Price = cart.Price,
-                PlannedTime = (DateTime)cart.PlannedTime,
+                //PlannedTime = (DateTime)cart.PlannedTime,
                 CartProd = cartProd,
                 Contact = contact,
             };
