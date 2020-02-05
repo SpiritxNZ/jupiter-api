@@ -122,6 +122,7 @@ namespace jupiterCore.Controllers
             cart.PlannedTime = null;
             cart.IsPickup = cartContactModel.CartModel.IsPickup;
             cart.Region = cartContactModel.CartModel.Region;
+            cart.UserId = null;
             //cart.CartProd = cart
 
             try
