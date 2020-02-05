@@ -62,8 +62,8 @@ namespace jupiterCore.Controllers
             input.MerchantReference = "My Reference";
             input.TxnType = "Purchase";
 
-            input.UrlFail = "http://45.76.123.59:80/paymentresult";
-            input.UrlSuccess = "http://45.76.123.59:80/paymentresult";
+            input.UrlFail = "http://luxedreameventhire.co.nz/paymentresult";
+            input.UrlSuccess = "http://luxedreameventhire.co.nz/paymentresult";
 
             //input.UrlFail = "http://localhost:4240/paymentresult";
             //input.UrlSuccess = "http://localhost:4240/paymentresult";

@@ -194,7 +194,7 @@ namespace jupiterCore.Controllers
             if (user != null)
             {
                 result.IsSuccess = false;
-                result.ErrorMessage = "This email has been registed.";
+                result.ErrorMessage = "This email has been registered.";
                 return BadRequest(result);
             }
             User newUser = new User();

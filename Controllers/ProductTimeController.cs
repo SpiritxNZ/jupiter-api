@@ -185,7 +185,7 @@ namespace jupiterCore.Controllers
 
         [HttpPost]
         [Route("[action]")]
-        public IActionResult CheckIfAvaliable([FromBody] IEnumerable<ProductTimetableModel> productTimetableModel)
+        public IActionResult CheckIfAvailable([FromBody] IEnumerable<ProductTimetableModel> productTimetableModel)
         {
             //var result = new Result<Object>();
             var result = new Result<string>();
