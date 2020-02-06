@@ -17,6 +17,7 @@ using MimeKit;
 using MimeKit.Utils;
 using SendGrid;
 using SendGrid.Helpers.Mail;
+using System.Linq.Expressions;
 
 namespace jupiterCore.Controllers
 {
@@ -55,32 +56,20 @@ namespace jupiterCore.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public ActionResult<List<Cart>> GetCartByEventDate(DateTime eventDate)
+        public ActionResult<List<Cart>> GetCartByFilter(string phoneNumber,DateTime? eventDate, string firstName)
         {
-            var cartsValue = _context.Cart.Where(x => x.IsActivate == 1 && x.IsPay==1 && x.EventStartDate<= eventDate && x.EventEndDate>= eventDate).Include(s => s.Contact).Include(s => s.CartProd).Include(s => s.CartStatus).OrderByDescending(x => x.EventStartDate).ToList();
+            var name = firstName == null ? _context.Contact.Select(x=>x.ContactId).ToList() : _context.Contact.Where(x => x.FirstName == firstName).Select(x => x.ContactId).ToList();
+
+            var phone = phoneNumber == null ? _context.Contact.Select(x => x.ContactId).ToList() :_context.Contact.Where(x => x.PhoneNum == phoneNumber).Select(x => x.ContactId).ToList();
+
+            var date = eventDate == null ? _context.Cart.Select(x => x.CartId).ToList() : _context.Cart.Where(x => x.EventStartDate <= eventDate && x.EventEndDate >= eventDate).Select(x => x.CartId).ToList();
+            var intersectedList = name.Intersect(phone);
+
+            
+            var cartsValue = _context.Cart.Where(x => x.IsActivate == 1 && intersectedList.Contains((int)x.ContactId) && date.Contains(x.CartId)).Include(s => s.Contact).Include(s => s.CartProd).Include(s => s.CartStatus).OrderByDescending(x => x.EventStartDate).ToList();
             return Ok(cartsValue);
         }
 
-
-        [HttpGet]
-        [Route("[action]")]
-        public ActionResult<List<Cart>> GetCartByPhoneNumber(string phoneNumber)
-        {
-            var cart1 = _context.Contact.Include(s => s.Cart).Where(x=>x.PhoneNum==phoneNumber).Select(x=>x.ContactId).ToList();
-            List<Cart> courses = new List<Cart>();
-            var cartsValue = _context.Cart.Where(x => x.IsActivate == 1 && cart1.Contains((int)x.ContactId)).Include(s => s.Contact).Include(s => s.CartProd).Include(s => s.CartStatus).OrderByDescending(x => x.EventStartDate).ToList();
-            return Ok(cartsValue);
-        }
-
-        [HttpGet]
-        [Route("[action]")]
-        public ActionResult<List<Cart>> GetCartByFirstName(string firstName)
-        {
-            var cart1 = _context.Contact.Include(s => s.Cart).Where(x => x.FirstName == firstName).Select(x => x.ContactId).ToList();
-            List<Cart> courses = new List<Cart>();
-            var cartsValue = _context.Cart.Where(x => x.IsActivate == 1 && cart1.Contains((int)x.ContactId)).Include(s => s.Contact).Include(s => s.CartProd).Include(s => s.CartStatus).OrderByDescending(x => x.EventStartDate).ToList();
-            return Ok(cartsValue);
-        }
 
 
         // PUT: api/Carts/5
