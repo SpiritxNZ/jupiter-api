@@ -60,7 +60,7 @@ namespace jupiterCore.Controllers
         {
             var result = new Result<object>();
 
-            var user = _context.User.Include(x => x.UserContactInfo).Select(s=>new { s.Id,s.Email,s.IsSubscribe,UserInfo=s.UserContactInfo}).ToListAsync();
+            var user = _context.User.Include(x => x.UserContactInfo).Select(s=>new { s.Id,s.Email,s.IsSubscribe,s.CreatedOn,UserInfo=s.UserContactInfo}).OrderByDescending(x=>x.CreatedOn).ToListAsync();
             result.Data = user;
 
             return Ok(result);
@@ -198,6 +198,7 @@ namespace jupiterCore.Controllers
                 return BadRequest(result);
             }
             User newUser = new User();
+            userModel.CreatedOn = DateTime.Now;
             _mapper.Map(userModel, newUser);
             newUser.Password = HashPassword(userModel.Password);
             try

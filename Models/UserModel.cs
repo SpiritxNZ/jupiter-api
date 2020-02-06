@@ -15,6 +15,8 @@ namespace jupiterCore.Models
         [MinLength(6)]
         public string Password { get; set; }
 
+        public DateTime CreatedOn { get; set; }
+
         public byte IsSubscribe { get; set; }
 
         //[DataType(DataType.Password)]

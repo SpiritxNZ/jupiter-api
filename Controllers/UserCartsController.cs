@@ -38,7 +38,7 @@ namespace jupiterCore.Controllers
         //[Authorize]
         public ActionResult<List<Cart>> GetCart()
         {
-            var cartsValue = _context.Cart.Where(x => x.IsActivate == 1 && x.UserId != null).Include(s => s.Contact).Include(s => s.CartProd).ToList();
+            var cartsValue = _context.Cart.Where(x => x.IsActivate == 1 && x.UserId != null).Include(s => s.Contact).Include(s => s.CartProd).OrderByDescending(x=>x.EventStartDate).ToList();
             return Ok(cartsValue);
         }
 

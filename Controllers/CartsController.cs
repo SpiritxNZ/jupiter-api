@@ -38,7 +38,7 @@ namespace jupiterCore.Controllers
         //[Authorize]
         public ActionResult<List<Cart>> GetCart()
         {
-            var cartsValue = _context.Cart.Where(x => x.IsActivate == 1).Include(s => s.Contact).Include(s => s.CartProd).Include(s=>s.CartStatus).ToList();
+            var cartsValue = _context.Cart.Where(x => x.IsActivate == 1).Include(s => s.Contact).Include(s => s.CartProd).Include(s=>s.CartStatus).OrderByDescending(x=>x.EventStartDate).ToList();
             return Ok(cartsValue);
         }
 
@@ -51,6 +51,37 @@ namespace jupiterCore.Controllers
                 .FirstOrDefault(s => s.CartId == id);
             return Ok(cart1);
         }
+
+
+        [HttpGet]
+        [Route("[action]")]
+        public ActionResult<List<Cart>> GetCartByEventDate(DateTime eventDate)
+        {
+            var cartsValue = _context.Cart.Where(x => x.IsActivate == 1 && x.IsPay==1 && x.EventStartDate<= eventDate && x.EventEndDate>= eventDate).Include(s => s.Contact).Include(s => s.CartProd).Include(s => s.CartStatus).OrderByDescending(x => x.EventStartDate).ToList();
+            return Ok(cartsValue);
+        }
+
+
+        [HttpGet]
+        [Route("[action]")]
+        public ActionResult<List<Cart>> GetCartByPhoneNumber(string phoneNumber)
+        {
+            var cart1 = _context.Contact.Include(s => s.Cart).Where(x=>x.PhoneNum==phoneNumber).Select(x=>x.ContactId).ToList();
+            List<Cart> courses = new List<Cart>();
+            var cartsValue = _context.Cart.Where(x => x.IsActivate == 1 && cart1.Contains((int)x.ContactId)).Include(s => s.Contact).Include(s => s.CartProd).Include(s => s.CartStatus).OrderByDescending(x => x.EventStartDate).ToList();
+            return Ok(cartsValue);
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        public ActionResult<List<Cart>> GetCartByFirstName(string firstName)
+        {
+            var cart1 = _context.Contact.Include(s => s.Cart).Where(x => x.FirstName == firstName).Select(x => x.ContactId).ToList();
+            List<Cart> courses = new List<Cart>();
+            var cartsValue = _context.Cart.Where(x => x.IsActivate == 1 && cart1.Contains((int)x.ContactId)).Include(s => s.Contact).Include(s => s.CartProd).Include(s => s.CartStatus).OrderByDescending(x => x.EventStartDate).ToList();
+            return Ok(cartsValue);
+        }
+
 
         // PUT: api/Carts/5
         [CheckModelFilter]
