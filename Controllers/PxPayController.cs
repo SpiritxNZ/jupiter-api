@@ -61,12 +61,14 @@ namespace jupiterCore.Controllers
             input.CurrencyInput = "NZD";
             input.MerchantReference = "My Reference";
             input.TxnType = "Purchase";
+            input.Opt = "TO="+DateTime.UtcNow.AddMinutes(10).ToString("yyMMddHHmm");
 
-            input.UrlFail = "http://45.76.123.59:80/paymentresult";
-            input.UrlSuccess = "http://45.76.123.59:80/paymentresult";
+            //input.UrlFail = "http://45.76.123.59:80/paymentresult";
+            //input.UrlSuccess = "http://45.76.123.59:80/paymentresult";
 
-            //input.UrlFail = "http://localhost:4240/paymentresult";
-            //input.UrlSuccess = "http://localhost:4240/paymentresult";
+
+            input.UrlFail = "http://localhost:4580/paymentresult";
+            input.UrlSuccess = "http://localhost:4580/paymentresult";
 
             // TODO: GUID representing unique identifier for the transaction within the shopping cart (normally would be an order ID or similar)
             Guid orderId = Guid.NewGuid();
@@ -158,6 +160,15 @@ namespace jupiterCore.Controllers
                 foreach (var producttime in producttimes)
                 {
                     producttime.IsActive = 1;
+                    _context.ProductTimetable.Update(producttime);
+                }
+            }
+            if (payment.Success == 0)
+            {
+                cart.IsExpired = 1;
+                foreach (var producttime in producttimes)
+                {
+                    producttime.IsActive = 0;
                     _context.ProductTimetable.Update(producttime);
                 }
             }

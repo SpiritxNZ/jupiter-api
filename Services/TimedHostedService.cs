@@ -35,7 +35,7 @@ namespace jupiterCore.Services
             foreach(var cart in carts)
             {
                 DateTime dateTime = (DateTime)cart.CreateOn;
-                DateTime expireDate = dateTime.AddMinutes(10);
+                DateTime expireDate = dateTime.AddMinutes(11);
                 DateTime now = toNZTimezone(DateTime.UtcNow);
                 if (DateTime.Compare(expireDate, now)<0)
                 {

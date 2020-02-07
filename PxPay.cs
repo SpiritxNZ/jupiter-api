@@ -226,7 +226,7 @@ namespace PaymentExpress
             private string _UrlFail;
             private string _UrlSuccess;
             private string _UrlCallback;
-            //private string _Opt;
+            private string _Opt;
 
 
             public RequestInput()
@@ -426,17 +426,17 @@ namespace PaymentExpress
                 }
             }
 
-            //public string Opt
-            //{
-            //    get
-            //    {
-            //        return _Opt;
-            //    }
-            //    set
-            //    {
-            //        _Opt = value;
-            //    }
-            //}
+            public string Opt
+            {
+                get
+                {
+                    return _Opt;
+                }
+                set
+                {
+                    _Opt = value;
+                }
+            }
 
             // If there are any additional input parameters simply add a new read/write property
 
