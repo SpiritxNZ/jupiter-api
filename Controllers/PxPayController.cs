@@ -132,6 +132,8 @@ namespace jupiterCore.Controllers
                 Location = cart.Location,
                 Price = cart.Price,
                 //PlannedTime = (DateTime)cart.PlannedTime,
+                EventStartDate=(DateTime)cart.EventStartDate,
+                EventEndDate = (DateTime)cart.EventEndDate,
                 CartProd = cartProd,
                 Contact = contact,
             };
