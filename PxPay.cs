@@ -181,11 +181,11 @@ namespace PaymentExpress
                 settings.Indent = true;
                 settings.NewLineOnAttributes = false;
                 settings.OmitXmlDeclaration = true;
-                result = result.Replace("%26", "&");
-                int firstStringPosition = result.IndexOf("result=");
-                int secondStringPosition = result.IndexOf("&userid");
+                //result = result.Replace("%26", "&");
+                //int firstStringPosition = result.IndexOf("result=");
+                //int secondStringPosition = result.IndexOf("&userid");
 
-                string stringBeforeChar = result.Substring(firstStringPosition + 7, secondStringPosition - firstStringPosition - 7);
+                //string stringBeforeChar = result.Substring(firstStringPosition + 7, secondStringPosition - firstStringPosition - 7);
 
                 using (XmlWriter writer = XmlWriter.Create(sw, settings))
                 {
@@ -193,7 +193,7 @@ namespace PaymentExpress
                     writer.WriteStartElement("ProcessResponse");
                     writer.WriteElementString("PxPayUserId", _PxPayUserId);
                     writer.WriteElementString("PxPayKey", _PxPayKey);
-                    writer.WriteElementString("Response", stringBeforeChar);
+                    writer.WriteElementString("Response", result);
                     writer.WriteEndElement();
                     writer.WriteEndDocument();
                     writer.Flush();

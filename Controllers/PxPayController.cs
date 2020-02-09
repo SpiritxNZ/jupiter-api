@@ -99,26 +99,26 @@ namespace jupiterCore.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public ResponseOutput ResponseOutput(string url)
+        public ResponseOutput ResponseOutput(string result,string userid)
         {
-            var result = new Result<Faq>();
+            var result1 = new Result<Faq>();
             Faq faq = new Faq();
             FaqModel faqModel = new FaqModel
             {
-                Question = url,
-                Answer = "test",
+                Question = result,
+                Answer = userid,
             };
             _mapper.Map(faqModel, faq);
             try
             {
-                result.Data = faq;
+                result1.Data = faq;
                 _context.Faq.AddAsync(faq);
                 _context.SaveChangesAsync();
             }
             catch (Exception e)
             {
-                result.ErrorMessage = e.Message;
-                result.IsFound = false;
+                result1.ErrorMessage = e.Message;
+                result1.IsFound = false;
             }
 
             //-----------
@@ -128,7 +128,7 @@ namespace jupiterCore.Controllers
 
             PxPay WS = new PxPay(PxPayUserId, PxPayKey);
 
-            ResponseOutput response = WS.ProcessResponse(url);
+            ResponseOutput response = WS.ProcessResponse(result);
             var payment = _context.Payment.Where(x => x.TxnId == response.TxnId).First();
             var cart = _context.Cart.Where(x => x.CartId == payment.CardId).First();
 
