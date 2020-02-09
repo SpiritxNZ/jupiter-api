@@ -101,6 +101,27 @@ namespace jupiterCore.Controllers
         [Route("[action]")]
         public ResponseOutput ResponseOutput(string url)
         {
+            var result = new Result<Faq>();
+            Faq faq = new Faq();
+            FaqModel faqModel = new FaqModel
+            {
+                Question = "test",
+                Answer = "test",
+            };
+            _mapper.Map(faqModel, faq);
+            try
+            {
+                result.Data = faq;
+                _context.Faq.AddAsync(faq);
+                _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                result.ErrorMessage = e.Message;
+                result.IsFound = false;
+            }
+
+            //-----------
             string PxPayUserId = _configuration.GetSection("WindCave:PxPayUserId").Value;//.AppSettings["PxPayUserId"];
             string PxPayKey = _configuration.GetSection("WindCave:PxPayKey").Value;
             //string PxPayKey = ConfigurationManager.AppSettings["PxPayKey"];
