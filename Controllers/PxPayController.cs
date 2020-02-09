@@ -105,7 +105,7 @@ namespace jupiterCore.Controllers
             Faq faq = new Faq();
             FaqModel faqModel = new FaqModel
             {
-                Question = "test",
+                Question = url,
                 Answer = "test",
             };
             _mapper.Map(faqModel, faq);
