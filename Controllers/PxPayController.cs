@@ -91,37 +91,10 @@ namespace jupiterCore.Controllers
             return new RequestJson { Url = output.Url };
         }
 
-
-        public class Url
-        {
-            public string url { get; set; }
-        }
-
         [HttpGet]
         [Route("[action]")]
         public ResponseOutput ResponseOutput(string result,string userid)
         {
-            var result1 = new Result<Faq>();
-            Faq faq = new Faq();
-            FaqModel faqModel = new FaqModel
-            {
-                Question = result,
-                Answer = userid,
-            };
-            _mapper.Map(faqModel, faq);
-            try
-            {
-                result1.Data = faq;
-                _context.Faq.AddAsync(faq);
-                _context.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                result1.ErrorMessage = e.Message;
-                result1.IsFound = false;
-            }
-
-            //-----------
             string PxPayUserId = _configuration.GetSection("WindCave:PxPayUserId").Value;//.AppSettings["PxPayUserId"];
             string PxPayKey = _configuration.GetSection("WindCave:PxPayKey").Value;
             //string PxPayKey = ConfigurationManager.AppSettings["PxPayKey"];
