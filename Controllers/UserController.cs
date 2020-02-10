@@ -81,6 +81,7 @@ namespace jupiterCore.Controllers
 
         [HttpPut]
         [Route("ChangePassword")]
+        [Authorize]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordModel changePasswordModel)
         {
             var result = new Result<string>();
