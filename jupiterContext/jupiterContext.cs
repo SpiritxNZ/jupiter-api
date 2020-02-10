@@ -228,6 +228,8 @@ namespace jupiterCore.jupiterContext
 
                 entity.Property(e => e.Quantity).HasColumnType("int(11)");
 
+                entity.Property(e => e.ProdDetailId).HasColumnType("int(11)");
+
                 entity.Property(e => e.SubTitle)
                     .HasMaxLength(255)
                     .IsUnicode(false);

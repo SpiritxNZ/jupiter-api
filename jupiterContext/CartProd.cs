@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace jupiterCore.jupiterContext
 {
@@ -12,6 +13,7 @@ namespace jupiterCore.jupiterContext
         public string Title { get; set; }
         public string SubTitle { get; set; }
         public int? Quantity { get; set; }
+        public int? ProdDetailId { get; set; }
 
         public virtual Cart Cart { get; set; }
         public virtual Product Prod { get; set; }

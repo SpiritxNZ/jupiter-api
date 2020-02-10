@@ -11,13 +11,7 @@ using jupiterCore.Models;
 using Jupiter.ActionFilter;
 using Jupiter.Controllers;
 using Jupiter.Models;
-using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Authorization;
-using MimeKit;
-using MimeKit.Utils;
-using SendGrid;
-using SendGrid.Helpers.Mail;
-using System.Linq.Expressions;
 
 namespace jupiterCore.Controllers
 {
@@ -70,23 +64,74 @@ namespace jupiterCore.Controllers
             return Ok(cartsValue);
         }
 
-
+        public class PutCartModel
+        {
+            public CartModel cartModel { get; set; }
+            public IEnumerable<CartProdModel> cartProdModel { get; set; }
+        }
 
         // PUT: api/Carts/5
         [CheckModelFilter]
         [HttpPut("{id}")]
-        [Authorize]
-        public async Task<ActionResult> PutCart(int id, CartModel cartModel)
+        //[Authorize]
+        public async Task<ActionResult> PutCart(int id, PutCartModel putCartModel)
         {
             var result = new Result<string>();
-            Type cartType = typeof(Cart);
+
+
+            //update Cart
             var updateCart = await _context.Cart.Where(x => x.CartId == id).FirstOrDefaultAsync();
+
             if (updateCart == null)
             {
                 return NotFound(DataNotFound(result));
             }
-            UpdateTable(cartModel, cartType, updateCart);
+            
+            _mapper.Map(putCartModel.cartModel, updateCart);
             updateCart.UpdateOn = DateTime.Now;
+            _context.Cart.Update(updateCart);
+
+            //update timetable
+            var updateTimetable = await _context.ProductTimetable.Where(x => x.CartId == id).ToListAsync();
+            foreach(var time in updateTimetable)
+            {
+                time.BeginDate = putCartModel.cartModel.EventEndDate;
+                time.EndDate = putCartModel.cartModel.EventEndDate;
+            }
+
+            //update cartProd && 
+            foreach (var prod in putCartModel.cartProdModel)
+            {
+                var updateProd = await _context.CartProd.Where(x => x.Id == prod.Id).FirstOrDefaultAsync();
+                if (updateProd.ProdDetailId == null)
+                {
+                    var updateTimeQuantity = await _context.ProductTimetable.Where(x => x.CartId == id && x.ProdId == updateProd.ProdId).FirstOrDefaultAsync();
+                    if(updateTimeQuantity == null)
+                    {
+                        return NotFound(DataNotFound(result));
+                    }
+                    updateTimeQuantity.Quantity = prod.Quantity;
+                }
+                else
+                {
+                    var updateTimeQuantity = await _context.ProductTimetable.Where(x => x.CartId == id && x.ProdDetailId == updateProd.ProdDetailId).FirstOrDefaultAsync();
+                    if (updateTimeQuantity == null)
+                    {
+                        return NotFound(DataNotFound(result));
+                    }
+                    updateTimeQuantity.Quantity = prod.Quantity;
+                }
+                
+                if (updateProd == null) {
+                    return NotFound(DataNotFound(result));
+                }
+                updateProd.Price = prod.Price;
+                updateProd.Quantity = prod.Quantity;
+                _context.CartProd.Update(updateProd);
+            }
+
+
+            
             try
             {
                 await _context.SaveChangesAsync();

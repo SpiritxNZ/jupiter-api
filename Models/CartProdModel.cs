@@ -15,5 +15,6 @@ namespace Jupiter.Models
         public string Title { get; set; }
         public string SubTitle { get; set; }
         public int? Quantity { get; set; }
+        public int? ProdDetailId { get; set; }
     }
 }
