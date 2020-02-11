@@ -195,6 +195,7 @@ namespace jupiterCore.Controllers
             cart.Price = cartContactModel.CartModel.Price;
             //cart.RentalPaidFee = cartContactModel.CartModel.Price * 0.50m;
             cart.RentalPaidFee = 0;
+            cart.DepositPaidFee = 0;
             cart.EventStartDate = cartContactModel.CartModel.EventStartDate;
             cart.EventEndDate = cartContactModel.CartModel.EventEndDate;
             cart.IsPickup = cartContactModel.CartModel.IsPickup;
