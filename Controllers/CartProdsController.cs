@@ -91,17 +91,53 @@ namespace jupiterCore.Controllers
         // POST: api/CartProds
         [CheckModelFilter]
         [HttpPost]
-        public async Task<ActionResult<CartProd>> PostCartProd(IEnumerable<CartProdModel> cartProdModelList)
+        public async Task<ActionResult> PostCartProd(IEnumerable<CartProdModel> cartProdModelList)
         {
-            var result = new Result<IEnumerable<CartProd>>();
-            var list = _mapper.Map<IEnumerable<CartProdModel>, IEnumerable<CartProd>>(cartProdModelList);
-
-            result.Data = list;
-
-            foreach (CartProd cp in list)
+            var result = new Result<string>();
+            var cart = await _context.Cart.Where(x => x.CartId == cartProdModelList.ToArray()[0].CartId).FirstOrDefaultAsync();
+            if(cart == null)
             {
-                await _context.CartProd.AddAsync(cp);
+                return NotFound(DataNotFound(result));
             }
+ 
+            cartProdModelList.ToList().ForEach(s => {
+                _context.CartProd.Add(new CartProd
+                {
+                    ProdDetailId = s.ProdDetailId,
+                    ProdId = s.ProdId,
+                    Quantity = s.Quantity,
+                    CartId = s.CartId,
+                    Price = s.Price,
+                    Title = s.Title,
+                });
+                cart.Price += s.Price;
+                if (s.ProdDetailId != null)
+                {
+                    _context.ProductTimetable.Add(new ProductTimetable
+                    {
+                        ProdDetailId = s.ProdDetailId,
+                        Quantity = s.Quantity,
+                        CartId = s.CartId,
+                        IsActive = 1,
+                        BeginDate = cart.EventStartDate,
+                        EndDate = cart.EventEndDate
+                    });
+                }
+                else
+                {
+                    _context.ProductTimetable.Add(new ProductTimetable
+                    {
+                        ProdId = s.ProdId,
+                        Quantity = s.Quantity,
+                        CartId = s.CartId,
+                        IsActive = 1,
+                        BeginDate = cart.EventStartDate,
+                        EndDate = cart.EventEndDate
+                    });
+                }
+                
+            });
+
             try
             {
                 await _context.SaveChangesAsync();
@@ -120,10 +156,27 @@ namespace jupiterCore.Controllers
         {
             var result = new Result<string>();
             var cartProd = await _context.CartProd.FindAsync(id);
-            if (cartProd == null)
+
+            var cart = await _context.Cart.Where(x => x.CartId == cartProd.CartId).FirstOrDefaultAsync();
+;
+            if (cartProd.ProdDetailId == null)
+            {
+                var time = await _context.ProductTimetable.Where(x => x.CartId == cart.CartId && x.ProdId == cartProd.ProdId).FirstOrDefaultAsync();
+                time.IsActive = 0;
+                _context.ProductTimetable.Remove(time);
+            }
+            else
+            {
+                var time = await _context.ProductTimetable.Where(x => x.CartId == cart.CartId && x.ProdDetailId == cartProd.ProdDetailId).FirstOrDefaultAsync();
+                time.IsActive = 0;
+                _context.ProductTimetable.Remove(time);
+            }
+            if (cartProd == null || cart==null)
             {
                 return NotFound(DataNotFound(result));
             }
+            cart.Price = cart.Price - cartProd.Price * cartProd.Quantity;
+            _context.Cart.Update(cart);
             _context.CartProd.Remove(cartProd);
             
             try

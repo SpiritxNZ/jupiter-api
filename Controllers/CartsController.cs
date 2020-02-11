@@ -89,7 +89,7 @@ namespace jupiterCore.Controllers
             
             _mapper.Map(putCartModel.cartModel, updateCart);
             updateCart.UpdateOn = DateTime.Now;
-            _context.Cart.Update(updateCart);
+            updateCart.Price = 0;
 
             //update timetable
             var updateTimetable = await _context.ProductTimetable.Where(x => x.CartId == id).ToListAsync();
@@ -103,6 +103,7 @@ namespace jupiterCore.Controllers
             foreach (var prod in putCartModel.cartProdModel)
             {
                 var updateProd = await _context.CartProd.Where(x => x.Id == prod.Id).FirstOrDefaultAsync();
+                updateCart.Price += prod.Price * prod.Quantity;
                 if (updateProd.ProdDetailId == null)
                 {
                     var updateTimeQuantity = await _context.ProductTimetable.Where(x => x.CartId == id && x.ProdId == updateProd.ProdId).FirstOrDefaultAsync();
@@ -130,8 +131,8 @@ namespace jupiterCore.Controllers
                 _context.CartProd.Update(updateProd);
             }
 
+            _context.Cart.Update(updateCart);
 
-            
             try
             {
                 await _context.SaveChangesAsync();
