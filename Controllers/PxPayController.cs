@@ -63,12 +63,9 @@ namespace jupiterCore.Controllers
             input.TxnType = "Purchase";
             input.Opt = "TO="+DateTime.UtcNow.AddMinutes(10).ToString("yyMMddHHmm");
 
-            //input.UrlFail = "http://45.76.123.59:80/paymentresult";
-            //input.UrlSuccess = "http://45.76.123.59:80/paymentresult";
+            input.UrlFail = "http://45.76.123.59:80/paymentresult";
+            input.UrlSuccess = "http://45.76.123.59:80/paymentresult";
 
-
-            input.UrlFail = "http://localhost:4580/paymentresult";
-            input.UrlSuccess = "http://localhost:4580/paymentresult";
             input.UrlCallback = "http://45.76.123.59:443/api/pxpay/ResponseOutput";
 
             // TODO: GUID representing unique identifier for the transaction within the shopping cart (normally would be an order ID or similar)

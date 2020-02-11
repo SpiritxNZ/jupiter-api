@@ -139,7 +139,7 @@ namespace jupiterCore.Controllers
             var tokenString = GenerateJwt(user.Id);
 
 //            var callbackUrl = Url.Action("EmailResetPassword", "User", new { userId = user.Id, code = tokenToClient }, protocol: HttpContext.Request.Scheme);
-            var callbackUrl = "http://localhost:4239/reset?" + "code=" + tokenString;
+            var callbackUrl = "http://45.76.123.59:80/reset?" + "code=" + tokenString;
             var sendgrid = _context.ApiKey.Find(1);
             var sendGridClient = new SendGridClient(sendgrid.ApiKey1);
 
