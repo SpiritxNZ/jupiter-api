@@ -119,19 +119,6 @@ namespace jupiterCore.Controllers
                 });
             });
 
-            CartModel cartModel = new CartModel
-            {
-                Location = cart.Location,
-                Price = cart.Price,
-                //PlannedTime = (DateTime)cart.PlannedTime,
-                EventStartDate=(DateTime)cart.EventStartDate,
-                EventEndDate = (DateTime)cart.EventEndDate,
-                CartProd = cartProd,
-                Contact = contact,
-            };
-
-
-
             payment.Success = int.Parse(response.Success);
             //payment.TxnId = response.TxnId;
             payment.ClientInfo = response.ClientInfo;
@@ -146,6 +133,22 @@ namespace jupiterCore.Controllers
             payment.txnMac = response.TxnMac;
             if (payment.Success == 1)
             {
+                CartModel cartModel = new CartModel
+                {
+                    CartId = cart.CartId,
+
+                    Location = cart.Location,
+                    Price = cart.Price,
+                    DeliveryFee = cart.DeliveryFee,
+                    DepositFee = cart.DepositFee,
+                    DepositPaidFee = cart.DepositPaidFee,
+                    RentalPaidFee = cart.RentalPaidFee,
+                    IsPickup = cart.IsPickup,
+                    EventStartDate = (DateTime)cart.EventStartDate,
+                    EventEndDate = (DateTime)cart.EventEndDate,
+                    CartProd = cartProd,
+                    Contact = contact,
+                };
 
                 SendCartEmail(cartModel);
 
@@ -171,6 +174,8 @@ namespace jupiterCore.Controllers
             _context.Cart.Update(cart);
 
             _context.SaveChanges();
+
+
             return response;
 
         }
@@ -197,7 +202,7 @@ namespace jupiterCore.Controllers
             //{
             //    cartProds = cartProds + cart.Quantity + " of " + " " + cart.Title + "\r\n";
             //}
-
+            
             myMessage.SetTemplateData(new
             {
                 FirstName = contactDetail.FirstName,
@@ -206,9 +211,14 @@ namespace jupiterCore.Controllers
                 EventEndDate = cartDetail.EventEndDate.ToString("D"),
                 Email = contactDetail.Email,
                 PhoneNum = contactDetail.PhoneNum,
-                //cartProds = cartProds,
                 cartProds = cartDetail.CartProd,
-                Message = contactDetail.Message
+                Message = contactDetail.Message,
+                Price= cartDetail.Price,
+                DeliveryFee= cartDetail.DeliveryFee,
+                DepositFee= cartDetail.DepositPaidFee,
+                RentalPaidFee= cartDetail.RentalPaidFee,
+                OrderId= cartDetail.CartId
+
             });
             sendGridClient.SendEmailAsync(myMessage);
 

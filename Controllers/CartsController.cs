@@ -47,6 +47,14 @@ namespace jupiterCore.Controllers
             return Ok(cart1);
         }
 
+        [HttpGet]
+        [Route("[action]")]
+        public ActionResult<List<Cart>> GetCartByPaid(int isPaid)
+        {
+            var cart1 = _context.Cart.Where(x => x.IsActivate == 1 && x.IsPay == isPaid).Include(s => s.Contact).Include(s => s.CartProd).Include(s => s.CartStatus).OrderByDescending(x => x.EventStartDate).ToList();
+            return Ok(cart1);
+        }
+
 
         [HttpGet]
         [Route("[action]")]
