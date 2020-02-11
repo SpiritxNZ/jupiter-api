@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Jupiter.Models;
 using System.Collections.Generic;
 using AutoMapper;
+using System.Threading.Tasks;
 
 namespace jupiterCore.Controllers
 {
@@ -90,7 +91,7 @@ namespace jupiterCore.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public ResponseOutput ResponseOutput(string result,string userid)
+        public async Task<ResponseOutput> ResponseOutputAsync(string result,string userid)
         {
             string PxPayUserId = _configuration.GetSection("WindCave:PxPayUserId").Value;//.AppSettings["PxPayUserId"];
             string PxPayKey = _configuration.GetSection("WindCave:PxPayKey").Value;
@@ -170,7 +171,7 @@ namespace jupiterCore.Controllers
             _context.Payment.Update(payment);
             _context.Cart.Update(cart);
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             if (payment.Success == 1)
             {
                 SendCartEmail(cartModel);
