@@ -119,6 +119,7 @@ namespace jupiterCore.Controllers
             cart.ContactId = contact.ContactId;
             cart.Location = cartContactModel.CartModel.Location;
             cart.Price = cartContactModel.CartModel.Price;
+            cart.RentalPaidFee = cartContactModel.CartModel.Price * 0.50m;
             cart.EventStartDate = cartContactModel.CartModel.EventStartDate;
             cart.EventEndDate = cartContactModel.CartModel.EventEndDate;
             cart.IsPickup = cartContactModel.CartModel.IsPickup;

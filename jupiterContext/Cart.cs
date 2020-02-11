@@ -30,6 +30,8 @@ namespace jupiterCore.jupiterContext
         public byte? IsPay { get; set; }
         public byte? IsExpired { get; set; }
         public int? CartStatusId { get; set; }
+        public decimal? RentalPaidFee { get; set; }
+        public decimal? DepositPaidFee { get; set; }
 
         public virtual CartStatus CartStatus { get; set; }
         public virtual User User { get; set; }
