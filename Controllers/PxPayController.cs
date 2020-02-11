@@ -119,22 +119,7 @@ namespace jupiterCore.Controllers
 
                 });
             });
-            CartModel cartModel = new CartModel
-            {
-                CartId = cart.CartId,
-
-                Location = cart.Location,
-                Price = cart.Price,
-                DeliveryFee = cart.DeliveryFee,
-                DepositFee = cart.DepositFee,
-                DepositPaidFee = cart.DepositPaidFee,
-                RentalPaidFee = cart.RentalPaidFee,
-                IsPickup = cart.IsPickup,
-                EventStartDate = (DateTime)cart.EventStartDate,
-                EventEndDate = (DateTime)cart.EventEndDate,
-                CartProd = cartProd,
-                Contact = contact,
-            };
+            
 
             payment.Success = int.Parse(response.Success);
             //payment.TxnId = response.TxnId;
@@ -172,6 +157,23 @@ namespace jupiterCore.Controllers
             _context.Cart.Update(cart);
 
             await _context.SaveChangesAsync();
+
+            CartModel cartModel = new CartModel
+            {
+                CartId = cart.CartId,
+
+                Location = cart.Location,
+                Price = cart.Price,
+                DeliveryFee = cart.DeliveryFee,
+                DepositFee = cart.DepositFee,
+                DepositPaidFee = cart.DepositPaidFee,
+                RentalPaidFee = cart.RentalPaidFee,
+                IsPickup = cart.IsPickup,
+                EventStartDate = (DateTime)cart.EventStartDate,
+                EventEndDate = (DateTime)cart.EventEndDate,
+                CartProd = cartProd,
+                Contact = contact,
+            };
             if (payment.Success == 1)
             {
                 SendCartEmail(cartModel);
