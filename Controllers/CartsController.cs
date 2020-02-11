@@ -95,7 +95,7 @@ namespace jupiterCore.Controllers
             var updateTimetable = await _context.ProductTimetable.Where(x => x.CartId == id).ToListAsync();
             foreach(var time in updateTimetable)
             {
-                time.BeginDate = putCartModel.cartModel.EventEndDate;
+                time.BeginDate = putCartModel.cartModel.EventStartDate;
                 time.EndDate = putCartModel.cartModel.EventEndDate;
             }
 
