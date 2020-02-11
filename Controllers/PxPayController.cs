@@ -56,8 +56,8 @@ namespace jupiterCore.Controllers
 
             RequestInput input = new RequestInput();
             var card = _context.Cart.Find(cartId);
-
-            input.AmountInput = card.Price.ToString();
+            float amount = (float)((float)card.Price / 2) + (float)card.DeliveryFee;
+            input.AmountInput = amount.ToString();
             input.CurrencyInput = "NZD";
             input.MerchantReference = "My Reference";
             input.TxnType = "Purchase";
