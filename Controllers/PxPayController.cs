@@ -118,6 +118,22 @@ namespace jupiterCore.Controllers
 
                 });
             });
+            CartModel cartModel = new CartModel
+            {
+                CartId = cart.CartId,
+
+                Location = cart.Location,
+                Price = cart.Price,
+                DeliveryFee = cart.DeliveryFee,
+                DepositFee = cart.DepositFee,
+                DepositPaidFee = cart.DepositPaidFee,
+                RentalPaidFee = cart.RentalPaidFee,
+                IsPickup = cart.IsPickup,
+                EventStartDate = (DateTime)cart.EventStartDate,
+                EventEndDate = (DateTime)cart.EventEndDate,
+                CartProd = cartProd,
+                Contact = contact,
+            };
 
             payment.Success = int.Parse(response.Success);
             //payment.TxnId = response.TxnId;
@@ -133,25 +149,6 @@ namespace jupiterCore.Controllers
             payment.txnMac = response.TxnMac;
             if (payment.Success == 1)
             {
-                CartModel cartModel = new CartModel
-                {
-                    CartId = cart.CartId,
-
-                    Location = cart.Location,
-                    Price = cart.Price,
-                    DeliveryFee = cart.DeliveryFee,
-                    DepositFee = cart.DepositFee,
-                    DepositPaidFee = cart.DepositPaidFee,
-                    RentalPaidFee = cart.RentalPaidFee,
-                    IsPickup = cart.IsPickup,
-                    EventStartDate = (DateTime)cart.EventStartDate,
-                    EventEndDate = (DateTime)cart.EventEndDate,
-                    CartProd = cartProd,
-                    Contact = contact,
-                };
-
-                SendCartEmail(cartModel);
-
                 cart.IsPay = 1;
                 cart.CartStatusId = 1;
                 cart.RentalPaidFee = Convert.ToDecimal(payment.AmountSettlemen);
@@ -174,7 +171,10 @@ namespace jupiterCore.Controllers
             _context.Cart.Update(cart);
 
             _context.SaveChanges();
-
+            if (payment.Success == 1)
+            {
+                SendCartEmail(cartModel);
+            }
 
             return response;
 
@@ -215,7 +215,7 @@ namespace jupiterCore.Controllers
                 Message = contactDetail.Message,
                 Price= cartDetail.Price,
                 DeliveryFee= cartDetail.DeliveryFee,
-                DepositFee= cartDetail.DepositPaidFee,
+                DepositFee= cartDetail.DepositFee,
                 RentalPaidFee= cartDetail.RentalPaidFee,
                 OrderId= cartDetail.CartId
 
