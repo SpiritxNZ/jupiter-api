@@ -154,6 +154,7 @@ namespace jupiterCore.Controllers
 
                 cart.IsPay = 1;
                 cart.CartStatusId = 1;
+                cart.RentalPaidFee = Convert.ToDecimal(payment.AmountSettlemen);
                 foreach (var producttime in producttimes)
                 {
                     producttime.IsActive = 1;
