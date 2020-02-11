@@ -132,7 +132,7 @@ namespace jupiterCore.Controllers
 
         [HttpPost]
         [Route("[action]")]
-        public List<DateTime> CalculateTime ([FromBody] IEnumerable<CheckProdStockModel> checkProdStockModel)
+        public List<string> CalculateTime ([FromBody] IEnumerable<CheckProdStockModel> checkProdStockModel)
         {
             int count = checkProdStockModel.Count();
             int[][] storeAvaliableStock = new int[count][];
@@ -180,7 +180,13 @@ namespace jupiterCore.Controllers
 
             List<DateTime> allDateList = GenerateDate(checkProdStockModel.ToArray()[0].beginDate);
             List<DateTime> unavaliable = new List<DateTime>(allDateList.Except(dateList));
-            return unavaliable;
+
+            List<string> dateString = new List<string>();
+            foreach (var date in unavaliable)
+            {
+                dateString.Add(date.ToString("yyyy-MM-dd"));
+            }
+            return dateString;
         }
 
         [HttpPost]
@@ -202,7 +208,7 @@ namespace jupiterCore.Controllers
 
                 });
             });
-            List<DateTime> unavaliables = CalculateTime(checkProdStockModel);
+            List<DateTime> unavaliables = CalculateTimePrivate(checkProdStockModel);
             DateTime begindate = (DateTime)productTimetableModel.ToArray()[0].BeginDate;
             DateTime enddate = (DateTime)productTimetableModel.ToArray()[0].EndDate;
 
@@ -210,37 +216,64 @@ namespace jupiterCore.Controllers
             {
                 if (unavaliable >= begindate && unavaliable <= enddate)
                 {
-                    result.IsSuccess = false ;
+                    result.IsSuccess = false;
                     break;
 
                 }
             }
 
-            //foreach (var productTimetable in productTimetableModel)
-            //{
-            //    foreach (var unavaliable in unavaliables)
-            //    {
-            //        if (unavaliable >= productTimetable.BeginDate && unavaliable <= productTimetable.EndDate)
-            //        {
-            //            if (productTimetable.ProdId != null)
-            //            {
-            //                checkif.Add(new JsonResult
-            //                {
-            //                    ProdId = productTimetable.ProdId,
-            //                });
-            //                break;
-            //            }
-            //            checkif.Add(new JsonResult
-            //            {
-            //                ProdDetailId = productTimetable.ProdDetailId,
-            //            });
-            //            break;
-
-            //        }
-            //    }
-            //}
-
             return Ok(result);
+        }
+
+        private List<DateTime> CalculateTimePrivate([FromBody] IEnumerable<CheckProdStockModel> checkProdStockModel)
+        {
+            int count = checkProdStockModel.Count();
+            int[][] storeAvaliableStock = new int[count][];
+            int[] rentNum = new int[count];
+            List<int> avaliable = new List<int>();
+
+            int i = 0;
+            foreach (var prod in checkProdStockModel)
+            {
+                if (prod.prodid == null)
+                {
+                    storeAvaliableStock[i] = CalculateQuantity((int)prod.proddetailid, prod.beginDate, 1);
+                }
+                else if (prod.prodid != null)
+                {
+                    storeAvaliableStock[i] = CalculateQuantity((int)prod.prodid, prod.beginDate, 0);
+                }
+
+                rentNum[i] = prod.quantity;
+                i++;
+            }
+
+            for (int index = 0; index < storeAvaliableStock[0].Count(); index++)
+            {
+                int satisfiedNum = 0;
+                for (int j = 0; j < count; j++)
+                {
+                    if (storeAvaliableStock[j][index] < rentNum[j])
+                    {
+                        break;
+                    }
+                    satisfiedNum++;
+                }
+                if (satisfiedNum == count)
+                {
+                    avaliable.Add(index);
+                }
+
+            }
+            List<DateTime> dateList = new List<DateTime>();
+            for (int j = 0; j < avaliable.Count; j++)
+            {
+                dateList.Add(checkProdStockModel.ToArray()[0].beginDate.AddDays(avaliable[j]));
+            }
+
+            List<DateTime> allDateList = GenerateDate(checkProdStockModel.ToArray()[0].beginDate);
+            List<DateTime> unavaliable = new List<DateTime>(allDateList.Except(dateList));
+            return unavaliable;
         }
 
     }
