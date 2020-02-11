@@ -189,6 +189,7 @@ namespace jupiterCore.Controllers
             cart.CreateOn = toNZTimezone(DateTime.UtcNow);
             cart.IsActivate = 1;
             cart.IsPay = 0;
+            cart.IsEmailSend = 0;
             cart.IsExpired = 0;
             cart.ContactId = contact.ContactId;
             cart.Location = cartContactModel.CartModel.Location;

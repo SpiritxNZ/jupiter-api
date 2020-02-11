@@ -25,6 +25,7 @@ namespace jupiterCore.jupiterContext
         public decimal? DeliveryFee { get; set; }
         public decimal? DepositFee { get; set; }
 
+        public byte? IsEmailSend { get; set; }
         public byte? IsPickup { get; set; }
         public string Region { get; set; }
         public byte? IsPay { get; set; }

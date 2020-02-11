@@ -26,7 +26,7 @@ namespace Jupiter.Models
         public decimal? DepositFee { get; set; }
         public byte? IsPickup { get; set; }
         public string Region { get; set; }
-
+        public byte? IsEmailSend { get; set; }
         public byte? IsPay { get; set; }
         public byte? IsExpired { get; set; }
         public int? CartStatusId { get; set; }

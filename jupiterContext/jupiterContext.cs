@@ -185,7 +185,7 @@ namespace jupiterCore.jupiterContext
                 entity.Property(e => e.UserId).HasColumnType("int(11)");
 
                 entity.Property(e => e.IsPickup).HasColumnType("tinyint(4)");
-
+                entity.Property(e => e.IsEmailSend).HasColumnType("tinyint(4)");
                 entity.Property(e => e.IsPay).HasColumnType("tinyint(4)");
 
                 entity.Property(e => e.IsExpired).HasColumnType("tinyint(4)");
