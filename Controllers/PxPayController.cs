@@ -89,6 +89,24 @@ namespace jupiterCore.Controllers
             return new RequestJson { Url = output.Url };
         }
 
+
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<bool> CheckIsPaid(string result)
+        {
+            string PxPayUserId = _configuration.GetSection("WindCave:PxPayUserId").Value;//.AppSettings["PxPayUserId"];
+            string PxPayKey = _configuration.GetSection("WindCave:PxPayKey").Value;
+            //string PxPayKey = ConfigurationManager.AppSettings["PxPayKey"];
+
+            PxPay WS = new PxPay(PxPayUserId, PxPayKey);
+
+            ResponseOutput response = WS.ProcessResponse(result);
+            var payment = _context.Payment.Where(x => x.TxnId == response.TxnId).First();
+            if (payment.Success == 1) { return true; }
+            else { return false; }
+            
+        }
+
         [HttpGet]
         [Route("[action]")]
         public async Task<ResponseOutput> ResponseOutput(string result,string userid)
@@ -138,11 +156,11 @@ namespace jupiterCore.Controllers
                 cart.IsPay = 1;
                 cart.CartStatusId = 1;
                 cart.RentalPaidFee = Convert.ToDecimal(payment.AmountSettlemen);
-                foreach (var producttime in producttimes)
-                {
-                    producttime.IsActive = 1;
-                    _context.ProductTimetable.Update(producttime);
-                }
+                //foreach (var producttime in producttimes)
+                //{
+                //    producttime.IsActive = 1;
+                //    _context.ProductTimetable.Update(producttime);
+                //}
             }
             if (payment.Success == 0)
             {
