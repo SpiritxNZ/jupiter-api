@@ -91,7 +91,7 @@ namespace jupiterCore.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public async Task<ResponseOutput> ResponseOutputAsync(string result,string userid)
+        public async Task<ResponseOutput> ResponseOutput(string result,string userid)
         {
             string PxPayUserId = _configuration.GetSection("WindCave:PxPayUserId").Value;//.AppSettings["PxPayUserId"];
             string PxPayKey = _configuration.GetSection("WindCave:PxPayKey").Value;
