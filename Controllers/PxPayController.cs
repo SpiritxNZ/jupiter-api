@@ -179,8 +179,8 @@ namespace jupiterCore.Controllers
             {
                 SendCartEmail(cartModel);
                 cart.IsEmailSend = 1;
-                _context.Payment.Update(payment);
                 _context.Cart.Update(cart);
+                _context.SaveChangesAsync();
 
             }
 
