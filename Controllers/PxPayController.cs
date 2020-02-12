@@ -138,7 +138,6 @@ namespace jupiterCore.Controllers
             {
                 cart.IsPay = 1;
                 cart.CartStatusId = 1;
-                cart.IsEmailSend = 1;
                 cart.RentalPaidFee = Convert.ToDecimal(payment.AmountSettlemen);
                 //foreach (var producttime in producttimes)
                 //{
@@ -179,6 +178,10 @@ namespace jupiterCore.Controllers
             if (payment.Success == 1 && cart.IsEmailSend!=1)
             {
                 SendCartEmail(cartModel);
+                cart.IsEmailSend = 1;
+                _context.Payment.Update(payment);
+                _context.Cart.Update(cart);
+
             }
 
             return response;
