@@ -180,7 +180,7 @@ namespace jupiterCore.Controllers
                 SendCartEmail(cartModel);
                 cart.IsEmailSend = 1;
                 _context.Cart.Update(cart);
-                _context.SaveChangesAsync();
+                _context.SaveChanges();
 
             }
 
