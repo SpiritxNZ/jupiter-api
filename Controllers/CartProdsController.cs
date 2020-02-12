@@ -100,7 +100,7 @@ namespace jupiterCore.Controllers
                 return NotFound(DataNotFound(result));
             }
  
-            cartProdModelList.ToList().ForEach(s => {
+            cartProdModelList.ToList().ForEach(async s => {
                 _context.CartProd.Add(new CartProd
                 {
                     ProdDetailId = s.ProdDetailId,
@@ -113,27 +113,47 @@ namespace jupiterCore.Controllers
                 cart.Price += s.Price;
                 if (s.ProdDetailId != null)
                 {
-                    _context.ProductTimetable.Add(new ProductTimetable
+                    var cardprod = await _context.CartProd.Where(x => x.CartId == s.CartId && x.ProdId == s.ProdId && x.ProdDetailId == s.ProdDetailId).FirstOrDefaultAsync();
+                    if (cardprod != null)
                     {
-                        ProdDetailId = s.ProdDetailId,
-                        Quantity = s.Quantity,
-                        CartId = s.CartId,
-                        IsActive = 1,
-                        BeginDate = cart.EventStartDate,
-                        EndDate = cart.EventEndDate
-                    });
+                        result.IsSuccess = false;
+                        result.ErrorMessage = "This product already exist in this cart.";
+                    }
+                    else
+                    {
+                        _context.ProductTimetable.Add(new ProductTimetable
+                        {
+                            ProdDetailId = s.ProdDetailId,
+                            Quantity = s.Quantity,
+                            CartId = s.CartId,
+                            IsActive = 1,
+                            BeginDate = cart.EventStartDate,
+                            EndDate = cart.EventEndDate
+                        });
+                    }
+                   
                 }
                 else
                 {
-                    _context.ProductTimetable.Add(new ProductTimetable
+                    var cardprod = await _context.CartProd.Where(x => x.CartId == s.CartId && x.ProdId == s.ProdId).FirstOrDefaultAsync();
+                    if (cardprod != null)
                     {
-                        ProdId = s.ProdId,
-                        Quantity = s.Quantity,
-                        CartId = s.CartId,
-                        IsActive = 1,
-                        BeginDate = cart.EventStartDate,
-                        EndDate = cart.EventEndDate
-                    });
+                        result.IsSuccess = false;
+                        result.ErrorMessage = "This product already exist in this cart.";
+                    }
+                    else
+                    {
+                        _context.ProductTimetable.Add(new ProductTimetable
+                        {
+                            ProdId = s.ProdId,
+                            Quantity = s.Quantity,
+                            CartId = s.CartId,
+                            IsActive = 1,
+                            BeginDate = cart.EventStartDate,
+                            EndDate = cart.EventEndDate
+                        });
+                    }
+                   
                 }
                 
             });
