@@ -129,6 +129,7 @@ namespace jupiterCore.Controllers
             cart.Region = cartContactModel.CartModel.Region;           
             cart.UserId = id;
             cart.IsExpired = 0;
+            cart.TradingTime = cartContactModel.CartModel.TradingTime;
 
             try
             {

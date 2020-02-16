@@ -15,6 +15,7 @@ namespace jupiterCore.jupiterContext
         public string Location { get; set; }
         public DateTime? EventStartDate { get; set; }
         public DateTime? EventEndDate { get; set; }
+        public string TradingTime { get; set; }
         public byte? IsActivate { get; set; }
         public DateTime? CreateOn { get; set; }
         public DateTime? UpdateOn { get; set; }

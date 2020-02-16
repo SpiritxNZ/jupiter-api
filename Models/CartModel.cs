@@ -15,6 +15,7 @@ namespace Jupiter.Models
         public string Location { get; set; }
         public DateTime EventStartDate { get; set; }
         public DateTime EventEndDate { get;set; }
+        public string TradingTime { get; set; }
         [Range(0, 1, ErrorMessage = "IsActivate must be either 0 or 1")]
         public byte? IsActivate { get; set; }
         public DateTime? CreateOn { get; set; }

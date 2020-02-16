@@ -183,6 +183,9 @@ namespace jupiterCore.jupiterContext
                 entity.Property(e => e.RentalPaidFee).HasColumnType("decimal(10,2)");
 
                 entity.Property(e => e.UserId).HasColumnType("int(11)");
+                entity.Property(e => e.TradingTime)
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.IsPickup).HasColumnType("tinyint(4)");
                 entity.Property(e => e.IsEmailSend).HasColumnType("tinyint(4)");
