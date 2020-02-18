@@ -166,32 +166,35 @@ namespace jupiterCore.Controllers
                 result.IsSuccess = false;
                 return BadRequest(result);
             }
-
-            Popup popup = await _context.Popups.Where(x => x.Coupon == cart.Coupon).FirstOrDefaultAsync();
-            if (null == popup)
+            if (cart.Coupon != null)
             {
-                result.ErrorMessage = "Coupon not exist.";
-                result.IsSuccess = false;
-                return BadRequest(result);
+                Popup popup = await _context.Popups.Where(x => x.Coupon == cart.Coupon).FirstOrDefaultAsync();
+                if (null == popup)
+                {
+                    result.ErrorMessage = "Coupon not exist.";
+                    result.IsSuccess = false;
+                    return BadRequest(result);
+                }
+                if (popup.IsValid == 0)
+                {
+                    result.IsSuccess = false;
+                    result.ErrorMessage = "This coupon is expired.";
+                    return BadRequest(result);
+                }
+                try
+                {
+                    popup.IsValid = 0;
+                    _context.Popups.Update(popup);
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception e)
+                {
+                    result.ErrorMessage = e.Message;
+                    result.IsSuccess = false;
+                    return BadRequest(result);
+                }
             }
-            if (popup.IsValid == 0)
-            {
-                result.IsSuccess = false;
-                result.ErrorMessage = "This coupon is expired.";
-                return BadRequest(result);
-            }
-            try
-            {
-                popup.IsValid = 0;
-                _context.Popups.Update(popup);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                result.ErrorMessage = e.Message;
-                result.IsSuccess = false;
-                return BadRequest(result);
-            }
+            
 
             result.Data = cart;
             return Ok(result);
