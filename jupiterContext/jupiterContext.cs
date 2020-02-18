@@ -662,6 +662,11 @@ namespace jupiterCore.jupiterContext
                     .HasMaxLength(45)
                     .IsUnicode(false);
 
+                entity.Property(e => e.Comments)
+                   .HasColumnName("comments")
+                   .HasMaxLength(255)
+                   .IsUnicode(false);
+
                 entity.Property(e => e.UserId)
                     .HasColumnName("user_id")
                     .HasColumnType("int(11)");

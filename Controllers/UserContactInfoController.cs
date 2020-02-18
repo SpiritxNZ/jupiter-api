@@ -58,6 +58,7 @@ namespace jupiterCore.Controllers
                 user.LastName = userContactInfoModel.LastName;
                 user.PhoneNumber = userContactInfoModel.PhoneNumber;
                 user.Company = userContactInfoModel.Company;
+                user.Comments = userContactInfoModel.Comments;
                 _context.UserContactInfo.Update(user);
 
             }
