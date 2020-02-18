@@ -12,4 +12,5 @@ namespace jupiterCore.Models
         public ContactModel ContactModel { get; set; }
         public IEnumerable<ProductTimetableModel> ProductTimetableModel { get; set; }
     }
+
 }

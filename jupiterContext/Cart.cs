@@ -16,6 +16,7 @@ namespace jupiterCore.jupiterContext
         public DateTime? EventStartDate { get; set; }
         public DateTime? EventEndDate { get; set; }
         public string TradingTime { get; set; }
+        public string ReturnTime { get; set; }
         public byte? IsActivate { get; set; }
         public DateTime? CreateOn { get; set; }
         public DateTime? UpdateOn { get; set; }
@@ -34,6 +35,7 @@ namespace jupiterCore.jupiterContext
         public int? CartStatusId { get; set; }
         public decimal? RentalPaidFee { get; set; }
         public decimal? DepositPaidFee { get; set; }
+        public string Coupon { get; set; }
 
         public virtual CartStatus CartStatus { get; set; }
         public virtual User User { get; set; }

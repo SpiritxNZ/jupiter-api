@@ -19,7 +19,9 @@ using SendGrid;
 using SendGrid.Helpers.Mail;
 using Attachment = SendGrid.Helpers.Mail.Attachment;
 using SmtpClient = MailKit.Net.Smtp.SmtpClient;
-
+using MailChimp.Net.Interfaces;
+using MailChimp.Net;
+using MailChimp.Net.Models;
 
 namespace jupiterCore.Controllers
 {
@@ -112,20 +114,44 @@ namespace jupiterCore.Controllers
             return Ok(result);
         }
 
+        public class CustomMessageResult
+        {
+            public string email { get; set; }
+            public string phoneNumber { get; set; }
+            public string findUs { get; set; }
+            public string coupon { get; set; }
+        }
+
         [CheckModelFilter]
         [HttpPost("[action]")]
-        public async Task<ActionResult<ContactEmail>> CustomerMessage(ContactUsModel contactUsModel)
+        public async Task<ActionResult<CustomMessageResult>> CustomerMessage(ContactUsModel contactUsModel)
         {
-            var result = new Result<ContactEmail>();
+            var result = new Result<CustomMessageResult>();
             ContactEmail contactEmail = new ContactEmail();
             _mapper.Map(contactUsModel, contactEmail);
-            result.Data = contactEmail;
             await _context.ContactEmail.AddAsync(contactEmail);
 
             try
             {
-                SendEmailToLuxe(contactUsModel);
+                Guid coupon = Guid.NewGuid();
+                Popup newPopUp = new Popup
+                {
+                    Coupon = coupon.ToString().Substring(0, 8),
+                    IsValid = 1
+                };
+                await _context.Popups.AddAsync(newPopUp);
+                SendEmailCustomer(contactUsModel,newPopUp.Coupon);
                 await _context.SaveChangesAsync();
+                CustomMessageResult messageResult = new CustomMessageResult
+                {
+                    email = contactEmail.Email,
+                    phoneNumber = contactEmail.PhoneNumber,
+                    findUs = contactEmail.FindUs,
+                    coupon = newPopUp.Coupon
+                };
+                await UserSubscribe(contactEmail.Email);
+                
+                result.Data = messageResult;
             }
             catch (Exception e)
             {
@@ -135,6 +161,13 @@ namespace jupiterCore.Controllers
             }
             return Ok(result);
         }
+
+        [HttpGet("[action]")]
+        public async Task<IEnumerable<ContactEmail>> GetAllCustomerMessage()
+        {
+            return await _context.ContactEmail.Where(x => x.Name == null).ToListAsync();
+        }
+
 
         // DELETE: api/ContactEmails/5
         [HttpDelete("{id}")]
@@ -207,24 +240,43 @@ namespace jupiterCore.Controllers
         }
 
 
-        private void SendEmailToLuxe (ContactUsModel contactUsModel)
+        private void SendEmailCustomer (ContactUsModel contactUsModel,string coupon)
         {
             var sendgrid = _context.ApiKey.Find(1);
             var sendGridClient = new SendGridClient(sendgrid.ApiKey1);
 
             var myMessage = new SendGridMessage();
 
-            myMessage.AddTo("Info@luxedreameventhire.co.nz");
+            myMessage.AddTo(contactUsModel.Email);
             myMessage.From = new EmailAddress("Info@luxedreameventhire.co.nz", "LuxeDreamEventHire");
-            myMessage.SetTemplateId("d-fa12e602e09041339338a5869708e195");
+            myMessage.SetTemplateId("d-1df8a6bcabad4f4fa62d98a4941cd08c");
             myMessage.SetTemplateData(new
             {
                 Email = contactUsModel.Email,
                 PhoneNumber = contactUsModel.PhoneNumber,
                 FindUs = contactUsModel.FindUs,
+                Coupon = coupon,
 
             });
             sendGridClient.SendEmailAsync(myMessage);
+        }
+
+        private async Task<IActionResult> UserSubscribe(string email)
+        {
+            var result = new Result<string>();
+            var mailchimp = _context.ApiKey.Find(2);
+            
+            IMailChimpManager mailChimpManager = new MailChimpManager(mailchimp.ApiKey1);
+            var listId = "c8326de226";
+            var members = await mailChimpManager.Members.GetAllAsync(listId).ConfigureAwait(false);
+            var member = members.FirstOrDefault(x => x.EmailAddress == email);
+            if (null == member)
+            {
+                var newMember = new Member { EmailAddress = email, StatusIfNew = Status.Subscribed };
+                await mailChimpManager.Members.AddOrUpdateAsync(listId, newMember);
+            }
+
+            return Ok(result);
         }
     }
 

@@ -203,6 +203,8 @@ namespace jupiterCore.Controllers
             cart.Region = cartContactModel.CartModel.Region;
             cart.UserId = null;
             cart.TradingTime = cartContactModel.CartModel.TradingTime;
+            cart.TradingTime = cartContactModel.CartModel.ReturnTime;
+            cart.Coupon = cartContactModel.CartModel.Coupon;
             //cart.CartProd = cart
 
             try
@@ -241,8 +243,51 @@ namespace jupiterCore.Controllers
                 result.IsSuccess = false;
                 return BadRequest(result);
             }
+
+            Popup popup = await _context.Popups.Where(x => x.Coupon == cart.Coupon).FirstOrDefaultAsync();
+            if(null == popup)
+            {
+                result.ErrorMessage = "Coupon not exist.";
+                result.IsSuccess = false;
+                return BadRequest(result);
+            }
+            if (popup.IsValid == 0)
+            {
+                result.IsSuccess = false;
+                result.ErrorMessage = "This coupon is expired.";
+                return BadRequest(result);
+            }
+
+            try
+            {
+                popup.IsValid = 0;
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                result.ErrorMessage = e.Message;
+                result.IsSuccess = false;
+                return BadRequest(result);
+            }
+
+
             result.Data = cart;
             return Ok(result);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<int> CheckCoupon(string coupon)
+        {
+            var cou = await _context.Popups.Where(x => x.Coupon == coupon).FirstOrDefaultAsync();
+            if (null == cou)
+            {
+                return 0;
+            }
+            else if (cou.IsValid == 0)
+            {
+                return 0;
+            }
+            return 1;
         }
 
         // DELETE: api/Carts/5

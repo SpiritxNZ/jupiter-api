@@ -37,6 +37,7 @@ namespace jupiterCore.jupiterContext
         public virtual DbSet<UserContactInfo> UserContactInfo { get; set; }
         public virtual DbSet<Payment> Payment { get; set; }
         public virtual DbSet<CartStatus> CartStatuses { get; set; }
+        public virtual DbSet<Popup> Popups { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -66,6 +67,18 @@ namespace jupiterCore.jupiterContext
                     .IsUnicode(false);
             });
 
+            modelBuilder.Entity <Popup>(entity =>
+            {
+                entity.ToTable("PopUp", "luxedream");
+
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.Property(e => e.Coupon)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.IsValid).HasColumnType("tinyint(4)");
+            });
 
 
             modelBuilder.Entity<CartStatus>(entity =>
@@ -184,6 +197,14 @@ namespace jupiterCore.jupiterContext
 
                 entity.Property(e => e.UserId).HasColumnType("int(11)");
                 entity.Property(e => e.TradingTime)
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ReturnTime)
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Coupon)
                     .HasMaxLength(45)
                     .IsUnicode(false);
 

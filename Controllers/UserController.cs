@@ -245,7 +245,6 @@ namespace jupiterCore.Controllers
                 var tokenString = GenerateJwt(user.Id);
                 result1.Data = new JsonResult { userId = user.Id, email = user.Email, token = tokenString };
                 return Ok(result1);
-                return Ok(new { token = tokenString });
             }
             else
             {
@@ -253,7 +252,6 @@ namespace jupiterCore.Controllers
             }
             
         }
-
 
         private async Task<IActionResult> UserSubscribe(UserModel userModel)
         {
@@ -263,16 +261,22 @@ namespace jupiterCore.Controllers
             IMailChimpManager mailChimpManager = new MailChimpManager(mailchimp.ApiKey1);
             var listId = "c8326de226";
 
-            if (userModel.IsSubscribe == 0)
+            var members = await mailChimpManager.Members.GetAllAsync(listId).ConfigureAwait(false);
+            var member = members.FirstOrDefault(x => x.EmailAddress == userModel.Email);
+            if (null == member)
             {
-                var member = new Member { EmailAddress = userModel.Email, StatusIfNew = Status.Unsubscribed };
-                await mailChimpManager.Members.AddOrUpdateAsync(listId, member);
+                if (userModel.IsSubscribe == 0)
+                {
+                    var newMember = new Member { EmailAddress = userModel.Email, StatusIfNew = Status.Unsubscribed };
+                    await mailChimpManager.Members.AddOrUpdateAsync(listId, newMember);
+                }
+                else if (userModel.IsSubscribe == 1)
+                {
+                    var newMember = new Member { EmailAddress = userModel.Email, StatusIfNew = Status.Subscribed };
+                    await mailChimpManager.Members.AddOrUpdateAsync(listId, newMember);
+                }
             }
-            else if(userModel.IsSubscribe == 1)
-            {
-                var member = new Member { EmailAddress = userModel.Email, StatusIfNew = Status.Subscribed };
-                await mailChimpManager.Members.AddOrUpdateAsync(listId, member);
-            }
+            
             
             return Ok(result);
         }

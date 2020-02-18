@@ -153,6 +153,9 @@ namespace jupiterCore.Controllers
                     producttime.IsActive = 0;
                     _context.ProductTimetable.Update(producttime);
                 }
+                Popup popup = await _context.Popups.Where(x => x.Coupon == cart.Coupon).FirstOrDefaultAsync();
+                popup.IsValid = 1;
+                _context.Popups.Update(popup);
             }
             _context.Payment.Update(payment);
             _context.Cart.Update(cart);

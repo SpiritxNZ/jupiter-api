@@ -16,6 +16,7 @@ namespace Jupiter.Models
         public DateTime EventStartDate { get; set; }
         public DateTime EventEndDate { get;set; }
         public string TradingTime { get; set; }
+        public string ReturnTime { get; set; }
         [Range(0, 1, ErrorMessage = "IsActivate must be either 0 or 1")]
         public byte? IsActivate { get; set; }
         public DateTime? CreateOn { get; set; }
@@ -33,6 +34,7 @@ namespace Jupiter.Models
         public int? CartStatusId { get; set; }
         public decimal? RentalPaidFee { get; set; }
         public decimal? DepositPaidFee { get; set; }
+        public string Coupon { get; set; }
 
         public Contact Contact { get; set; }
         public IEnumerable<CartProd> CartProd { get; set; }
