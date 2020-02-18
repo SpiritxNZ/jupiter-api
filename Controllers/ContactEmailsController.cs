@@ -133,25 +133,36 @@ namespace jupiterCore.Controllers
 
             try
             {
-                Guid coupon = Guid.NewGuid();
-                Popup newPopUp = new Popup
+                var emailExist = await _context.ContactEmail.Where(x => x.Name == null && x.Email == contactUsModel.Email).FirstOrDefaultAsync();
+                if (emailExist == null)
                 {
-                    Coupon = coupon.ToString().Substring(0, 8),
-                    IsValid = 1
-                };
-                await _context.Popups.AddAsync(newPopUp);
-                SendEmailCustomer(contactUsModel,newPopUp.Coupon);
-                await _context.SaveChangesAsync();
-                CustomMessageResult messageResult = new CustomMessageResult
+                    Guid coupon = Guid.NewGuid();
+                    Popup newPopUp = new Popup
+                    {
+                        Coupon = coupon.ToString().Substring(0, 8),
+                        IsValid = 1
+                    };
+                    await _context.Popups.AddAsync(newPopUp);
+                    SendEmailCustomer(contactUsModel, newPopUp.Coupon);
+                    await _context.SaveChangesAsync();
+                    CustomMessageResult messageResult = new CustomMessageResult
+                    {
+                        email = contactEmail.Email,
+                        phoneNumber = contactEmail.PhoneNumber,
+                        findUs = contactEmail.FindUs,
+                        coupon = newPopUp.Coupon
+                    };
+                    await UserSubscribe(contactEmail.Email);
+
+                    result.Data = messageResult;
+                }
+                else
                 {
-                    email = contactEmail.Email,
-                    phoneNumber = contactEmail.PhoneNumber,
-                    findUs = contactEmail.FindUs,
-                    coupon = newPopUp.Coupon
-                };
-                await UserSubscribe(contactEmail.Email);
+                    result.IsSuccess = false;
+                    result.ErrorMessage = "This email already subscribed.";
+                    return BadRequest(result);
+                }
                 
-                result.Data = messageResult;
             }
             catch (Exception e)
             {
