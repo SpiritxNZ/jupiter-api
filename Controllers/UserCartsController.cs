@@ -166,7 +166,7 @@ namespace jupiterCore.Controllers
                 result.IsSuccess = false;
                 return BadRequest(result);
             }
-            if (cart.Coupon != null)
+            if (cart.Coupon != "")
             {
                 Popup popup = await _context.Popups.Where(x => x.Coupon == cart.Coupon).FirstOrDefaultAsync();
                 if (null == popup)
