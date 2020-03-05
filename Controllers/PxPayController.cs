@@ -64,8 +64,8 @@ namespace jupiterCore.Controllers
             input.TxnType = "Purchase";
             input.Opt = "TO="+DateTime.UtcNow.AddMinutes(10).ToString("yyMMddHHmm");
 
-            input.UrlFail = "http://45.76.123.59:80/paymentresult";
-            input.UrlSuccess = "http://45.76.123.59:80/paymentresult";
+            input.UrlFail = "http://luxedreameventhire.co.nz/paymentresult";
+            input.UrlSuccess = "http://luxedreameventhire.co.nz/paymentresult";
 
             input.UrlCallback = "http://45.76.123.59:443/api/pxpay/ResponseOutput";
 
