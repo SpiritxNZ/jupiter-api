@@ -16,6 +16,7 @@ namespace jupiterCore.jupiterContext
         public string PhoneNum { get; set; }
         public string Email { get; set; }
         public string Message { get; set; }
+        public string FindUs { get; set; }
 
         public virtual ICollection<Cart> Cart { get; set; }
     }

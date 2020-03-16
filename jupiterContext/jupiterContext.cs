@@ -287,6 +287,10 @@ namespace jupiterCore.jupiterContext
                     .HasMaxLength(60)
                     .IsUnicode(false);
 
+                entity.Property(e => e.FindUs)
+                    .HasMaxLength(60)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.FirstName)
                     .HasMaxLength(60)
                     .IsUnicode(false);
