@@ -92,16 +92,20 @@ namespace jupiterCore.Controllers
             {
                 // add image
                 bool isStoreSuccess = await StoreImage("ProductImages", newFileName, file);
-                if (!isStoreSuccess)
+                //if (!isStoreSuccess)
+                //{
+                //    throw new Exception("Store image locally failed.");
+                //}
+                if (isStoreSuccess)
                 {
-                    throw new Exception("Store image locally failed.");
-                }
-                //add image name to db
-                ProjectMedia projectMedia = new ProjectMedia { ProjectId = Int32.Parse(projectMediaModel.ProjectId), Url = $@"Images/GalleryImages/{newFileName}" };
-                await _context.ProjectMedia.AddAsync(projectMedia);
-                await _context.SaveChangesAsync();
+                    //add image name to db
+                    ProjectMedia projectMedia = new ProjectMedia { ProjectId = Int32.Parse(projectMediaModel.ProjectId), Url = $@"Images/GalleryImages/{newFileName}" };
+                    await _context.ProjectMedia.AddAsync(projectMedia);
+                    await _context.SaveChangesAsync();
 
-                result.Data = $@"{fileName} successfully uploaded";
+                    result.Data = $@"{fileName} successfully uploaded";
+                }
+                
             }
             catch (Exception e)
             {

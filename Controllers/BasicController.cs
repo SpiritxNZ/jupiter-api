@@ -101,7 +101,8 @@ namespace Jupiter.Controllers
             }
             catch (Exception e)
             {
-                return false;
+                throw e;
+                //return false;
             }
 
             return true;
