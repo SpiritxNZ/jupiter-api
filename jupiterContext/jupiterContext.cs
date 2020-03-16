@@ -38,6 +38,7 @@ namespace jupiterCore.jupiterContext
         public virtual DbSet<Payment> Payment { get; set; }
         public virtual DbSet<CartStatus> CartStatuses { get; set; }
         public virtual DbSet<Popup> Popups { get; set; }
+        public virtual DbSet<Video> Videos { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -111,6 +112,31 @@ namespace jupiterCore.jupiterContext
                 entity.Property(e => e.ApiName)
                     .HasColumnName("api_name")
                     .HasMaxLength(80)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<Video>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.ToTable("Video", "luxedream");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.Description)
+                    .HasColumnName("Description")
+                    .HasMaxLength(1000)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Url)
+                    .HasColumnName("Url")
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
+                entity.Property(e => e.Type)
+                    .HasColumnName("Type")
+                    .HasMaxLength(45)
                     .IsUnicode(false);
             });
 
