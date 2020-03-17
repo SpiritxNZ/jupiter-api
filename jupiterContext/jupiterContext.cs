@@ -55,7 +55,7 @@ namespace jupiterCore.jupiterContext
 
             modelBuilder.Entity<Admin>(entity =>
             {
-                entity.ToTable("Admin", "luxedream");
+                entity.ToTable("Admin", "jupiter");
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
@@ -70,7 +70,7 @@ namespace jupiterCore.jupiterContext
 
             modelBuilder.Entity <Popup>(entity =>
             {
-                entity.ToTable("PopUp", "luxedream");
+                entity.ToTable("PopUp", "jupiter");
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
@@ -84,7 +84,7 @@ namespace jupiterCore.jupiterContext
 
             modelBuilder.Entity<CartStatus>(entity =>
             {
-                entity.ToTable("CartStatus", "luxedream");
+                entity.ToTable("CartStatus", "jupiter");
 
                 entity.Property(e => e.CartStatusId).HasColumnType("int(11)");
 
@@ -98,7 +98,7 @@ namespace jupiterCore.jupiterContext
             {
                 entity.HasKey(e => e.KeyId);
 
-                entity.ToTable("ApiKey", "luxedream");
+                entity.ToTable("ApiKey", "jupiter");
 
                 entity.Property(e => e.KeyId)
                     .HasColumnName("key_id")
@@ -119,7 +119,7 @@ namespace jupiterCore.jupiterContext
             {
                 entity.HasKey(e => e.Id);
 
-                entity.ToTable("Video", "luxedream");
+                entity.ToTable("Video", "jupiter");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -144,7 +144,7 @@ namespace jupiterCore.jupiterContext
             {
                 entity.HasKey(e => e.PaymentId);
 
-                entity.ToTable("Payment", "luxedream");
+                entity.ToTable("Payment", "jupiter");
 
                 entity.Property(e => e.PaymentId)
                     .HasColumnName("PaymentId")
@@ -194,7 +194,7 @@ namespace jupiterCore.jupiterContext
 
             modelBuilder.Entity<Cart>(entity =>
             {
-                entity.ToTable("Cart", "luxedream");
+                entity.ToTable("Cart", "jupiter");
 
                 entity.HasIndex(e => e.ContactId)
                     .HasName("FK_Reference_11");
@@ -262,7 +262,7 @@ namespace jupiterCore.jupiterContext
 
             modelBuilder.Entity<CartProd>(entity =>
             {
-                entity.ToTable("CartProd", "luxedream");
+                entity.ToTable("CartProd", "jupiter");
 
                 entity.HasIndex(e => e.CartId)
                     .HasName("FK_Reference_10");
@@ -305,7 +305,7 @@ namespace jupiterCore.jupiterContext
 
             modelBuilder.Entity<Contact>(entity =>
             {
-                entity.ToTable("Contact", "luxedream");
+                entity.ToTable("Contact", "jupiter");
 
                 entity.Property(e => e.ContactId).HasColumnType("int(11)");
 
@@ -336,7 +336,7 @@ namespace jupiterCore.jupiterContext
 
             modelBuilder.Entity<ContactEmail>(entity =>
             {
-                entity.ToTable("ContactEmail", "luxedream");
+                entity.ToTable("ContactEmail", "jupiter");
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
@@ -377,7 +377,7 @@ namespace jupiterCore.jupiterContext
             {
                 entity.HasKey(e => e.TypeId);
 
-                entity.ToTable("EventType", "luxedream");
+                entity.ToTable("EventType", "jupiter");
 
                 entity.Property(e => e.TypeId).HasColumnType("int(11)");
 
@@ -392,7 +392,7 @@ namespace jupiterCore.jupiterContext
 
             modelBuilder.Entity<Faq>(entity =>
             {
-                entity.ToTable("Faq", "luxedream");
+                entity.ToTable("Faq", "jupiter");
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
@@ -407,7 +407,7 @@ namespace jupiterCore.jupiterContext
 
             modelBuilder.Entity<HomepageCarouselMedia>(entity =>
             {
-                entity.ToTable("HomepageCarouselMedia", "luxedream");
+                entity.ToTable("HomepageCarouselMedia", "jupiter");
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
@@ -420,7 +420,7 @@ namespace jupiterCore.jupiterContext
             {
                 entity.HasKey(e => e.ProdId);
 
-                entity.ToTable("Product", "luxedream");
+                entity.ToTable("Product", "jupiter");
 
                 entity.HasIndex(e => e.CategoryId)
                     .HasName("FK_Reference_9");
@@ -475,7 +475,7 @@ namespace jupiterCore.jupiterContext
             {
                 entity.HasKey(e => e.CategoryId);
 
-                entity.ToTable("ProductCategory", "luxedream");
+                entity.ToTable("ProductCategory", "jupiter");
 
                 entity.HasIndex(e => e.ProdTypeId)
                     .HasName("FK_Reference_17");
@@ -496,7 +496,7 @@ namespace jupiterCore.jupiterContext
 
             modelBuilder.Entity<ProductDetail>(entity =>
             {
-                entity.ToTable("ProductDetail", "luxedream");
+                entity.ToTable("ProductDetail", "jupiter");
 
                 entity.HasIndex(e => e.ProdId)
                     .HasName("FK_Reference_15");
@@ -525,7 +525,7 @@ namespace jupiterCore.jupiterContext
 
             modelBuilder.Entity<ProductMedia>(entity =>
             {
-                entity.ToTable("ProductMedia", "luxedream");
+                entity.ToTable("ProductMedia", "jupiter");
 
                 entity.HasIndex(e => e.ProdId)
                     .HasName("FK_Reference_3");
@@ -547,7 +547,7 @@ namespace jupiterCore.jupiterContext
 
             modelBuilder.Entity<ProductTimetable>(entity =>
             {
-                entity.ToTable("ProductTimetable", "luxedream");
+                entity.ToTable("ProductTimetable", "jupiter");
 
                 entity.HasIndex(e => e.ProdDetailId)
                     .HasName("fk_prodtimetable_idx");
@@ -576,7 +576,7 @@ namespace jupiterCore.jupiterContext
             {
                 entity.HasKey(e => e.ProdTypeId);
 
-                entity.ToTable("ProductType", "luxedream");
+                entity.ToTable("ProductType", "jupiter");
 
                 entity.Property(e => e.ProdTypeId).HasColumnType("int(11)");
 
@@ -589,7 +589,7 @@ namespace jupiterCore.jupiterContext
             {
                 entity.HasKey(e => e.ProdjectId);
 
-                entity.ToTable("Project", "luxedream");
+                entity.ToTable("Project", "jupiter");
 
                 entity.HasIndex(e => e.EventtypeId)
                     .HasName("FK_Reference_12");
@@ -614,7 +614,7 @@ namespace jupiterCore.jupiterContext
 
             modelBuilder.Entity<ProjectMedia>(entity =>
             {
-                entity.ToTable("ProjectMedia", "luxedream");
+                entity.ToTable("ProjectMedia", "jupiter");
 
                 entity.HasIndex(e => e.ProjectId)
                     .HasName("FK_Reference_6");
@@ -636,7 +636,7 @@ namespace jupiterCore.jupiterContext
 
             modelBuilder.Entity<Testimonial>(entity =>
             {
-                entity.ToTable("Testimonial", "luxedream");
+                entity.ToTable("Testimonial", "jupiter");
 
                 entity.HasIndex(e => e.EventtypeId)
                     .HasName("FK_Reference_13");
@@ -661,7 +661,7 @@ namespace jupiterCore.jupiterContext
 
             modelBuilder.Entity<User>(entity =>
             {
-                entity.ToTable("User", "luxedream");
+                entity.ToTable("User", "jupiter");
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
@@ -684,7 +684,7 @@ namespace jupiterCore.jupiterContext
             {
                 entity.HasKey(e => e.UserContactId);
 
-                entity.ToTable("UserContactInfo", "luxedream");
+                entity.ToTable("UserContactInfo", "jupiter");
 
                 entity.HasIndex(e => e.UserId)
                     .HasName("fk_user_contact_idx");
