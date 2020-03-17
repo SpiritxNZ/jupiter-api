@@ -49,7 +49,7 @@ namespace jupiterCore
             services.AddDbContext<jupiterContext.jupiterContext>(options =>
                 //options.UseMySQL("server=localhost;port=3306;user=lyric;password=Lychy31623;database=jupiter"));
 
-                options.UseMySQL("server=35.197.166.191;port=3306;user=dbuser;password=ToMPyaJzCW88JPRqBkxqZpiiEElX7Tv1;database=jupiter"));
+                options.UseMySQL("server=localhost;port=3306;user=dbuser;password=ToMPyaJzCW88JPRqBkxqZpiiEElX7Tv1;database=jupiter"));
             //8Tg01UyW7rOg6PZatvvFTuoPWOQ58wvT
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddJsonOptions(option =>
