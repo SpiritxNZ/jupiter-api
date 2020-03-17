@@ -29,7 +29,7 @@ namespace Jupiter.Models
         public byte? IsPickup { get; set; }
         public string Region { get; set; }
         public byte? IsEmailSend { get; set; }
-        public byte? IsPay { get; set; }
+        public int? IsPay { get; set; }
         public byte? IsExpired { get; set; }
         public int? CartStatusId { get; set; }
         public decimal? RentalPaidFee { get; set; }
