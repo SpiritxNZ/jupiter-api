@@ -45,7 +45,7 @@ namespace jupiterCore.Controllers
 
         // PUT: api/Videos/5
         [HttpPut("{id}")]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> PutVideo(int id, VideoModel VideoModel)
         {
             var result = new Result<Video>();
@@ -74,7 +74,7 @@ namespace jupiterCore.Controllers
 
         // POST: api/Videos
         [HttpPost]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult<Video>> PostVideo(VideoModel VideoModel)
         {
             var result = new Result<Video>();
@@ -100,7 +100,7 @@ namespace jupiterCore.Controllers
 
         // DELETE: api/Videos/5
         [HttpDelete("{id}")]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult<Video>> DeleteVideo(int id)
         {
             var video = await _context.Videos.FindAsync(id);
