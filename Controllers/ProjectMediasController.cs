@@ -14,6 +14,8 @@ using Jupiter.ActionFilter;
 using Jupiter.Controllers;
 using Jupiter.Models;
 using Microsoft.AspNetCore.Authorization;
+using Google.Apis.Auth.OAuth2;
+using Google.Cloud.Storage.V1;
 
 namespace jupiterCore.Controllers
 {
@@ -90,21 +92,27 @@ namespace jupiterCore.Controllers
             var newFileName = $@"{Int32.Parse(projectMediaModel.ProjectId)}-{fileName}";
             try
             {
-                // add image
-                bool isStoreSuccess = await StoreImage("ProductImages", newFileName, file);
-                //if (!isStoreSuccess)
-                //{
-                //    throw new Exception("Store image locally failed.");
-                //}
-                if (isStoreSuccess)
-                {
                     //add image name to db
-                    ProjectMedia projectMedia = new ProjectMedia { ProjectId = Int32.Parse(projectMediaModel.ProjectId), Url = $@"Images/GalleryImages/{newFileName}" };
-                    await _context.ProjectMedia.AddAsync(projectMedia);
-                    await _context.SaveChangesAsync();
+                ProjectMedia projectMedia = new ProjectMedia { ProjectId = Int32.Parse(projectMediaModel.ProjectId), Url = $@"Images/GalleryImages/{newFileName}" };
+                await _context.ProjectMedia.AddAsync(projectMedia);
+                await _context.SaveChangesAsync();
 
-                    result.Data = $@"{fileName} successfully uploaded";
+                var bucketName = "luxe_media";
+                GoogleCredential credential = null;
+                using (var jsonStream = new FileStream("secrect.json", FileMode.Open,
+                    FileAccess.Read, FileShare.Read))
+                {
+                    credential = GoogleCredential.FromStream(jsonStream);
                 }
+                var storageClient = StorageClient.Create(credential);
+
+                using (var memoryStream = new MemoryStream())
+                {
+                    await projectMediaModel.file.CopyToAsync(memoryStream);
+                    await storageClient.UploadObjectAsync(bucketName, $@"wwwroot/Images/GalleryImages/{newFileName}", "image/jpeg", memoryStream);
+                }
+
+                result.Data = $@"{fileName} successfully uploaded";
                 
             }
             catch (Exception e)

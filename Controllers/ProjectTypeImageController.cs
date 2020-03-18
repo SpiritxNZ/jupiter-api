@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Google.Apis.Auth.OAuth2;
+using Google.Cloud.Storage.V1;
 using Jupiter.Controllers;
 using Jupiter.Models;
 using jupiterCore.jupiterContext;
@@ -77,10 +79,19 @@ namespace jupiterCore.Controllers
                 await _context.SaveChangesAsync();
 
                 // add new image
-                bool isStoreSuccess = await StoreImage("EventTypeImages", newFileName, file);
-                if (!isStoreSuccess)
+                var bucketName = "luxe_media";
+                GoogleCredential credential = null;
+                using (var jsonStream = new FileStream("secrect.json", FileMode.Open,
+                    FileAccess.Read, FileShare.Read))
                 {
-                    throw new Exception("Store image locally failed.");
+                    credential = GoogleCredential.FromStream(jsonStream);
+                }
+                var storageClient = StorageClient.Create(credential);
+
+                using (var memoryStream = new MemoryStream())
+                {
+                    await eventTypeImageModel.FormFile.CopyToAsync(memoryStream);
+                    await storageClient.UploadObjectAsync(bucketName, $@"wwwroot/Images/EventTypeImages/{newFileName}", "image/jpeg", memoryStream);
                 }
 
                 result.Data = $@"{fileName} successfully uploaded";

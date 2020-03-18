@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Authorization;
+using Google.Apis.Auth.OAuth2;
+using Google.Cloud.Storage.V1;
 
 namespace jupiterCore.Controllers
 {
@@ -43,16 +45,8 @@ namespace jupiterCore.Controllers
             var file = requestForm.Files[0];
             var result = new Result<string>();
             var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-            // fileName = RemoveWhitespace(fileName);
             try
             {
-                // add image
-                bool isStoreSuccess = await StoreImage("HomepageCarouselImages", fileName, file);
-                if (!isStoreSuccess)
-                {
-                    throw new Exception("Store image locally failed.");
-                }
-
                 //add image name to db
                 HomepageCarouselMedia homepageCarouselMedia = new HomepageCarouselMedia
                 {
@@ -60,6 +54,21 @@ namespace jupiterCore.Controllers
                 };
                 await _context.HomepageCarouselMedia.AddAsync(homepageCarouselMedia);
                 await _context.SaveChangesAsync();
+
+                var bucketName = "luxe_media";
+                GoogleCredential credential = null;
+                using (var jsonStream = new FileStream("secrect.json", FileMode.Open,
+                    FileAccess.Read, FileShare.Read))
+                {
+                    credential = GoogleCredential.FromStream(jsonStream);
+                }
+                var storageClient = StorageClient.Create(credential);
+
+                using (var memoryStream = new MemoryStream())
+                {
+                    await homepageCarouselMediaModel.file.CopyToAsync(memoryStream);
+                    await storageClient.UploadObjectAsync(bucketName, $@"wwwroot/Images/ProductImages/{fileName}", "image/jpeg", memoryStream);
+                }
 
                 result.Data = $@"{fileName} successfully uploaded";
             }

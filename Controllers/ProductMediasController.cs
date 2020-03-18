@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Newtonsoft.Json;
 using Type = System.Type;
+using Google.Apis.Auth.OAuth2;
+using Google.Cloud.Storage.V1;
 
 namespace jupiterCore.Controllers
 {
@@ -88,7 +90,6 @@ namespace jupiterCore.Controllers
 
         // POST: api/ProductMedias
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> UploadFile([FromForm] ProductMediaModel productMediaModel)
         {
             var requestForm = Request.Form;
@@ -98,18 +99,25 @@ namespace jupiterCore.Controllers
             var newFileName = $@"{Int32.Parse(productMediaModel.ProdId)}-{fileName}";
             try
             {
-                // add image
-                bool isStoreSuccess = await StoreImage("ProductImages", newFileName, file);
-                if (!isStoreSuccess)
-                {
-                    throw new Exception("Store image locally failed.");
-                }
-
-                //add image name to db
+                //    //add image name to db
                 ProductMedia productMedia = new ProductMedia { ProdId = Int32.Parse(productMediaModel.ProdId), Url = $@"Images/ProductImages/{newFileName}" };
                 await _context.ProductMedia.AddAsync(productMedia);
                 await _context.SaveChangesAsync();
 
+                var bucketName = "luxe_media";
+                GoogleCredential credential = null;
+                using (var jsonStream = new FileStream("secrect.json", FileMode.Open,
+                    FileAccess.Read, FileShare.Read))
+                {
+                    credential = GoogleCredential.FromStream(jsonStream);
+                }
+                var storageClient = StorageClient.Create(credential);
+
+                using (var memoryStream = new MemoryStream())
+                {
+                    await productMediaModel.file.CopyToAsync(memoryStream);
+                    await storageClient.UploadObjectAsync(bucketName, $@"wwwroot/Images/ProductImages/{newFileName}", "image/jpeg", memoryStream);
+                }
                 result.Data = $@"{fileName} successfully uploaded";
             }
             catch (Exception e)
@@ -119,7 +127,44 @@ namespace jupiterCore.Controllers
             }
             return Ok(result);
 
+
         }
+
+        //[Authorize]
+        //public async Task<IActionResult> UploadFile([FromForm] ProductMediaModel productMediaModel)
+        //{
+        //    var requestForm = Request.Form;
+        //    var file = requestForm.Files[0];
+        //    var result = new Result<string>();
+        //    var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+        //    var newFileName = $@"{Int32.Parse(productMediaModel.ProdId)}-{fileName}";
+        //    try
+        //    {
+        //        // add image
+        //        bool isStoreSuccess = await StoreImage("ProductImages", newFileName, file);
+        //        if (!isStoreSuccess)
+        //        {
+        //            throw new Exception("Store image locally failed.");
+        //        }
+
+        //        //add image name to db
+        //        ProductMedia productMedia = new ProductMedia { ProdId = Int32.Parse(productMediaModel.ProdId), Url = $@"Images/ProductImages/{newFileName}" };
+        //        await _context.ProductMedia.AddAsync(productMedia);
+        //        await _context.SaveChangesAsync();
+
+        //        result.Data = $@"{fileName} successfully uploaded";
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        result.ErrorMessage = e.Message;
+        //        return BadRequest(result);
+        //    }
+        //    return Ok(result);
+
+        //}
+
+
+
 
         // DELETE: api/ProductMedias/5
         [HttpDelete("{id}")]
