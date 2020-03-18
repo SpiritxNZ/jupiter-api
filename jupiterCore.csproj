@@ -24,6 +24,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc4" />
     <PackageReference Include="MailChimp.Net.V3" Version="4.2.1" />
     <PackageReference Include="BarcodeLib" Version="2.2.3" />
+    <PackageReference Include="Google.Cloud.Storage.V1" Version="2.5.0" />
+    <PackageReference Include="Google.Apis.Auth" Version="1.44.1" />
   </ItemGroup>
 
 
@@ -33,6 +35,10 @@
     <Folder Include="wwwroot\Images\HomepageCarouselImages\" />
     <Folder Include="wwwroot\Images\ProductImages\" />
     <Folder Include="Services\" />
+    <Folder Include="wwwroot\Video\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Remove="wwwroot\Images\ProductImages\268-32423654gfsd.jpg" />
+  </ItemGroup>
 </Project>
