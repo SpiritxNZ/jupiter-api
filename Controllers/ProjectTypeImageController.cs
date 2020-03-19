@@ -82,7 +82,7 @@ namespace jupiterCore.Controllers
                 // add new image
                 var bucketName = "luxe_media";
                 GoogleCredential credential = null;
-                using (var jsonStream = new FileStream("secrect1.json", FileMode.Open,
+                using (var jsonStream = new FileStream("xxxxx.json", FileMode.Open,
                     FileAccess.Read, FileShare.Read))
                 {
                     credential = GoogleCredential.FromStream(jsonStream);
