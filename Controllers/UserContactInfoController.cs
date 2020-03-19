@@ -62,7 +62,7 @@ namespace jupiterCore.Controllers
                 _context.UserContactInfo.Update(user);
             }
             updateSubscribe.IsSubscribe = userContactInfoModel.IsSubscribe;
-            updateSubscribe.Discount = userContactInfoModel.Discount/100;
+            updateSubscribe.Discount = userContactInfoModel.Discount;
             _context.User.Update(updateSubscribe);
 
             try

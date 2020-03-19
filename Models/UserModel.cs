@@ -15,7 +15,7 @@ namespace jupiterCore.Models
         [DataType(DataType.Password)]
         [MinLength(6)]
         public string Password { get; set; }
-
+        [Range(0, 1)]
         [Column(TypeName = "decimal(3,2)")]
         public decimal Discount { get; set; }
 
