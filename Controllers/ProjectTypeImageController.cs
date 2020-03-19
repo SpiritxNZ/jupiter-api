@@ -57,8 +57,9 @@ namespace jupiterCore.Controllers
         {
             var file = Request.Form.Files[0];
             var result = new Result<string>();
-            var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-            var newFileName = $@"{Int32.Parse(eventTypeImageModel.Id)}-{fileName}";
+            //var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+            //var newFileName = $@"{Int32.Parse(eventTypeImageModel.Id)}-{fileName}";
+            string fileNameForStorage = Guid.NewGuid().ToString();
 
             try
             {
@@ -75,7 +76,7 @@ namespace jupiterCore.Controllers
                 }
 
                 //update image name on db
-                selectedEventType.EventTypeImage = $@"Images/EventTypeImages/{newFileName}";
+                selectedEventType.EventTypeImage = $@"Images/EventTypeImages/{fileNameForStorage}";
                 await _context.SaveChangesAsync();
 
                 // add new image
@@ -91,10 +92,10 @@ namespace jupiterCore.Controllers
                 using (var memoryStream = new MemoryStream())
                 {
                     await file.CopyToAsync(memoryStream);
-                    await storageClient.UploadObjectAsync(bucketName, $@"wwwroot/Images/EventTypeImages/{newFileName}", "image/jpeg", memoryStream);
+                    await storageClient.UploadObjectAsync(bucketName, $@"wwwroot/Images/EventTypeImages/{fileNameForStorage}", "image/jpeg", memoryStream);
                 }
 
-                result.Data = $@"{fileName} successfully uploaded";
+                result.Data = $@"{fileNameForStorage} successfully uploaded";
             }
             catch (Exception e)
             {

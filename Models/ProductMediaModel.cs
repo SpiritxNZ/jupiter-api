@@ -11,6 +11,6 @@ namespace Jupiter.Models
         public int? Id { get; set; }
         public string ProdId { get; set; }
         public string Url { get; set; }
-        public IFormFile file { get; set; }
+        //public IFormFile file { get; set; }
     }
 }

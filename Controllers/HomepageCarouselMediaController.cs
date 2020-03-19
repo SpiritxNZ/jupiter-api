@@ -44,13 +44,14 @@ namespace jupiterCore.Controllers
             var requestForm = Request.Form;
             var file = requestForm.Files[0];
             var result = new Result<string>();
-            var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+            //var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+            string fileNameForStorage = Guid.NewGuid().ToString();
             try
             {
                 //add image name to db
                 HomepageCarouselMedia homepageCarouselMedia = new HomepageCarouselMedia
                 {
-                    ImageUrl = $@"Images/HomepageCarouselImages/{fileName}"
+                    ImageUrl = $@"Images/HomepageCarouselImages/{fileNameForStorage}"
                 };
                 await _context.HomepageCarouselMedia.AddAsync(homepageCarouselMedia);
                 await _context.SaveChangesAsync();
@@ -67,10 +68,10 @@ namespace jupiterCore.Controllers
                 using (var memoryStream = new MemoryStream())
                 {
                     await file.CopyToAsync(memoryStream);
-                    await storageClient.UploadObjectAsync(bucketName, $@"wwwroot/Images/ProductImages/{fileName}", "image/jpeg", memoryStream);
+                    await storageClient.UploadObjectAsync(bucketName, $@"wwwroot/Images/ProductImages/{fileNameForStorage}", "image/jpeg", memoryStream);
                 }
 
-                result.Data = $@"{fileName} successfully uploaded";
+                result.Data = $@"{fileNameForStorage} successfully uploaded";
             }
             catch (Exception e)
             {

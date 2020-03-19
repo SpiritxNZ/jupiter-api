@@ -95,12 +95,13 @@ namespace jupiterCore.Controllers
             var requestForm = Request.Form;
             var file = requestForm.Files[0];
             var result = new Result<string>();
-            var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-            var newFileName = $@"{Int32.Parse(productMediaModel.ProdId)}-{fileName}";
+            //var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+            string fileNameForStorage = Guid.NewGuid().ToString();
+            //var newFileName = $@"{Int32.Parse(productMediaModel.ProdId)}-{fileName}";
             try
             {
                 //    //add image name to db
-                ProductMedia productMedia = new ProductMedia { ProdId = Int32.Parse(productMediaModel.ProdId), Url = $@"Images/ProductImages/{newFileName}" };
+                ProductMedia productMedia = new ProductMedia { ProdId = Int32.Parse(productMediaModel.ProdId), Url = $@"Images/ProductImages/{fileNameForStorage}" };
                 await _context.ProductMedia.AddAsync(productMedia);
                 await _context.SaveChangesAsync();
 
@@ -112,13 +113,13 @@ namespace jupiterCore.Controllers
                     credential = GoogleCredential.FromStream(jsonStream);
                 }
                 var storageClient = StorageClient.Create(credential);
-
                 using (var memoryStream = new MemoryStream())
                 {
                     await file.CopyToAsync(memoryStream);
-                    await storageClient.UploadObjectAsync(bucketName, $@"wwwroot/Images/ProductImages/{newFileName}", "image/jpeg", memoryStream);
+                    await storageClient.UploadObjectAsync(bucketName, $@"wwwroot/Images/ProductImages/{fileNameForStorage}", "image/jpeg", memoryStream);
+                    memoryStream.Close();
                 }
-                result.Data = $@"{fileName} successfully uploaded";
+                result.Data = $@"{fileNameForStorage} successfully uploaded";
             }
             catch (Exception e)
             {

@@ -88,12 +88,13 @@ namespace jupiterCore.Controllers
             var requestForm = Request.Form;
             var file = requestForm.Files[0];
             var result = new Result<string>();
-            var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-            var newFileName = $@"{Int32.Parse(projectMediaModel.ProjectId)}-{fileName}";
+            //var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+            //var newFileName = $@"{Int32.Parse(projectMediaModel.ProjectId)}-{fileName}";
+            string fileNameForStorage = Guid.NewGuid().ToString();
             try
             {
                     //add image name to db
-                ProjectMedia projectMedia = new ProjectMedia { ProjectId = Int32.Parse(projectMediaModel.ProjectId), Url = $@"Images/GalleryImages/{newFileName}" };
+                ProjectMedia projectMedia = new ProjectMedia { ProjectId = Int32.Parse(projectMediaModel.ProjectId), Url = $@"Images/GalleryImages/{fileNameForStorage}" };
                 await _context.ProjectMedia.AddAsync(projectMedia);
                 await _context.SaveChangesAsync();
 
@@ -109,10 +110,10 @@ namespace jupiterCore.Controllers
                 using (var memoryStream = new MemoryStream())
                 {
                     await file.CopyToAsync(memoryStream);
-                    await storageClient.UploadObjectAsync(bucketName, $@"wwwroot/Images/GalleryImages/{newFileName}", "image/jpeg", memoryStream);
+                    await storageClient.UploadObjectAsync(bucketName, $@"wwwroot/Images/GalleryImages/{fileNameForStorage}", "image/jpeg", memoryStream);
                 }
 
-                result.Data = $@"{fileName} successfully uploaded";
+                result.Data = $@"{fileNameForStorage} successfully uploaded";
                 
             }
             catch (Exception e)
