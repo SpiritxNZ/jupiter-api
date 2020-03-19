@@ -47,10 +47,8 @@ namespace jupiterCore
             //services.AddDbContext<jupiterContext.jupiterContext>(options => 
             //    options.UseMySQL("server=localhost;port=3306;user=dbuser;password=ToMPyaJzCW88JPRqBkxqZpiiEElX7Tv1;database=jupiter"));
             services.AddDbContext<jupiterContext.jupiterContext>(options =>
-                //options.UseMySQL("server=localhost;port=3306;user=lyric;password=Lychy31623;database=jupiter"));
-
                 options.UseMySQL("server=localhost;port=3306;user=dbuser;password=ToMPyaJzCW88JPRqBkxqZpiiEElX7Tv1;database=jupiter"));
-            //8Tg01UyW7rOg6PZatvvFTuoPWOQ58wvT
+            //options.UseMySQL("server=45.76.123.59;port=3306;user=dbuser;password=8Tg01UyW7rOg6PZatvvFTuoPWOQ58wvT;database=luxedream"));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddJsonOptions(option =>
                     option.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
