@@ -66,7 +66,7 @@ namespace jupiterCore.Controllers
 
                 using (var memoryStream = new MemoryStream())
                 {
-                    await homepageCarouselMediaModel.file.CopyToAsync(memoryStream);
+                    await file.CopyToAsync(memoryStream);
                     await storageClient.UploadObjectAsync(bucketName, $@"wwwroot/Images/ProductImages/{fileName}", "image/jpeg", memoryStream);
                 }
 

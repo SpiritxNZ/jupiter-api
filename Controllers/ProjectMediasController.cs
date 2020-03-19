@@ -108,7 +108,7 @@ namespace jupiterCore.Controllers
 
                 using (var memoryStream = new MemoryStream())
                 {
-                    await projectMediaModel.file.CopyToAsync(memoryStream);
+                    await file.CopyToAsync(memoryStream);
                     await storageClient.UploadObjectAsync(bucketName, $@"wwwroot/Images/GalleryImages/{newFileName}", "image/jpeg", memoryStream);
                 }
 

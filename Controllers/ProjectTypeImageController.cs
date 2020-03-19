@@ -90,7 +90,7 @@ namespace jupiterCore.Controllers
 
                 using (var memoryStream = new MemoryStream())
                 {
-                    await eventTypeImageModel.FormFile.CopyToAsync(memoryStream);
+                    await file.CopyToAsync(memoryStream);
                     await storageClient.UploadObjectAsync(bucketName, $@"wwwroot/Images/EventTypeImages/{newFileName}", "image/jpeg", memoryStream);
                 }
 
