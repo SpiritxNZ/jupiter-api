@@ -60,10 +60,11 @@ namespace jupiterCore.Controllers
                 user.Company = userContactInfoModel.Company;
                 user.Comments = userContactInfoModel.Comments;
                 _context.UserContactInfo.Update(user);
-
             }
             updateSubscribe.IsSubscribe = userContactInfoModel.IsSubscribe;
+            updateSubscribe.Discount = userContactInfoModel.Discount/100;
             _context.User.Update(updateSubscribe);
+
             try
             {
                 await UserSubscribe(userContactInfoModel);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace jupiterCore.Models
 {
@@ -14,6 +15,9 @@ namespace jupiterCore.Models
         [DataType(DataType.Password)]
         [MinLength(6)]
         public string Password { get; set; }
+
+        [Column(TypeName = "decimal(3,2)")]
+        public decimal Discount { get; set; }
 
         public DateTime CreatedOn { get; set; }
 

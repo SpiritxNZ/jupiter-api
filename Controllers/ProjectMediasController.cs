@@ -82,7 +82,7 @@ namespace jupiterCore.Controllers
         // POST: api/ProjectMedias
         [CheckModelFilter]
         [HttpPost]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult<ProjectMedia>> PostProjectMedia([FromForm] ProjectMediaModel projectMediaModel)
         {
             var requestForm = Request.Form;

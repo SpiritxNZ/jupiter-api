@@ -60,7 +60,7 @@ namespace jupiterCore.Controllers
         {
             var result = new Result<object>();
 
-            var user = _context.User.Include(x => x.UserContactInfo).Select(s=>new { s.Id,s.Email,s.IsSubscribe,s.CreatedOn,UserInfo=s.UserContactInfo}).OrderByDescending(x=>x.CreatedOn).ToListAsync();
+            var user = _context.User.Include(x => x.UserContactInfo).Select(s=>new { s.Id,s.Email,s.IsSubscribe,s.CreatedOn,s.Discount,UserInfo=s.UserContactInfo}).OrderByDescending(x=>x.CreatedOn).ToListAsync();
             result.Data = user;
 
             return Ok(result);
@@ -72,7 +72,7 @@ namespace jupiterCore.Controllers
         {
             Result<Object> result = new Result<Object>();
 
-            var user = await _context.User.Include(x => x.UserContactInfo).Where(x => x.Id == id).Select(s => new { s.Id, s.Email, s.IsSubscribe, UserInfo = s.UserContactInfo }).ToListAsync();
+            var user = await _context.User.Include(x => x.UserContactInfo).Where(x => x.Id == id).Select(s => new { s.Id, s.Email, s.IsSubscribe,s.CreatedOn,s.Discount, UserInfo = s.UserContactInfo }).ToListAsync();
             result.Data = user;
             return Ok(result);
         }

@@ -46,6 +46,7 @@ namespace jupiterCore.jupiterContext
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseMySQL("server=localhost;port=3306;user=dbuser;password=ToMPyaJzCW88JPRqBkxqZpiiEElX7Tv1;database=jupiter");
+                //optionsBuilder.UseMySQL("server=45.76.123.59;port=3306;user=dbuser;password=8Tg01UyW7rOg6PZatvvFTuoPWOQ58wvT;database=luxedream");
             }
         }
 
@@ -678,6 +679,7 @@ namespace jupiterCore.jupiterContext
                     .HasColumnName("password")
                     .HasMaxLength(45)
                     .IsUnicode(false);
+                entity.Property(e => e.Discount).HasColumnName("Discount").HasColumnType("decimal(3,2)");
             });
 
             modelBuilder.Entity<UserContactInfo>(entity =>

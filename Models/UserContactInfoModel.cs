@@ -13,6 +13,7 @@ namespace jupiterCore.Models
         public string Company { get; set; }
         public byte IsSubscribe { get; set; }
         public string Comments { get; set; }
+        public decimal Discount { get; set; }
 
         public User User { get; set; }
     }
