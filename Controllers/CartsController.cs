@@ -194,6 +194,7 @@ namespace jupiterCore.Controllers
             cart.ContactId = contact.ContactId;
             cart.Location = cartContactModel.CartModel.Location;
             cart.Price = cartContactModel.CartModel.Price;
+            cart.SavedAmount = cartContactModel.CartModel.SavedAmount;
             //cart.RentalPaidFee = cartContactModel.CartModel.Price * 0.50m;
             cart.RentalPaidFee = 0;
             cart.DepositPaidFee = 0;

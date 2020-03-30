@@ -64,10 +64,10 @@ namespace jupiterCore.Controllers
             input.TxnType = "Purchase";
             input.Opt = "TO="+DateTime.UtcNow.AddMinutes(10).ToString("yyMMddHHmm");
 
-            input.UrlFail = "http://http://luxedreameventhire.co.nz/:80/paymentresult";
-            input.UrlSuccess = "http://http://luxedreameventhire.co.nz/:80/paymentresult";
+            input.UrlFail = "http://luxedreameventhire.co.nz:80/paymentresult";
+            input.UrlSuccess = "http://luxedreameventhire.co.nz:80/paymentresult";
 
-            input.UrlCallback = "http://http://luxedreameventhire.co.nz/:443/api/pxpay/ResponseOutput";
+            input.UrlCallback = "http://luxedreameventhire.co.nz:443/api/pxpay/ResponseOutput";
 
             // TODO: GUID representing unique identifier for the transaction within the shopping cart (normally would be an order ID or similar)
             Guid orderId = Guid.NewGuid();
@@ -190,6 +190,11 @@ namespace jupiterCore.Controllers
             return response;
 
         }
+        public class EmailProduct {
+            public decimal Price { get; set; }
+            public string Title { get; set; }
+            public int Quantity { get; set; }
+        }
 
 
         private void SendCartEmail(CartModel cartContactModel)
@@ -209,11 +214,19 @@ namespace jupiterCore.Controllers
             var cartDetail = cartContactModel;
             //return Ok(cartDetail.CartProd;
             //var cartProds = "";
-            //foreach (var cart in cartDetail.CartProd)
-            //{
-            //    cartProds = cartProds + cart.Quantity + " of " + " " + cart.Title + "\r\n";
-            //}
-            
+            List<EmailProduct> emailProducts = new List<EmailProduct>();
+
+            foreach (var cart in cartDetail.CartProd)
+            {
+                emailProducts.Add(new EmailProduct
+                {
+                    Title=cart.Title,
+                    Quantity=(int)cart.Quantity,
+                    Price= (int)cart.Quantity * (decimal)cart.Price*1.00m,
+                });
+                //cartProds = cartProds + cart.Quantity + " of " + " " + cart.Title + "\r\n";
+            }
+
             myMessage.SetTemplateData(new
             {
                 FirstName = contactDetail.FirstName,
@@ -222,13 +235,15 @@ namespace jupiterCore.Controllers
                 EventEndDate = cartDetail.EventEndDate.ToString("D"),
                 Email = contactDetail.Email,
                 PhoneNum = contactDetail.PhoneNum,
-                cartProds = cartDetail.CartProd,
+                //cartProds = cartDetail.CartProd,
+                cartProds= emailProducts,
+
                 Message = contactDetail.Message,
                 Price= cartDetail.Price,
                 DeliveryFee= cartDetail.DeliveryFee,
-                DepositFee= cartDetail.DepositFee,
-                RentalPaidFee= cartDetail.RentalPaidFee,
-                OrderId= cartDetail.CartId
+                GST = (decimal)cartDetail.Price * 0.15m,
+                TotalPrice= cartDetail.Price+ cartDetail.DeliveryFee,
+                Location = cartDetail.Location,
 
             });
             sendGridClient.SendEmailAsync(myMessage);

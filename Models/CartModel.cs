@@ -11,6 +11,7 @@ namespace Jupiter.Models
     {
         public int? CartId { get; set; }
         public decimal? Price { get; set; }
+        public decimal? SavedAmount { get; set; }
         [Required (ErrorMessage ="Location is Required.")]
         public string Location { get; set; }
         public DateTime EventStartDate { get; set; }

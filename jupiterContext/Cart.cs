@@ -21,6 +21,7 @@ namespace jupiterCore.jupiterContext
         public DateTime? CreateOn { get; set; }
         public DateTime? UpdateOn { get; set; }
         public int? ContactId { get; set; }
+        public decimal? SavedAmount { get; set; }
 
         public int? UserId { get; set; }
 
