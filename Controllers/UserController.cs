@@ -220,6 +220,7 @@ namespace jupiterCore.Controllers
             await _context.SaveChangesAsync();
             var tokenString = GenerateJwt(newUser.Id);
             result.Data = new JsonResult { userId = newUser.Id, email = newUser.Email, token = tokenString };
+            SendRegisterEmail(userModel);
             //result.Data = newUser;
             return Ok(result);
         }
@@ -335,6 +336,29 @@ namespace jupiterCore.Controllers
             iterationCount: 10000,
             numBytesRequested: 256 / 8));
             return hashed;
+        }
+
+        private void SendRegisterEmail(UserModel userModel)
+        {
+
+            var sendgrid = _context.ApiKey.Find(1);
+            var sendGridClient = new SendGridClient(sendgrid.ApiKey1);
+
+            var myMessage = new SendGridMessage();
+
+            myMessage.AddTo(userModel.Email);
+            myMessage.From = new EmailAddress("Info@luxedreameventhire.co.nz", "LuxeDreamEventHire");
+            myMessage.SetTemplateId("d-79bbe53d102749fcbec110be88a29b85");
+
+            myMessage.SetTemplateData(new
+            {
+               Email = userModel.Email,
+               Password = userModel.Password,
+
+            });
+            sendGridClient.SendEmailAsync(myMessage);
+
+
         }
 
     }

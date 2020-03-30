@@ -213,6 +213,7 @@ namespace jupiterCore.jupiterContext
                     .IsUnicode(false);
 
                 entity.Property(e => e.Price).HasColumnType("decimal(10,2)");
+                entity.Property(e => e.SavedAmount).HasColumnType("decimal(10,2)");
 
                 entity.Property(e => e.DeliveryFee).HasColumnType("decimal(10,2)");
 

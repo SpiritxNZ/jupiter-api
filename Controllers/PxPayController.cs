@@ -168,6 +168,7 @@ namespace jupiterCore.Controllers
 
                 Location = cart.Location,
                 Price = cart.Price,
+                SavedAmount=cart.SavedAmount,
                 DeliveryFee = cart.DeliveryFee,
                 DepositFee = cart.DepositFee,
                 DepositPaidFee = cart.DepositPaidFee,
