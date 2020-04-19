@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+//using System.Security.Claims;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using Microsoft.AspNetCore.Authorization;

@@ -245,6 +245,8 @@ namespace jupiterCore.Controllers
                 GST = (decimal)cartDetail.Price * 0.15m,
                 TotalPrice= cartDetail.Price+ cartDetail.DeliveryFee,
                 Location = cartDetail.Location,
+                DepositFee = cartDetail.DepositFee,
+                RentalPaidFee = cartDetail.RentalPaidFee,
 
             });
             sendGridClient.SendEmailAsync(myMessage);
