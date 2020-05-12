@@ -247,6 +247,7 @@ namespace jupiterCore.Controllers
                 Location = cartDetail.Location,
                 DepositFee = cartDetail.DepositFee,
                 RentalPaidFee = cartDetail.RentalPaidFee,
+                CurrentDue = cartDetail.DepositFee + cartDetail.RentalPaidFee,
 
             });
             sendGridClient.SendEmailAsync(myMessage);
