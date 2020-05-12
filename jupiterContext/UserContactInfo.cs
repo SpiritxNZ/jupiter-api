@@ -13,6 +13,11 @@ namespace jupiterCore.jupiterContext
         public string PhoneNumber { get; set; }
         public string Company { get; set; }
         public string Comments { get; set; }
+        public string Website { get; set; }
+        public string SocialMedia { get; set; }
+        public string BusinessInfo { get; set; }
+        public string Nzbn { get; set; }
+
 
         [JsonIgnore]
         public virtual User User { get; set; }

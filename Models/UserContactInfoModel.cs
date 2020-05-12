@@ -14,6 +14,10 @@ namespace jupiterCore.Models
         public byte IsSubscribe { get; set; }
         public string Comments { get; set; }
         public decimal Discount { get; set; }
+        public string Website { get; set; }
+        public string SocialMedia { get; set; }
+        public string BusinessInfo { get; set; }
+        public string Nzbn { get; set; }
 
         public User User { get; set; }
     }

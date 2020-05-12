@@ -59,6 +59,10 @@ namespace jupiterCore.Controllers
                 user.PhoneNumber = userContactInfoModel.PhoneNumber;
                 user.Company = userContactInfoModel.Company;
                 user.Comments = userContactInfoModel.Comments;
+                user.Website = userContactInfoModel.Website;
+                user.SocialMedia = userContactInfoModel.SocialMedia;
+                user.Nzbn = userContactInfoModel.Nzbn;
+                user.BusinessInfo = userContactInfoModel.BusinessInfo;
                 _context.UserContactInfo.Update(user);
             }
             updateSubscribe.IsSubscribe = userContactInfoModel.IsSubscribe;

@@ -721,6 +721,26 @@ namespace jupiterCore.jupiterContext
                    .HasMaxLength(255)
                    .IsUnicode(false);
 
+                entity.Property(e => e.Website)
+                   .HasColumnName("website")
+                   .HasMaxLength(500)
+                   .IsUnicode(false);
+
+                entity.Property(e => e.SocialMedia)
+                   .HasColumnName("social_media")
+                   .HasMaxLength(500)
+                   .IsUnicode(false);
+
+                entity.Property(e => e.Nzbn)
+                   .HasColumnName("nzbn")
+                   .HasMaxLength(500)
+                   .IsUnicode(false);
+
+                entity.Property(e => e.BusinessInfo)
+                   .HasColumnName("business_info")
+                   .HasMaxLength(1400)
+                   .IsUnicode(false);
+
                 entity.Property(e => e.UserId)
                     .HasColumnName("user_id")
                     .HasColumnType("int(11)");
