@@ -67,7 +67,7 @@ namespace jupiterCore.Controllers
             input.UrlFail = "http://luxedreameventhire.co.nz:80/paymentresult";
             input.UrlSuccess = "http://luxedreameventhire.co.nz:80/paymentresult";
 
-            input.UrlCallback = "http://luxedreameventhire.co.nz:443/api/pxpay/ResponseOutput";
+            input.UrlCallback = "http://api.luxedreameventhire.co.nz/api/pxpay/ResponseOutput";
 
             // TODO: GUID representing unique identifier for the transaction within the shopping cart (normally would be an order ID or similar)
             Guid orderId = Guid.NewGuid();
