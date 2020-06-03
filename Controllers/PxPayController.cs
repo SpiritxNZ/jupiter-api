@@ -223,7 +223,7 @@ namespace jupiterCore.Controllers
                 {
                     Title=cart.Title,
                     Quantity=(int)cart.Quantity,
-                    Price= (int)cart.Quantity * (decimal)cart.Price*1.00m,
+                    Price= (decimal)cart.Price*1.00m,
                 });
                 //cartProds = cartProds + cart.Quantity + " of " + " " + cart.Title + "\r\n";
             }
