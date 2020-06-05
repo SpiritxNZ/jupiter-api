@@ -279,6 +279,133 @@ namespace jupiterCore.Controllers
             return Ok(result);
         }
 
+        // POST: api/Carts
+        [CheckModelFilter]
+        [HttpPost("[action]")]
+        [Authorize]
+        public async Task<ActionResult<Cart>> AdminPostCart(CartContactModel cartContactModel)
+        {
+            var result = new Result<Cart>();
+            try
+            {
+                //SendCartEmail(cartContactModel);
+            }
+            catch (Exception e)
+            {
+                result.ErrorMessage = $@"Sending Email Failed, {e.Message}";
+                result.IsSuccess = false;
+                return BadRequest(result);
+            }
+            Contact contact = new Contact();
+            _mapper.Map(cartContactModel.ContactModel, contact);
+            try
+            {
+                await _context.Contact.AddAsync(contact);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                result.ErrorMessage = e.Message;
+                result.IsSuccess = false;
+                return BadRequest(result);
+            }
+
+            Cart cart = new Cart();
+            _mapper.Map(cartContactModel.CartModel, cart);
+            cart.CreateOn = toNZTimezone(DateTime.UtcNow);
+            cart.IsActivate = 1;
+            cart.IsPay = 1;
+            cart.IsEmailSend = 0;
+            cart.IsExpired = 0;
+            cart.CartStatusId = 1;
+            cart.ContactId = contact.ContactId;
+            cart.Location = cartContactModel.CartModel.Location;
+            cart.Price = cartContactModel.CartModel.Price;
+            cart.SavedAmount = cartContactModel.CartModel.SavedAmount;
+            //cart.RentalPaidFee = cartContactModel.CartModel.Price * 0.50m;
+            cart.RentalPaidFee = 0;
+            cart.DepositPaidFee = 0;
+            cart.EventStartDate = cartContactModel.CartModel.EventStartDate;
+            cart.EventEndDate = cartContactModel.CartModel.EventEndDate;
+            cart.IsPickup = cartContactModel.CartModel.IsPickup;
+            cart.Region = cartContactModel.CartModel.Region;
+            cart.UserId = null;
+            cart.TradingTime = cartContactModel.CartModel.TradingTime;
+            cart.TradingTime = cartContactModel.CartModel.ReturnTime;
+            cart.Coupon = cartContactModel.CartModel.Coupon;
+            //cart.CartProd = cart
+
+            try
+            {
+                await _context.Cart.AddAsync(cart);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                result.ErrorMessage = e.Message;
+                result.IsFound = false;
+                return BadRequest(result);
+            }
+
+            cartContactModel.ProductTimetableModel.ToList().ForEach(s => {
+                _context.ProductTimetable.Add(new ProductTimetable
+                {
+                    ProdDetailId = s.ProdDetailId,
+                    ProdId = s.ProdId,
+                    BeginDate = s.BeginDate,
+                    EndDate = s.EndDate,
+                    Quantity = s.Quantity,
+                    CartId = cart.CartId,
+                    IsActive = 1,
+                    //IsExpired = 0,
+
+                });
+            });
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                result.ErrorMessage = e.Message;
+                result.IsSuccess = false;
+                return BadRequest(result);
+            }
+            if (cart.Coupon != "")
+            {
+                Popup popup = await _context.Popups.Where(x => x.Coupon == cart.Coupon).FirstOrDefaultAsync();
+                if (null == popup)
+                {
+                    result.ErrorMessage = "Coupon not exist.";
+                    result.IsSuccess = false;
+                    return BadRequest(result);
+                }
+                if (popup.IsValid == 0)
+                {
+                    result.IsSuccess = false;
+                    result.ErrorMessage = "This coupon is expired.";
+                    return BadRequest(result);
+                }
+
+                try
+                {
+                    popup.IsValid = 0;
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception e)
+                {
+                    result.ErrorMessage = e.Message;
+                    result.IsSuccess = false;
+                    return BadRequest(result);
+                }
+            }
+
+
+
+            result.Data = cart;
+            return Ok(result);
+        }
+
         [HttpGet("[action]")]
         public async Task<int> CheckCoupon(string coupon)
         {
