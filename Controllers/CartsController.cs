@@ -406,6 +406,38 @@ namespace jupiterCore.Controllers
             return Ok(result);
         }
 
+        [HttpPut("[action]/{cartId}")]
+        [Authorize]
+        public async Task<ActionResult> UndoCart(int cartId)
+        {
+            var result = new Result<string>();
+            var card = _context.Cart.Find(cartId);
+            if(card == null)
+            {
+                return NotFound(DataNotFound(result));
+            }
+            
+            var prodTimeTables = await _context.ProductTimetable.Where(x => x.CartId == cartId).ToListAsync();
+            try
+            {
+                card.IsPay = 0;
+                foreach (var productTimetable in prodTimeTables)
+                {
+                    productTimetable.IsActive = 0;
+                }
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                result.ErrorMessage = e.Message;
+                result.IsSuccess = false;
+                return BadRequest(result);
+            }
+            return Ok(result);
+
+
+        }
+
         [HttpGet("[action]")]
         public async Task<int> CheckCoupon(string coupon)
         {
